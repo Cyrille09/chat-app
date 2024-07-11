@@ -1,0 +1,130 @@
+@import "../styles/variables";
+
+:root {
+  --max-width: 1100px;
+  --border-radius: 12px;
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+}
+
+h1 {
+  font-size: 25px;
+}
+h2 {
+  font-size: 23px;
+}
+h3 {
+  font-size: 21px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 15px;
+}
+
+p {
+  font-size: 15px;
+  color: #555;
+}
+span {
+  color: #555;
+  font-size: 15px;
+}
+
+/*  CSSTransition modal */
+body.css-transition-modal-open {
+  overflow: hidden;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.flex-row-left-side {
+  flex: 1;
+}
+.flex-row-right-side {
+  flex: none;
+  width: auto;
+}
+
+// Tabs
+.nav-segment {
+  position: relative;
+  background-color: $nav-segment-bg-color;
+  padding: $nav-segment-padding-y $nav-segment-padding-x;
+  border-radius: 0.5rem;
+  border-bottom: none;
+  height: 50px;
+
+  &:not(.nav-fill) {
+    display: inline-flex;
+  }
+
+  .nav-link {
+    color: $nav-segment-link-color;
+    font-size: $nav-segment-font-size;
+    padding: $nav-segment-link-padding-y $nav-segment-link-padding-x;
+    border-radius: 0.5rem;
+
+    &:hover {
+      color: $nav-segment-link-hover-color;
+    }
+
+    &.active {
+      color: $nav-segment-link-active-color;
+      background-color: $nav-segment-link-active-bg-color;
+      box-shadow: $nav-segment-link-active-box-shadow;
+      border-color: $white;
+    }
+
+    &.disabled {
+      color: $nav-segment-link-disabled-color;
+    }
+  }
+
+  &.nav-pills {
+    border-radius: 50rem;
+
+    .nav-link {
+      border-radius: 50rem;
+    }
+  }
+}
+
+// search
+.rbt {
+  display: flex;
+  height: 43px;
+}
+.rbt-input-main.form-control {
+  padding-left: 2.5rem;
+  padding-right: 1.75rem;
+}
+.navbar .rbt {
+  height: 36px;
+}
+.navbar .rbt-input-main.form-control {
+  background-color: rgb(235, 235, 235) !important;
+}
+.rbt-aux {
+  position: absolute;
+  right: 9px;
+  top: 3px;
+
+  .btn-close {
+    opacity: 0.6;
+    font-size: 11px;
+  }
+
+  .rbt-close-content {
+    display: none;
+  }
+}

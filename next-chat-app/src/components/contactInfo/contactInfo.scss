@@ -1,0 +1,247 @@
+@import "../../styles/variables";
+
+.contactInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  background-color: $white;
+
+  .contactInfoTop {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid $gray-300;
+    background: $gray-50;
+
+    h4 {
+      padding-left: 15px;
+    }
+  }
+
+  .chatListTopIcon {
+    cursor: pointer;
+  }
+
+  .contactInfoGroupMember {
+    padding: 0 10px 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid $gray-300;
+  }
+  .contactInfoGroupMemberIcon {
+    cursor: pointer;
+  }
+
+  .contactContent {
+    flex: 1;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+
+    .contactHeader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px 0;
+      padding: 20px;
+      h4 {
+        text-transform: capitalize;
+      }
+      p {
+        text-transform: lowercase;
+      }
+    }
+
+    .avatar {
+      width: auto;
+      height: 200px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .noImage {
+      text-align: center;
+      align-items: center;
+      align-content: center;
+      height: 200px;
+      width: 200px;
+      background-color: $gray-400;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      p {
+        color: white;
+        text-transform: uppercase;
+        font-size: 30px;
+      }
+    }
+
+    .contactInfoAbout {
+      text-align: left;
+      padding: 20px 0 20px 20px;
+    }
+
+    .contactInfoMedia {
+      text-align: left;
+      padding: 20px 10px 20px 20px;
+    }
+
+    .mediaHeader {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .mediaCount {
+      font-size: 15px;
+    }
+
+    .mediaItems {
+      display: flex;
+      gap: 10px;
+      overflow: scroll;
+    }
+
+    .mediaItem {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 5px solid $gray-400;
+    }
+
+    .mediaItem img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .videoDuration {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 2px 5px;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+
+    .contactInfoActions {
+      text-align: left;
+      padding: 20px 10px 20px 20px;
+    }
+
+    .eachAction {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      cursor: pointer;
+    }
+    .eachActionInRed {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      cursor: pointer;
+      color: $danger;
+
+      span {
+        color: $danger;
+      }
+    }
+
+    .eachActionLeftIcon {
+      margin-right: 20px;
+    }
+    .eachActionLeftIconInRed {
+      margin-right: 20px;
+      color: $danger;
+    }
+    .mutedDate {
+      font-size: 13px;
+      margin-left: 38px;
+    }
+  }
+}
+
+//
+.chatAreaTop {
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid $gray-300;
+
+  .user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    img {
+      width: auto;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .chatAreaTopTexts {
+      display: flex;
+      flex-direction: column;
+      padding-top: 10px;
+
+      .chatAreaTopTextsName {
+        font-weight: 500;
+      }
+
+      span {
+        font-weight: 300;
+        text-transform: capitalize;
+      }
+      .chatAreaTopLastOnline {
+        color: $teal;
+        font-size: 13px;
+      }
+      .chatAreaTopLastSeen {
+        font-size: 13px;
+      }
+      .chatAreaTopOffline {
+        font-size: 13px;
+        color: $danger;
+      }
+
+      p {
+        font-size: 14px;
+        font-weight: 300;
+      }
+    }
+    .chatListItemUserNoImage {
+      text-align: center;
+      align-items: center;
+      align-content: center;
+      height: 50px;
+      width: 50px;
+      background-color: $gray-400;
+      border-radius: 50%;
+      p {
+        color: white;
+        text-transform: uppercase;
+        font-size: 15px;
+        margin-top: 10px;
+      }
+    }
+  }
+
+  .groupAdmin {
+    span {
+      font-size: 13px;
+      background-color: $teal;
+      padding: 1px 3px;
+      color: $white;
+      border-radius: 3px;
+      margin-right: 10px;
+    }
+  }
+}

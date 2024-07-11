@@ -1,0 +1,499 @@
+@import "../../styles/variables";
+
+/*------------------------------------
+  Validation
+------------------------------------*/
+.isInvalid,
+.was-validated .form-control:invalid {
+  border-color: $danger;
+}
+.invalidFeedback {
+  display: block !important;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: $danger;
+}
+
+.tooltipIconHide {
+  display: none;
+  opacity: 0;
+}
+
+.tooltipIcon:hover + .tooltipIconHide {
+  display: block;
+  background-color: #132144;
+  border-radius: 0.5rem;
+  color: #fff;
+  line-height: 1.5;
+  text-align: center;
+  font-size: 0.76rem;
+  padding: 0.25rem 0.5rem;
+  max-width: 200px;
+  width: 200px;
+  word-wrap: break-word;
+  text-transform: none;
+  font-weight: 400;
+  position: absolute;
+  bottom: 175%;
+  opacity: 1;
+  margin-left: -100px;
+  left: 50%;
+  transition: opacity 0.2s;
+
+  &::before {
+    position: absolute;
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+
+    bottom: -6px;
+    border-width: 0.4rem calc(0.8rem * 0.5) 0;
+    border-top-color: #132144;
+    margin-left: -4px;
+  }
+}
+
+.panel .tooltipIcon:hover + .tooltipIconHide {
+  bottom: 0;
+  opacity: 1;
+  margin-left: 20px;
+  left: 0;
+  transition: opacity 0.2s;
+
+  &::before {
+    position: absolute;
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+
+    left: -6px;
+    top: 50%;
+    border-width: 0.4rem calc(0.8rem * 0.5) 0;
+    border-top-color: #132144;
+    margin-left: -4px;
+  }
+}
+
+/*------------------------------------
+  Input Group Merge
+------------------------------------*/
+
+.input-group-merge {
+  position: relative;
+  overflow: hidden;
+  border: $input-border-width solid $input-border-color;
+  border-radius: $input-border-radius;
+
+  .input-group-prepend,
+  .input-group-append {
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    z-index: $input-group-merge-addons-z-index;
+    background-color: transparent;
+
+    &.input-group-text {
+      border-width: $input-group-text-border-width;
+    }
+  }
+
+  .input-group-prepend {
+    left: 1px;
+  }
+
+  .input-group-append {
+    right: 1px;
+  }
+
+  .form-select,
+  .form-control {
+    border-width: 0;
+  }
+}
+
+// search
+.formSearch {
+  border: none;
+  width: 100%;
+  max-width: 25rem;
+}
+.formSearchIcon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  padding-left: 0.75rem;
+  border: none;
+  z-index: 6;
+  background-color: transparent;
+}
+
+/*------------------------------------
+  Form Check
+------------------------------------*/
+
+.form-check-label {
+  margin-top: $form-check-margin-y;
+}
+
+.form-check {
+  .form-check-label {
+    margin-top: 0;
+  }
+}
+
+.form-check-input {
+  margin-top: (1 - $form-check-input-width) * 0.375; // line-height minus check height
+}
+
+.form-check-text {
+  display: block;
+}
+
+.form-check-img {
+  max-width: 100%;
+  height: auto;
+}
+
+label.form-control,
+.form-check-input,
+.form-check-label {
+  cursor: pointer;
+}
+
+.form-check-input:focus {
+  box-shadow: none;
+}
+
+// Default/Active Icon
+.form-check-input ~ .form-check-label {
+  .form-check-default {
+    display: block;
+  }
+
+  .form-check-active {
+    display: none;
+  }
+}
+
+.form-check-input:checked ~ .form-check-label {
+  .form-check-default {
+    display: none;
+  }
+
+  .form-check-active {
+    display: block;
+  }
+}
+
+// Form Check Reverse
+.form-check-reverse {
+  padding-left: 0;
+  padding-right: $form-check-padding-start;
+
+  .form-check-input {
+    float: right;
+    margin-left: 0;
+    margin-right: $form-check-padding-start * -1;
+  }
+}
+
+// Validation
+.was-validated .form-check-input:valid,
+.form-check-input.is-valid {
+  border: $form-check-input-border;
+}
+
+.was-validated .form-check-input:valid ~ .form-check-label,
+.form-check-input.is-valid ~ .form-check-label {
+  color: $form-check-label-color;
+}
+
+// Styles
+@each $color, $value in $theme-colors {
+  .form-check-#{$color} {
+    .form-check-input {
+      &:checked {
+        background-color: $value;
+        border-color: $value;
+      }
+    }
+  }
+}
+
+/*------------------------------------
+  Form Switch
+------------------------------------*/
+
+.formSwitch {
+  position: relative;
+
+  &.row {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+
+    .form-check-input {
+      float: none;
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+}
+
+.formCheckInput {
+  width: $form-switch-input-width !important;
+  height: $form-switch-input-height;
+  border-width: $form-switch-input-border-width;
+  background-color: $form-switch-input-bg-color;
+  margin-top: -0.15rem; /* -(calc(calc($form-check-input-width / 2) / 2)); */
+  margin-right: $form-switch-margin-x;
+
+  &:active {
+    filter: $form-check-input-active-filter;
+  }
+}
+
+.form-check-input:checked {
+  background-color: $form-check-input-checked-bg-color;
+}
+
+// Between
+.form-switch-between {
+  align-items: center;
+  padding-left: 0;
+
+  .form-check-input {
+    float: none;
+    align-items: center;
+    margin-left: $form-switch-between-margin-x;
+  }
+
+  .form-check-label {
+    cursor: inherit;
+  }
+}
+
+// Promotion
+.form-switch-promotion {
+  position: relative;
+  min-width: $form-switch-promotion-min-width;
+}
+
+.form-switch-promotion-container {
+  position: absolute;
+  top: -$form-switch-promotion-container-position-top-offset;
+  left: $form-switch-promotion-container-position-left-offset;
+}
+
+.form-switch-promotion-body {
+  display: flex;
+  align-items: center;
+  margin-top: -$form-switch-promotion-body-margin-y;
+}
+
+.form-switch-promotion-arrow {
+  margin-right: -$form-switch-promotion-arrow-margin-x;
+}
+
+.form-switch-promotion-text {
+  display: block;
+  margin-top: $form-switch-promotion-text-margin-y;
+}
+
+.field {
+  margin-bottom: 24px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.error {
+  display: block !important;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: $danger;
+}
+
+.input {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+  // background: transparent;
+  background: #ffffff;
+
+  border-radius: 0;
+  appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  display: block;
+  width: 100%;
+
+  // font-size: 1.25rem;
+  padding: 0.3em 0.6em;
+
+  // border: 1px solid $turquoise;
+  border: 1px solid #e6e6e6;
+
+  &:focus {
+    // box-shadow: 0 0 5px blue;
+    outline-color: rgba(243, 64, 178, 0.5);
+  }
+  &:disabled {
+    color: grey;
+    border-color: grey;
+  }
+  ::placeholder {
+    color: lightgray;
+  }
+}
+
+.invalid {
+  border-color: darkred;
+}
+
+// Hide number input spinners
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 9'%3E%3Cpath d='M6.92 8.76L.24 2.16A.81.81 0 0 1 .24 1L1 .24a.82.82 0 0 1 1.16 0L7.5 5.47 12.82.24a.82.82 0 0 1 1.18 0l.78.77a.81.81 0 0 1 0 1.15l-6.7 6.6a.82.82 0 0 1-1.16 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center right 0.75em;
+  background-size: 0.6em 0.35em;
+  padding-right: 2.1em;
+
+  &:disabled {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 9'%3E%3Cpath fill='%23808285' d='M6.92 8.76L.24 2.16A.81.81 0 0 1 .24 1L1 .24a.82.82 0 0 1 1.16 0L7.5 5.47 12.82.24a.82.82 0 0 1 1.18 0l.78.77a.81.81 0 0 1 0 1.15l-6.7 6.6a.82.82 0 0 1-1.16 0z'/%3E%3C/svg%3E");
+  }
+  &:required:invalid {
+    color: #c1c2c3;
+  }
+  ::-ms-expand {
+    display: none;
+  }
+}
+
+/* checkable scss*/
+.valueTitle {
+  margin-left: 20px;
+}
+
+/* search styles*/
+.toggleButton {
+  background: transparent;
+  border: 0;
+  bottom: 0;
+  padding: 0 12px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/*  toggle scss */
+.inputToggle {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background: #ffffff;
+  border-radius: 0;
+  appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+.toggleLabel {
+  margin-right: 20px;
+}
+.toggleLabelRight {
+  margin-left: 20px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: green;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px green;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.checkboxLine {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* search styles*/
+.toggleButton {
+  background: transparent;
+  border: 0;
+  bottom: 0;
+  padding: 0 12px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}

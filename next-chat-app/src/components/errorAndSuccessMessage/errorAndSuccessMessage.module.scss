@@ -1,0 +1,17 @@
+@import "../../styles/variables";
+
+.message {
+  text-align: center;
+  color: $white;
+  background-color: $danger;
+  border-radius: 10px;
+  padding: 10px 0;
+}
+
+.successMessage {
+  text-align: center;
+  color: $white;
+  background-color: $success;
+  border-radius: 10px;
+  padding: 10px 0;
+}

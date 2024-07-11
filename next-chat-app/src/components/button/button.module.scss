@@ -1,0 +1,283 @@
+@import "../../styles/variables";
+
+.btn.dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+}
+
+// Add box-shadow on hover
+@each $color, $value in $theme-colors {
+  .btn-#{$color} {
+    background-color: $value;
+    .btn-check:focus + &,
+    &:hover,
+    &:focus {
+      box-shadow: $btn-box-shadow-value rgba($value, 0.35);
+    }
+  }
+}
+
+// Toggle
+.btn-toggle {
+  .btn-toggle-default {
+    display: inline-block;
+  }
+
+  .btn-toggle-toggled {
+    display: none;
+  }
+
+  &.toggled {
+    .btn-toggle-default {
+      display: none;
+    }
+
+    .btn-toggle-toggled {
+      display: inline-block;
+    }
+  }
+}
+
+.block {
+  width: 100% !important;
+  display: inline-block !important;
+}
+
+/*------------------------------------
+  Custom Buttons
+------------------------------------*/
+
+@each $color, $value in $theme-colors {
+  .btn-#{$color} {
+    background-color: $value;
+    &.dropdown-toggle::after {
+      background-image: escape-svg(
+        url("data:image/svg+xml,<svg width='24' height='24' viewBox='0 0 24 24' fill='#{(color-contrast($value))}' xmlns='http://www.w3.org/2000/svg'><path d='M12.72,15.78a.75.75,0,0,1-.53.22h-.38a.77.77,0,0,1-.53-.22L6.15,10.64a.5.5,0,0,1,0-.71l.71-.71a.49.49,0,0,1,.7,0L12,13.67l4.44-4.45a.5.5,0,0,1,.71,0l.7.71a.5.5,0,0,1,0,.71Z'/></svg>")
+      );
+      transition: $btn-transition;
+    }
+  }
+}
+
+/*------------------------------------
+  Button Icon
+------------------------------------*/
+
+.btn-icon {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  font-size: $btn-icon-font-size;
+  font-weight: $btn-icon-font-weight;
+  width: $btn-icon-width;
+  height: $btn-icon-height;
+  padding: 0;
+
+  > svg {
+    width: $btn-icon-font-size;
+    height: auto;
+  }
+}
+
+/*------------------------------------
+  Outline Button Styles
+------------------------------------*/
+
+@each $color, $value in $theme-colors {
+  .btn-outline-#{$color} {
+    &.dropdown-toggle::after {
+      background-image: escape-svg(
+        url("data:image/svg+xml,<svg width='24' height='24' viewBox='0 0 24 24' fill='#{$value}' xmlns='http://www.w3.org/2000/svg'><path d='M12.72,15.78a.75.75,0,0,1-.53.22h-.38a.77.77,0,0,1-.53-.22L6.15,10.64a.5.5,0,0,1,0-.71l.71-.71a.49.49,0,0,1,.7,0L12,13.67l4.44-4.45a.5.5,0,0,1,.71,0l.7.71a.5.5,0,0,1,0,.71Z'/></svg>")
+      );
+      transition: $btn-transition;
+    }
+
+    &:hover::after {
+      background-image: escape-svg(
+        url("data:image/svg+xml,<svg width='24' height='24' viewBox='0 0 24 24' fill='#{color-contrast($value)}' xmlns='http://www.w3.org/2000/svg'><path d='M12.72,15.78a.75.75,0,0,1-.53.22h-.38a.77.77,0,0,1-.53-.22L6.15,10.64a.5.5,0,0,1,0-.71l.71-.71a.49.49,0,0,1,.7,0L12,13.67l4.44-4.45a.5.5,0,0,1,.71,0l.7.71a.5.5,0,0,1,0,.71Z'/></svg>")
+      );
+    }
+
+    .btn-check:checked + &,
+    .btn-check:active + &,
+    &:active,
+    &.active,
+    &.dropdown-toggle.show {
+      &.dropdown-toggle::after {
+        background-image: escape-svg(
+          url("data:image/svg+xml,<svg width='24' height='24' viewBox='0 0 24 24' fill='#{(color-contrast($value))}' xmlns='http://www.w3.org/2000/svg'><path d='M12.72,15.78a.75.75,0,0,1-.53.22h-.38a.77.77,0,0,1-.53-.22L6.15,10.64a.5.5,0,0,1,0-.71l.71-.71a.49.49,0,0,1,.7,0L12,13.67l4.44-4.45a.5.5,0,0,1,.71,0l.7.71a.5.5,0,0,1,0,.71Z'/></svg>")
+        );
+      }
+    }
+  }
+}
+
+.btn-outline-secondary {
+  border-color: $btn-outline-secondary-color;
+}
+
+// Dashed Outline
+.btn-dashed-outline {
+  border-style: dashed;
+}
+
+/*------------------------------------
+  Button Sizes
+------------------------------------*/
+
+.btn-xs:not(.btn-icon) {
+  font-size: $input-btn-font-size-xs;
+  padding: $input-btn-padding-y-xs $input-btn-padding-x-xs;
+}
+
+.btn-icon.btn-xs {
+  font-size: $btn-icon-font-size-xs;
+  width: $btn-icon-width-xs;
+  height: $btn-icon-height-xs;
+
+  > svg {
+    width: $btn-icon-font-size-xs;
+    height: auto;
+  }
+}
+
+.btn-icon.btn-sm {
+  font-size: $btn-icon-font-size-sm;
+  width: $btn-icon-width-sm;
+  height: $btn-icon-height-sm;
+
+  > svg {
+    width: $btn-icon-font-size-sm;
+    height: auto;
+  }
+}
+
+.btn-icon.btn-lg {
+  font-size: $btn-icon-font-size-lg;
+  width: $btn-icon-width-lg;
+  height: $btn-icon-height-lg;
+
+  > svg {
+    width: $btn-icon-font-size-lg;
+    height: auto;
+  }
+}
+
+.btn {
+  display: inline-block;
+  color: #ffffff;
+  text-decoration: none;
+  border: none;
+  padding: 5px 10px;
+  text-align: center;
+}
+.btn a {
+  display: inline-block;
+  color: #ffffff;
+  text-decoration: none;
+  border: none;
+}
+
+.btn:disabled {
+  background-color: $gray-400;
+  color: darkgray;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn:hover {
+  color: $white;
+  background-color: $gray-400;
+}
+
+.btn-white {
+  background-color: $btn-white-bg-color;
+  border: $btn-white-border-width solid $btn-white-border-color;
+  color: $gray-500;
+
+  &.dropdown-toggle::after {
+    background-image: escape-svg(
+      url("data:image/svg+xml,<svg width='24' height='24' viewBox='0 0 24 24' fill='#{$secondary}' xmlns='http://www.w3.org/2000/svg'><path d='M12.72,15.78a.75.75,0,0,1-.53.22h-.38a.77.77,0,0,1-.53-.22L6.15,10.64a.5.5,0,0,1,0-.71l.71-.71a.49.49,0,0,1,.7,0L12,13.67l4.44-4.45a.5.5,0,0,1,.71,0l.7.71a.5.5,0,0,1,0,.71Z'/></svg>")
+    );
+    transition: $btn-transition;
+  }
+
+  .btn-check:focus + &,
+  &:hover,
+  &:focus {
+    color: $btn-white-hover-color;
+    border-color: $btn-white-border-color;
+    background-color: $btn-white-bg-color;
+    box-shadow: $btn-white-box-shadow-hover;
+
+    &.dropdown-toggle::after {
+      background-image: escape-svg(
+        url("data:image/svg+xml,<svg width='24' height='24' viewBox='0 0 24 24' fill='#{$primary}' xmlns='http://www.w3.org/2000/svg'><path d='M12.72,15.78a.75.75,0,0,1-.53.22h-.38a.77.77,0,0,1-.53-.22L6.15,10.64a.5.5,0,0,1,0-.71l.71-.71a.49.49,0,0,1,.7,0L12,13.67l4.44-4.45a.5.5,0,0,1,.71,0l.7.71a.5.5,0,0,1,0,.71Z'/></svg>")
+      );
+    }
+  }
+
+  &.disabled,
+  &:disabled {
+    color: $btn-white-disabled-color;
+    background-color: $btn-white-bg-disabled-color;
+  }
+}
+.btn-none {
+  padding: 0 !important;
+  background: none;
+  color: $gray-700;
+
+  &:hover {
+    color: $primary !important;
+    background-color: transparent;
+  }
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+.active-tag {
+  margin: 0 5px;
+  background-color: $teal;
+}
+.main-tag {
+  margin: 0 5px;
+  background-color: $gray-300;
+  color: $gray-900;
+}
+.main-tag:hover {
+  background-color: $gray-400;
+}
+
+.active-tag:hover {
+  background-color: $gray-400;
+}
+
+// button size
+@each $key, $value in $theme-sizes {
+  .btn-#{$key} {
+    font-size: $value;
+  }
+}
+
+@each $key, $value in $border-radius-sizes {
+  .btn-#{$key} {
+    border-radius: $value;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .main-tag {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .active-tag {
+    padding: 5px 10px;
+    font-size: 13px;
+    margin: 0 5px;
+  }
+}

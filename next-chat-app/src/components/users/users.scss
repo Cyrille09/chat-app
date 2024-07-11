@@ -1,0 +1,193 @@
+@import "../../styles/variables";
+
+.usersMain {
+  background-color: #e5ddd5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100vh;
+}
+
+.content-sign-in {
+  margin: 0 30%;
+}
+
+.sign-up-side {
+  padding: 20px;
+
+  h2 {
+    text-transform: uppercase;
+    font-size: 22px;
+  }
+}
+
+.sign-in-side {
+  text-align: left;
+  padding: 25px 25px 40px 25px;
+  .sign-in-side-input {
+    margin-bottom: 20px;
+  }
+}
+
+.sign-in-button {
+  text-align: center;
+  margin-top: 20px;
+}
+.sign-in-d-flex {
+  display: flex;
+  flex-direction: row;
+}
+.change-password-row {
+  padding-top: 20px;
+}
+
+.sign-forgot-password {
+  text-align: right;
+}
+
+.content-sign-up {
+  margin: 0 30%;
+}
+
+.create-account {
+  text-align: center;
+  margin-top: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.sign-up-row {
+  padding-top: 10px;
+}
+.sign-in-row {
+  padding-bottom: 20px;
+}
+
+.sign-up-button {
+  text-align: right;
+}
+
+.sign-up-button button {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.user-profile {
+  margin: 0 10%;
+  margin-bottom: 50px;
+}
+
+.user-billing {
+  padding: 0 20%;
+  margin-bottom: 30px;
+}
+
+.user-billing-content {
+  text-align: left;
+  padding: 30px 20px;
+}
+
+.show-password-toogle {
+  margin-bottom: 30px;
+}
+
+.sso-sign-in i {
+  padding-left: 10px;
+}
+
+.sso-linkedin-sign-in {
+  background: #0e76a8;
+  text-align: left;
+}
+.sign-up-member {
+  margin-left: 10px;
+  text-decoration: underline;
+}
+.horizontal-line-container {
+  display: flex;
+  align-items: center;
+  color: $gray-700;
+}
+
+.left-horizontal-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: $gray-500;
+  margin-right: 10px;
+}
+.right-horizontal-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: $gray-500;
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 1199px) {
+  .content-sign-up {
+    margin: 0 25%;
+  }
+  .content-sign-in {
+    margin: 0 25%;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .user-billing {
+    padding: 0 5%;
+  }
+
+  .content-sign-in {
+    margin: 0 20%;
+  }
+  .content-sign-up {
+    margin: 0 20%;
+  }
+
+  .sign-in-toggle {
+    font-size: 13px;
+  }
+
+  .sign-forgot-password button {
+    font-size: 13px;
+  }
+
+  .change-password-toogle {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .user-billing {
+    padding: 0;
+  }
+
+  .content-sign-in {
+    margin: 0 10%;
+  }
+  .content-sign-up {
+    margin: 0 10%;
+  }
+
+  .sign-in-toggle {
+    font-size: 13px;
+  }
+
+  .sign-forgot-password button {
+    font-size: 13px;
+  }
+
+  .change-password-toogle {
+    font-size: 9px;
+  }
+  .sign-forgot-password button {
+    font-size: 12px;
+  }
+
+  .user-profile-tab {
+    padding: 15px 0;
+  }
+}
+
+@media screen and (max-width: 575px) {
+}

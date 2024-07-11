@@ -1,0 +1,436 @@
+@import "/src/styles/variables";
+
+.modal {
+  margin: 0px 30px 30px 20px;
+}
+.footer {
+  margin-top: 30px;
+}
+
+.panelFooter {
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+}
+
+.locatonAndAreaIcon {
+  size: 8px;
+  color: #132144;
+  width: 20;
+}
+
+.serialNumber {
+  margin-right: 10px;
+  width: 45%;
+}
+
+.deviceOption {
+  width: 45%;
+}
+.flexRowWrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.flexRow {
+  display: flex;
+  flex-direction: row;
+}
+.emailExistError {
+  padding-left: 45px;
+  display: block !important;
+  width: 100%;
+  font-size: 0.875em;
+  color: $danger;
+}
+.comercialRules {
+  margin: 90px;
+}
+.addEmail {
+  float: right;
+  margin-top: 4px;
+  width: 30%;
+}
+.generatedPasswordLink {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+//
+
+.footerLeft {
+  margin-right: 15px;
+}
+
+.flexRowWrapModalFooter {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.footerAssignDevice {
+  margin-top: 6px;
+}
+
+.rightAligned {
+  display: flex;
+  justify-content: flex-end;
+}
+//
+
+.leftSide {
+  flex: 1;
+}
+.rightSide {
+  flex: none;
+  width: auto;
+}
+
+.tooltipIconHide {
+  display: none;
+  opacity: 0;
+}
+
+.tooltipIconLeftSpace {
+  margin-right: 10px;
+  margin-top: 5px;
+  width: 5%;
+  flex: 1;
+}
+
+.errorMessage {
+  display: block !important;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: $danger;
+}
+
+.tooltipIcon:hover + .tooltipIconHide {
+  display: block;
+  background-color: #132144;
+  border-radius: 0.5rem;
+  color: #fff;
+  line-height: 1.5;
+  text-align: center;
+  font-size: 0.76rem;
+  padding: 0.25rem 0.5rem;
+  max-width: 200px;
+  width: 200px;
+  word-wrap: break-word;
+  text-transform: none;
+  font-weight: 400;
+  position: absolute;
+  bottom: 175%;
+  opacity: 1;
+  margin-left: -100px;
+  left: 50%;
+  transition: opacity 0.2s;
+
+  &::before {
+    position: absolute;
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+
+    bottom: -6px;
+    border-width: 0.4rem calc(0.8rem * 0.5) 0;
+    border-top-color: #132144;
+    margin-left: -4px;
+  }
+}
+
+.userDetails {
+  text-align: left;
+  h4 {
+    color: $secondary;
+    padding-top: 5px;
+  }
+}
+
+.userProfileDetailsInfo {
+  text-align: left;
+  padding: 25px 25px 40px 25px;
+}
+
+.userDetailsInfo {
+  text-align: left;
+  padding: 25px 25px 20px 25px;
+}
+
+.userDetailsInfoUpBtn {
+  text-align: right;
+  margin-top: -2px;
+}
+
+.userDetailsAvatar {
+  text-align: center;
+}
+.userProfileImageUpload {
+  input {
+    display: none;
+  }
+  span {
+    padding-left: 5px;
+  }
+  hr {
+    margin: 40px 0;
+  }
+}
+
+.userProfileAvatar {
+  border-radius: 20px;
+  margin-bottom: 20px;
+  max-width: 250px;
+  max-height: 250px;
+}
+
+.sendImageMessage {
+  text-align: center;
+  margin: 50px 0;
+}
+
+.sendImageMessageAvatar {
+  max-width: 250px;
+  max-height: 250px;
+}
+
+.sendDocumentMessage {
+  text-align: center;
+  margin: 50px 0;
+  p {
+    margin-top: 20px;
+  }
+}
+
+.modalMediaItems {
+  display: flex;
+  text-align: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.modalMediaItem {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  border: 5px solid $gray-400;
+}
+
+.modalMediaItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chatAreaCenter {
+  margin-bottom: 20px;
+  flex: 1;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .message {
+    display: flex;
+    gap: 20px;
+
+    &.own {
+      .chatAreaCenterTexts {
+        .chatAreaCenterContent {
+          background-color: $message-owner;
+        }
+      }
+    }
+
+    &.receiver {
+      .chatAreaCenterTexts {
+        .chatAreaCenterContent {
+          background-color: $gray-50;
+        }
+      }
+    }
+    .documentSavePdf {
+      color: #e23002;
+    }
+
+    .messageList {
+      padding-right: 30px;
+    }
+
+    .messageTime {
+      text-align: right;
+      font-size: 14px;
+      color: #999;
+    }
+
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .chatAreaCenterTexts {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+
+      .chatAreaCenterContent {
+        padding: 5px 20px;
+        background-color: $white;
+        border-radius: 10px;
+      }
+    }
+
+    .userInfo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-transform: capitalize;
+
+        img {
+          width: auto;
+          height: 35px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        span {
+          font-weight: 500;
+        }
+      }
+
+      .chatListUserInfoNoImage {
+        text-align: center;
+        align-items: center;
+        align-content: center;
+        height: 35px;
+        width: 35px;
+        background-color: $gray-400;
+        border-radius: 50%;
+        p {
+          color: white;
+          text-transform: uppercase;
+          font-size: 14px;
+          margin-top: 6px;
+        }
+      }
+    }
+
+    .userInfoTop {
+      margin-bottom: 15px;
+    }
+    .userInfoLinkTop {
+      margin-bottom: 5px;
+    }
+
+    .userProfileAvatar {
+      margin-bottom: 5px;
+    }
+  }
+
+  .messageLink {
+    color: $blue;
+    text-align: left;
+  }
+
+  .documentSaveWord {
+    color: #cc99ff;
+  }
+  .documentTitle {
+    margin: 0 10px 0 5px;
+  }
+  .documentSaveDownload {
+    background: $gray-500;
+    padding: 5px;
+    border-radius: 50%;
+    color: $white;
+  }
+  .documentSaveDownloadIcon {
+    text-align: center;
+    cursor: pointer;
+    padding-right: 3px;
+  }
+}
+.newGroupSection {
+  margin-top: 30px;
+}
+.newGroup {
+  text-align: left;
+}
+.newGroupItems {
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+// contact group info
+.userInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: capitalize;
+
+    img {
+      width: auto;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    span {
+      font-weight: 500;
+    }
+  }
+
+  .icons {
+    display: flex;
+    gap: 20px;
+
+    .chatListTopIcon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      color: #555;
+    }
+  }
+  .chatListUserInfoNoImage {
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    height: 50px;
+    width: 50px;
+    background-color: $gray-400;
+    border-radius: 50%;
+    p {
+      color: white;
+      text-transform: uppercase;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+  }
+}

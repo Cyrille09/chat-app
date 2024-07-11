@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #e5ddd5;
+}
+
+/* CSSTransition modal */
+body.css-transition-modal-open {
+  overflow: hidden;
+}

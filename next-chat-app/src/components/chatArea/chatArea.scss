@@ -1,0 +1,311 @@
+@import "../../styles/variables";
+
+.chatAreaWithNoDetails {
+  border-left: 1px solid $gray-300;
+  border-right: 1px solid $gray-300;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+}
+
+.chatArea {
+  flex: 2;
+  border-left: 1px solid $gray-300;
+  border-right: 1px solid $gray-300;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+
+  .chatAreaTop {
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid $gray-300;
+    background-color: $gray-50;
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      img {
+        width: auto;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .chatAreaTopTexts {
+        display: flex;
+        flex-direction: column;
+        padding-top: 10px;
+
+        .chatAreaTopTextsName {
+          font-weight: 500;
+        }
+
+        span {
+          font-weight: 300;
+          text-transform: capitalize;
+        }
+        .chatAreaTopLastOnline {
+          color: $teal;
+          font-size: 13px;
+        }
+        .chatAreaTopLastSeen {
+          font-size: 13px;
+        }
+        .chatAreaTopOffline {
+          font-size: 13px;
+          color: $danger;
+        }
+
+        p {
+          font-size: 14px;
+          font-weight: 300;
+        }
+      }
+      .chatListItemUserNoImage {
+        text-align: center;
+        align-items: center;
+        align-content: center;
+        height: 50px;
+        width: 50px;
+        background-color: $gray-400;
+        border-radius: 50%;
+        p {
+          color: white;
+          text-transform: uppercase;
+          font-size: 15px;
+          margin-top: 10px;
+        }
+      }
+    }
+
+    .icons {
+      display: flex;
+      gap: 20px;
+
+      .chartTopIcon {
+        width: 20px;
+        height: 20px;
+        margin-left: 5px;
+        cursor: pointer;
+        color: #555;
+      }
+    }
+  }
+
+  .chatAreaCenter {
+    padding: 20px;
+    flex: 1;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .message {
+      max-width: 70%;
+      display: flex;
+      gap: 20px;
+
+      &.own {
+        align-self: flex-end;
+
+        .chatAreaCenterTexts {
+          .chatAreaCenterContent {
+            background-color: $message-owner;
+          }
+        }
+      }
+      .documentSavePdf {
+        color: #e23002;
+      }
+
+      .optionsBtn {
+        height: 20px;
+        width: 20px;
+        background: transparent;
+        display: none;
+        color: $gray-800;
+      }
+
+      .optionsSpan {
+        margin-top: 20px;
+        color: transparent;
+      }
+
+      .optionsSpan:hover {
+        margin-top: -20px;
+      }
+
+      .messageList {
+        padding-right: 30px;
+      }
+
+      .messageTime {
+        text-align: right;
+        font-size: 12px;
+        color: #999;
+      }
+
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .chatAreaCenterTexts {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        img {
+          width: 100%;
+          height: auto;
+          border-radius: 10px;
+          object-fit: cover;
+        }
+
+        .chatAreaCenterContent {
+          padding: 5px 20px;
+          background-color: $white;
+          border-radius: 10px;
+        }
+      }
+      .chatAreaCenterOptionsIcon {
+        text-align: right;
+        cursor: pointer;
+      }
+
+      .userProfileAvatar {
+        margin-bottom: 5px;
+        margin-top: 15px;
+      }
+    }
+    .chatAreaMessage {
+      margin-top: -20px;
+    }
+    .message:hover {
+      .optionsBtn {
+        display: inline-block;
+        cursor: pointer;
+      }
+    }
+    .groupMemberName {
+      span {
+        font-size: 15px;
+        color: $gray-500;
+      }
+    }
+
+    .messageLink {
+      color: $blue;
+    }
+
+    .documentSaveWord {
+      color: #cc99ff;
+    }
+    .documentTitle {
+      margin: 0 10px 0 5px;
+    }
+    .documentSaveDownload {
+      background: $gray-500;
+      padding: 5px;
+      border-radius: 50%;
+      color: $white;
+    }
+    .documentSaveDownloadIcon {
+      text-align: center;
+      cursor: pointer;
+      padding-right: 3px;
+    }
+  }
+
+  .chatAreaBottom {
+    padding: 15px;
+    background: $gray-50;
+    text-align: center;
+
+    .icons {
+      margin-top: 10px;
+    }
+
+    .icons {
+      input {
+        display: none;
+      }
+    }
+
+    .chatAreaBottomImage {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      color: #555;
+      margin-left: 10px;
+    }
+
+    .chatAreaBottomIcon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    input {
+      // flex: 1;
+      // background-color: rgba(17, 25, 40, 0.5);
+      border: none;
+      outline: none;
+      // color: white;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 16px;
+
+      &:disabled {
+        cursor: not-allowed;
+      }
+    }
+
+    .emoji {
+      position: relative;
+
+      .picker {
+        position: absolute;
+        bottom: 50px;
+        left: 0;
+      }
+    }
+
+    .chatAreaSend {
+      margin-top: 8px;
+    }
+    .chatAreaBottomSendIcon {
+      font-size: 28px;
+      cursor: pointer;
+    }
+  }
+  .chatAreaBottomBlock {
+    background-color: $gray-400;
+    color: darkgray;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .backToTop {
+    position: fixed;
+    bottom: 100px;
+    right: 5px;
+    margin-right: 25%;
+    height: 35px;
+    width: 35px;
+    font-size: 20px;
+    background: $gray-300;
+    border: none;
+    border-radius: 50%;
+  }
+}
