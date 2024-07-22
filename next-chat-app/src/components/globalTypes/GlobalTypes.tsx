@@ -19,6 +19,7 @@ export interface UserInterface {
   status: boolean;
   muteDate: any;
   isGroup: boolean;
+  disappearIn: string;
   updatedAt: any;
   group: {
     name: string;
@@ -28,6 +29,7 @@ export interface UserInterface {
     description: string;
     createdAt: string;
     updatedAt: string;
+    disappearIn: string;
     _id: string;
   };
 }
@@ -54,6 +56,7 @@ export const UserInterfaceInfo: UserInterface = {
   muteDate: null,
   isGroup: false,
   updatedAt: null,
+  disappearIn: "",
   group: {
     name: "",
     status: "",
@@ -62,6 +65,7 @@ export const UserInterfaceInfo: UserInterface = {
     description: "",
     createdAt: "",
     updatedAt: "",
+    disappearIn: "",
     _id: "",
   },
 };

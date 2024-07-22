@@ -108,6 +108,38 @@ export const muteUserContacts: RequestHandler = async (req: any, res, next) => {
 };
 
 /**
+ * Disappear contact user message
+ */
+export const disappearContactUserMessage: RequestHandler = async (
+  req: any,
+  res,
+  next
+) => {
+  try {
+    if (!req.body.receiver)
+      return res.status(400).json({ status: 401, message: "user required!" });
+
+    const blockUser = await UserContact.findOneAndUpdate(
+      { user: req.user, "users.user": req.body.receiver },
+      {
+        $set: { "users.$.disappearIn": req.body.disappearIn },
+      },
+      { new: true, upsert: true }
+    );
+
+    req.body.sender = req.user;
+    req.body.type = "action";
+    req.body.receiver = req.body.receiver._id;
+
+    await addMessage(req.body);
+
+    res.status(201).json(blockUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Get user contacts
  */
 export const getUserContacts: RequestHandler = async (req: any, res, next) => {
@@ -196,4 +228,9 @@ export const deleteUserContact: RequestHandler = async (
   } catch (error) {
     next(error);
   }
+};
+
+const addMessage = async (body: any) => {
+  const newMessage = new Message(body);
+  await newMessage.save();
 };

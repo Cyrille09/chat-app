@@ -18,6 +18,10 @@ export async function SocketIO(io: any) {
       io.emit("deleteMessage", ms);
     });
 
+    socket.on("starMessage", (ms: any) => {
+      io.emit("starMessage", ms);
+    });
+
     /**
      * Contact users socket
      */
@@ -75,6 +79,25 @@ export async function SocketIO(io: any) {
     });
     socket.on("messageGroup", (ms: any) => {
       io.emit("messageGroup", ms);
+    });
+    socket.on("updateGroupMember", (ms: any) => {
+      io.emit("updateGroupMember", ms);
+    });
+    socket.on("removeUserFromGroup", (ms: any) => {
+      io.emit("removeUserFromGroup", ms);
+    });
+
+    socket.on("disappearGroupMessage", (ms: any) => {
+      io.emit("disappearGroupMessage", ms);
+    });
+    socket.on("muteGroupMessage", (ms: any) => {
+      io.emit("muteGroupMessage", ms);
+    });
+    socket.on("starGroupMessage", (ms: any) => {
+      io.emit("starGroupMessage", ms);
+    });
+    socket.on("updateGroupMessage", (ms: any) => {
+      io.emit("updateGroupMessage", ms);
     });
   });
   return io;

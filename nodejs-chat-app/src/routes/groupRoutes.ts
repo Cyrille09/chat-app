@@ -3,11 +3,13 @@ import multer from "multer";
 import path from "path";
 import { verifyAccessToken } from "../middleware/middleware";
 import {
+  assignGroupAdmin,
   createGroup,
   deleteGroupPhoto,
   exitFromGroupContact,
   getGroupMmebers,
   muteGroupContact,
+  removeUserFromGroup,
   updateGroup,
   updateGroupMembers,
   uploadImage,
@@ -35,6 +37,8 @@ router.post(
   exitFromGroupContact
 );
 router.post("/mute/:contactId", verifyAccessToken, muteGroupContact);
+router.post("/admin/:groupId/:userId", verifyAccessToken, assignGroupAdmin);
+router.post("/remove/:groupId/:userId", verifyAccessToken, removeUserFromGroup);
 router.post("/", verifyAccessToken, createGroup);
 
 // patch routes

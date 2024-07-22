@@ -6,7 +6,7 @@ export interface ActionsState {
   successMedia: { status: boolean; record: [] };
   successMuteNotification: { status: boolean; record: {} };
   successUnmuteNotification: { status: boolean; record: {} };
-  successDisappearingMessage: { status: boolean; record: {} };
+  successDisappearMessage: { status: boolean; record: {} };
   successBlockUser: { status: boolean; record: {} };
   successClearChat: { status: boolean; record: {} };
   successDeleteUser: { status: boolean; record: {} };
@@ -27,6 +27,9 @@ export interface ActionsState {
   errorPopup: { status: boolean; message: string; display: string };
   successDeleteUserPhoto: { status: boolean; record: {} };
   successDeleteGroupUserPhoto: { status: boolean; record: {} };
+  successRemoveUserFromGroup: { status: boolean; record: any };
+  successMakeGroupAdmin: { status: boolean; record: any };
+  successViewGroupUser: { status: boolean; record: any };
   successSendImageMessage: {
     status: boolean;
     record: { selectedImage: any; message: string; saveButton: boolean };
@@ -39,79 +42,14 @@ export interface ActionsState {
       saveButton: boolean;
     };
   };
+  successEditMessage: {
+    status: boolean;
+    record: { message: string; _id: string };
+  };
+
   isLoading: boolean;
 
   //
-
-  logoutPopup: { cmsStatus: boolean; frontEndStatus: boolean };
-  userDocumentsBankPopup: {
-    deleteStatus: boolean;
-    viewStatus: boolean;
-    editStatus: boolean;
-    addStatus: boolean;
-    documentBank: any;
-    id: string;
-  };
-  categoryPopup: {
-    deleteStatus: boolean;
-    viewStatus: boolean;
-    editStatus: boolean;
-    addStatus: boolean;
-    category: string;
-    id: string;
-  };
-
-  documentsDownloadedPopup: {
-    deleteStatus: boolean;
-    document: string;
-    id: string;
-  };
-
-  rolePopup: {
-    deleteStatus: boolean;
-    viewStatus: boolean;
-    editStatus: boolean;
-    addStatus: boolean;
-    role: string;
-    id: string;
-  };
-
-  areaOfLawPopup: {
-    deleteStatus: boolean;
-    viewStatus: boolean;
-    editStatus: boolean;
-    addStatus: boolean;
-    areaOfLaw: string;
-    id: string;
-  };
-
-  subCategoryPopup: {
-    deleteStatus: boolean;
-    viewStatus: boolean;
-    editStatus: boolean;
-    addStatus: boolean;
-    subCategory: string;
-    id: string;
-  };
-
-  contactPopup: {
-    deleteStatus: boolean;
-    viewStatus: boolean;
-    editStatus: boolean;
-    addStatus: boolean;
-    contact: string;
-    newsLetter: boolean;
-    id: string;
-  };
-
-  userPopup: {
-    deleteStatus: boolean;
-    viewStatus: boolean;
-    editStatus: boolean;
-    addStatus: boolean;
-    user: string;
-    id: string;
-  };
 }
 
 const initialState: ActionsState = {
@@ -119,7 +57,7 @@ const initialState: ActionsState = {
   successMedia: { status: false, record: [] },
   successMuteNotification: { status: false, record: {} },
   successUnmuteNotification: { status: false, record: {} },
-  successDisappearingMessage: { status: false, record: {} },
+  successDisappearMessage: { status: false, record: {} },
   successBlockUser: { status: false, record: {} },
   successClearChat: { status: false, record: {} },
   successDeleteUser: { status: false, record: {} },
@@ -140,6 +78,9 @@ const initialState: ActionsState = {
   errorPopup: { status: false, message: "", display: "" },
   successDeleteUserPhoto: { status: false, record: {} },
   successDeleteGroupUserPhoto: { status: false, record: {} },
+  successRemoveUserFromGroup: { status: false, record: {} },
+  successMakeGroupAdmin: { status: false, record: {} },
+  successViewGroupUser: { status: false, record: {} },
   successSendImageMessage: {
     status: false,
     record: { selectedImage: "", message: "", saveButton: false },
@@ -148,79 +89,7 @@ const initialState: ActionsState = {
     status: false,
     record: { selectedImage: "", message: { name: "" }, saveButton: false },
   },
-
-  //
-
-  logoutPopup: { cmsStatus: false, frontEndStatus: false },
-
-  userDocumentsBankPopup: {
-    deleteStatus: false,
-    viewStatus: false,
-    editStatus: false,
-    addStatus: false,
-    documentBank: {},
-    id: "",
-  },
-  categoryPopup: {
-    deleteStatus: false,
-    viewStatus: false,
-    editStatus: false,
-    addStatus: false,
-    category: "",
-    id: "",
-  },
-
-  documentsDownloadedPopup: {
-    deleteStatus: false,
-    document: "",
-    id: "",
-  },
-
-  rolePopup: {
-    deleteStatus: false,
-    viewStatus: false,
-    editStatus: false,
-    addStatus: false,
-    role: "",
-    id: "",
-  },
-
-  areaOfLawPopup: {
-    deleteStatus: false,
-    viewStatus: false,
-    editStatus: false,
-    addStatus: false,
-    areaOfLaw: "",
-    id: "",
-  },
-
-  subCategoryPopup: {
-    deleteStatus: false,
-    viewStatus: false,
-    editStatus: false,
-    addStatus: false,
-    subCategory: "",
-    id: "",
-  },
-
-  contactPopup: {
-    deleteStatus: false,
-    viewStatus: false,
-    editStatus: false,
-    addStatus: false,
-    contact: "",
-    id: "",
-    newsLetter: false,
-  },
-
-  userPopup: {
-    deleteStatus: false,
-    viewStatus: false,
-    editStatus: false,
-    addStatus: false,
-    user: "",
-    id: "",
-  },
+  successEditMessage: { status: false, record: { message: "", _id: "" } },
 
   isLoading: false,
 };
@@ -242,8 +111,8 @@ export const ActionsSlice = createSlice({
     successUnmuteNotificationActions: (state, action: PayloadAction<any>) => {
       state.successUnmuteNotification = action.payload;
     },
-    successDisappearingMessageActions: (state, action: PayloadAction<any>) => {
-      state.successDisappearingMessage = action.payload;
+    successDisappearMessageActions: (state, action: PayloadAction<any>) => {
+      state.successDisappearMessage = action.payload;
     },
     successBlockUserActions: (state, action: PayloadAction<any>) => {
       state.successBlockUser = action.payload;
@@ -282,12 +151,24 @@ export const ActionsSlice = createSlice({
     successDeleteGroupUserPhotoActions: (state, action: PayloadAction<any>) => {
       state.successDeleteGroupUserPhoto = action.payload;
     },
+    successRemoveUserFromGroupActions: (state, action: PayloadAction<any>) => {
+      state.successRemoveUserFromGroup = action.payload;
+    },
+    successMakeGroupAdminActions: (state, action: PayloadAction<any>) => {
+      state.successMakeGroupAdmin = action.payload;
+    },
+    successViewGroupUserActions: (state, action: PayloadAction<any>) => {
+      state.successViewGroupUser = action.payload;
+    },
     successSendImageMessageActions: (state, action: PayloadAction<any>) => {
       state.successSendImageMessage = action.payload;
     },
 
     successSendDocumentMessageActions: (state, action: PayloadAction<any>) => {
       state.successSendDocumentMessage = action.payload;
+    },
+    successEditMessageActions: (state, action: PayloadAction<any>) => {
+      state.successEditMessage = action.payload;
     },
 
     successLogoutActions: (state, action: PayloadAction<any>) => {
@@ -326,48 +207,12 @@ export const ActionsSlice = createSlice({
       state.errorPopup = action.payload;
     },
 
-    //
-
-    logoutPopupActions: (state, action: PayloadAction<any>) => {
-      state.logoutPopup = action.payload;
-    },
-    userDocumentsBankPopupActions: (state, action: PayloadAction<any>) => {
-      state.userDocumentsBankPopup = action.payload;
-    },
-
-    categoryPopupActions: (state, action: PayloadAction<any>) => {
-      state.categoryPopup = action.payload;
-    },
-
-    rolePopupActions: (state, action: PayloadAction<any>) => {
-      state.rolePopup = action.payload;
-    },
-
-    DocumentsDownloadedPopupActions: (state, action: PayloadAction<any>) => {
-      state.documentsDownloadedPopup = action.payload;
-    },
-
-    areaOfLawPopupActions: (state, action: PayloadAction<any>) => {
-      state.areaOfLawPopup = action.payload;
-    },
-
-    subCategoryPopupActions: (state, action: PayloadAction<any>) => {
-      state.subCategoryPopup = action.payload;
-    },
-
-    contactPopupActions: (state, action: PayloadAction<any>) => {
-      state.contactPopup = action.payload;
-    },
-    userPopupActions: (state, action: PayloadAction<any>) => {
-      state.userPopup = action.payload;
-    },
-
     hideActions: (state) => {
       state.successStarMessage = { status: false, record: {} };
       state.successMedia = { status: false, record: [] };
       state.successMuteNotification = { status: false, record: {} };
       state.successUnmuteNotification = { status: false, record: {} };
-      state.successDisappearingMessage = { status: false, record: {} };
+      state.successDisappearMessage = { status: false, record: {} };
       state.successBlockUser = { status: false, record: {} };
       state.successClearChat = { status: false, record: {} };
       state.successDeleteUser = { status: false, record: {} };
@@ -388,6 +233,9 @@ export const ActionsSlice = createSlice({
       state.errorPopup = { status: false, message: "", display: "" };
       state.successDeleteUserPhoto = { status: false, record: {} };
       state.successDeleteGroupUserPhoto = { status: false, record: {} };
+      state.successRemoveUserFromGroup = { status: false, record: {} };
+      state.successMakeGroupAdmin = { status: false, record: {} };
+      state.successViewGroupUser = { status: false, record: {} };
       state.successSendImageMessage = {
         status: false,
         record: { selectedImage: "", message: "", saveButton: false },
@@ -396,81 +244,9 @@ export const ActionsSlice = createSlice({
         status: false,
         record: { selectedImage: "", message: { name: "" }, saveButton: false },
       };
-
-      //
-
-      state.userDocumentsBankPopup = {
-        deleteStatus: false,
-        viewStatus: false,
-        editStatus: false,
-        addStatus: false,
-        documentBank: {},
-        id: "",
-      };
-      state.categoryPopup = {
-        deleteStatus: false,
-        viewStatus: false,
-        editStatus: false,
-        addStatus: false,
-        category: "",
-        id: "",
-      };
-
-      state.rolePopup = {
-        deleteStatus: false,
-        viewStatus: false,
-        editStatus: false,
-        addStatus: false,
-        role: "",
-        id: "",
-      };
-
-      state.documentsDownloadedPopup = {
-        deleteStatus: false,
-        document: "",
-        id: "",
-      };
-
-      state.areaOfLawPopup = {
-        deleteStatus: false,
-        viewStatus: false,
-        editStatus: false,
-        addStatus: false,
-        areaOfLaw: "",
-        id: "",
-      };
-
-      state.subCategoryPopup = {
-        deleteStatus: false,
-        viewStatus: false,
-        editStatus: false,
-        addStatus: false,
-        subCategory: "",
-        id: "",
-      };
-
-      state.contactPopup = {
-        deleteStatus: false,
-        viewStatus: false,
-        editStatus: false,
-        addStatus: false,
-        contact: "",
-        id: "",
-        newsLetter: false,
-      };
-
-      state.userPopup = {
-        deleteStatus: false,
-        viewStatus: false,
-        editStatus: false,
-        addStatus: false,
-        user: "",
-        id: "",
-      };
-
-      state.logoutPopup = {
-        cmsStatus: false,
-        frontEndStatus: false,
+      state.successEditMessage = {
+        status: false,
+        record: { message: "", _id: "" },
       };
 
       state.isLoading = false;
@@ -484,7 +260,7 @@ export const ActionsSlice = createSlice({
 export const {
   hideActions,
   successStarMessageActions,
-  successDisappearingMessageActions,
+  successDisappearMessageActions,
   successBlockUserActions,
   successMediaActions,
   successMuteNotificationActions,
@@ -506,22 +282,15 @@ export const {
   successDisplayEmojiActions,
   successDeleteUserPhotoActions,
   successDeleteGroupUserPhotoActions,
+  successRemoveUserFromGroupActions,
+  successMakeGroupAdminActions,
+  successViewGroupUserActions,
   successSendImageMessageActions,
   successSendDocumentMessageActions,
-
-  //
   successPopupActions,
   errorPopupActions,
-  userDocumentsBankPopupActions,
+  successEditMessageActions,
   isLoadingActions,
-  categoryPopupActions,
-  DocumentsDownloadedPopupActions,
-  rolePopupActions,
-  areaOfLawPopupActions,
-  subCategoryPopupActions,
-  contactPopupActions,
-  userPopupActions,
-  logoutPopupActions,
 } = ActionsSlice.actions;
 
 export default ActionsSlice.reducer;

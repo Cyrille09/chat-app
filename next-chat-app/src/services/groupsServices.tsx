@@ -50,9 +50,14 @@ export async function updateGroup(groupDetail: any, id: string) {
 /**
  * Update group service
  */
-export async function updateGroupMembers(members: any, id: string) {
+export async function updateGroupMembers(
+  members: any,
+  id: string,
+  message: string
+) {
   return await axiosInterceptors.patch(`/groups/members/${id}`, {
     members,
+    message,
   });
 }
 
@@ -72,11 +77,14 @@ export async function deleteGroupPhoto(id: string) {
 /**
  * Exist from the group
  */
-export async function exitFromGroupContact(contactId: string, groupId: string) {
-  return await axiosInterceptors.post(
-    `/groups/exist/${contactId}/${groupId}`,
-    {}
-  );
+export async function exitFromGroupContact(
+  contactId: string,
+  groupId: string,
+  message: string
+) {
+  return await axiosInterceptors.post(`/groups/exist/${contactId}/${groupId}`, {
+    message,
+  });
 }
 
 /**
@@ -85,5 +93,31 @@ export async function exitFromGroupContact(contactId: string, groupId: string) {
 export async function muteGroupContact(contactId: string, muteDate: Date) {
   return await axiosInterceptors.post(`/groups/mute/${contactId}`, {
     muteDate,
+  });
+}
+
+/**
+ * Assign group admin
+ */
+export async function assignGroupAdmin(
+  groupId: string,
+  userId: string,
+  message: string
+) {
+  return await axiosInterceptors.post(`/groups/admin/${groupId}/${userId}`, {
+    message,
+  });
+}
+
+/**
+ * Remove user from group
+ */
+export async function removeUserFromGroup(
+  groupId: string,
+  userId: string,
+  message: string
+) {
+  return await axiosInterceptors.post(`/groups/remove/${groupId}/${userId}`, {
+    message,
   });
 }

@@ -4,11 +4,13 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export interface ChatMessagesState {
   chatMessages: any;
   chatGroupMembers: any;
+  chatMessagesGroupByDate: any;
 }
 
 const initialState: ChatMessagesState = {
   chatMessages: [],
   chatGroupMembers: [],
+  chatMessagesGroupByDate: {},
 };
 
 export const ChatMessagesSlice = createSlice({
@@ -21,10 +23,17 @@ export const ChatMessagesSlice = createSlice({
     chatGroupMembersRecord: (state, action: PayloadAction<any>) => {
       state.chatGroupMembers = action.payload;
     },
+
+    chatMessagesGroupByDatesRecord: (state, action: PayloadAction<any>) => {
+      state.chatMessagesGroupByDate = action.payload;
+    },
   },
 });
 
-export const { chatMessagesRecord, chatGroupMembersRecord } =
-  ChatMessagesSlice.actions;
+export const {
+  chatMessagesRecord,
+  chatGroupMembersRecord,
+  chatMessagesGroupByDatesRecord,
+} = ChatMessagesSlice.actions;
 
 export default ChatMessagesSlice.reducer;

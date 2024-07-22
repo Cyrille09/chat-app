@@ -11,6 +11,9 @@ import {
   sendGroupImage,
   sendGroupDocument,
   getGroupMessages,
+  updateMessage,
+  addStarToMessage,
+  removeStarToMessage,
 } from "../controllers/messagesController";
 import path from "path";
 
@@ -63,11 +66,16 @@ router.post(
   verifyAccessToken,
   sendGroupImage
 );
+router.post("/star/:id", verifyAccessToken, addStarToMessage);
+router.post("/unstar/:id", verifyAccessToken, removeStarToMessage);
+
 router.post(
   "/send/document/group",
   uploadDocument.single("message"),
   verifyAccessToken,
   sendGroupDocument
 );
+
+router.patch("/:id", verifyAccessToken, updateMessage);
 
 export default router;
