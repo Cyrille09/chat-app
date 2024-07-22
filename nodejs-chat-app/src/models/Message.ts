@@ -2,7 +2,7 @@ import { Schema, model, Types } from "mongoose";
 
 interface MessageModel {
   message: string;
-  type: "image" | "audio" | "video" | "text" | "document" | "link";
+  type: "image" | "audio" | "video" | "text" | "document" | "link" | "action";
   group: Types.ObjectId;
   receiver: Types.ObjectId;
   sender: Types.ObjectId;
@@ -13,6 +13,14 @@ interface MessageModel {
     }
   ];
   isGroup: boolean;
+  disappear: "no" | "yes" | "disappeared";
+  disappearTime: Date;
+  editMessage: boolean;
+  stars: [
+    {
+      user: Types.ObjectId;
+    }
+  ];
 }
 
 const messageSchema = new Schema<MessageModel>(
@@ -20,7 +28,7 @@ const messageSchema = new Schema<MessageModel>(
     message: { type: String, required: true, trim: true },
     type: {
       type: String,
-      enum: ["image", "audio", "video", "text", "document", "link"],
+      enum: ["image", "audio", "video", "text", "document", "link", "action"],
       trim: true,
       default: "text",
     },
@@ -48,9 +56,29 @@ const messageSchema = new Schema<MessageModel>(
         },
       },
     ],
+    stars: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      },
+    ],
     isGroup: {
       type: Boolean,
       default: false,
+    },
+    editMessage: {
+      type: Boolean,
+      default: false,
+    },
+    disappear: {
+      type: String,
+      enum: ["no", "yes", "disappeared"],
+      default: "no",
+    },
+    disappearTime: {
+      type: Date,
     },
   },
   { timestamps: true }

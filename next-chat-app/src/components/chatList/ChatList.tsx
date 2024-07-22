@@ -160,6 +160,8 @@ const ChatList = ({
       if (isSubscribed && response._id === userRecord._id) {
         getContactUserData();
         getRequestUserContactData();
+      } else if (response.groupId === usersSlice.selectedUser.group._id) {
+        getGroupMmebersData();
       }
     });
 
@@ -182,6 +184,52 @@ const ChatList = ({
           .map((user: { value: string }) => user.value)
           .includes(userRecord._id)
       ) {
+        getContactUserData();
+        getRequestUserContactData();
+      }
+    });
+
+    socket.on("updateGroupMember", (response: any) => {
+      if (isSubscribed && response._id === usersSlice.selectedUser.group._id) {
+        getGroupMmebersData();
+      }
+    });
+
+    socket.on("muteGroupMessage", (response: any) => {
+      if (
+        isSubscribed &&
+        response._id === userRecord._id &&
+        response.groupId === usersSlice.selectedUser.group._id
+      ) {
+        getContactUserData();
+        dispatch(
+          selectedUserRecord({
+            ...usersSlice.selectedUser,
+            muteDate: response.muteDate,
+          })
+        );
+      }
+    });
+
+    socket.on("removeUserFromGroup", (response: any) => {
+      if (
+        isSubscribed &&
+        response.group._id === usersSlice.selectedUser.group._id &&
+        response.user._id !== userRecord._id
+      ) {
+        getGroupMmebersData();
+      }
+
+      if (
+        isSubscribed &&
+        response.group._id === usersSlice.selectedUser.group._id &&
+        response.user._id === userRecord._id
+      ) {
+        dispatch(
+          selectedUserRecord({
+            ...UserInterfaceInfo,
+          })
+        );
         getContactUserData();
         getRequestUserContactData();
       }
@@ -214,8 +262,8 @@ const ChatList = ({
     socket.on("updateMessage", (response: any) => {
       if (
         isSubscribed &&
-        (response.currentUser._id === userRecord._id ||
-          response.secondUser._id === userRecord._id)
+        (response.sender === userRecord._id ||
+          response.receiver === userRecord._id)
       ) {
         getContactUserData();
       }
@@ -223,8 +271,8 @@ const ChatList = ({
     socket.on("deleteMessage", (response: any) => {
       if (
         isSubscribed &&
-        (response.currentUser._id === userRecord._id ||
-          response.secondUser._id === userRecord._id)
+        (response.sender === userRecord._id ||
+          response.receiver === userRecord._id)
       ) {
         getContactUserData();
       }
@@ -250,8 +298,44 @@ const ChatList = ({
         .catch((error) => {});
     };
 
+    const getGroupMmebersData = async () => {
+      const chatGroupMembers = await getGroupMmebers(
+        usersSlice.selectedUser.group._id
+      );
+
+      if (chatGroupMembers?.data?.length) {
+        dispatch(chatGroupMembersRecord(chatGroupMembers.data));
+      } else {
+        dispatch(chatGroupMembersRecord([]));
+      }
+    };
+
     return () => {
       isSubscribed = false;
+
+      socket.off("removeUserFromGroup", (response: any) => {
+        if (
+          isSubscribed &&
+          response.group._id === usersSlice.selectedUser.group._id &&
+          response.user._id !== userRecord._id
+        ) {
+          getGroupMmebersData();
+        }
+
+        if (
+          isSubscribed &&
+          response.group._id === usersSlice.selectedUser.group._id &&
+          response.user._id === userRecord._id
+        ) {
+          dispatch(
+            selectedUserRecord({
+              ...UserInterfaceInfo,
+            })
+          );
+          getContactUserData();
+          getRequestUserContactData();
+        }
+      });
       // user
       socket.off("user", (response: any) => {
         if (isSubscribed && response._id === userRecord._id)
@@ -304,8 +388,8 @@ const ChatList = ({
       socket.off("updateMessage", (response: any) => {
         if (
           isSubscribed &&
-          (response.currentUser._id === userRecord._id ||
-            response.secondUser._id === userRecord._id)
+          (response.sender === userRecord._id ||
+            response.receiver === userRecord._id)
         ) {
           getContactUserData();
         }
@@ -313,8 +397,8 @@ const ChatList = ({
       socket.off("deleteMessage", (response: any) => {
         if (
           isSubscribed &&
-          (response.currentUser._id === userRecord._id ||
-            response.secondUser._id === userRecord._id)
+          (response.sender === userRecord._id ||
+            response.receiver === userRecord._id)
         ) {
           getContactUserData();
         }
@@ -335,6 +419,8 @@ const ChatList = ({
         if (isSubscribed && response._id === userRecord._id) {
           getContactUserData();
           getRequestUserContactData();
+        } else if (response.groupId === usersSlice.selectedUser.group._id) {
+          getGroupMmebersData();
         }
       });
       socket.off("updateGroup", (response: any) => {
@@ -357,6 +443,15 @@ const ChatList = ({
         ) {
           getContactUserData();
           getRequestUserContactData();
+        }
+      });
+
+      socket.off("updateGroupMember", (response: any) => {
+        if (
+          isSubscribed &&
+          response._id === usersSlice.selectedUser.group._id
+        ) {
+          getGroupMmebersData();
         }
       });
     };
@@ -503,6 +598,7 @@ const ChatList = ({
       >
         <DisplayStarredMessages
           show={actionsSlice.successStarMessages.status}
+          user={userRecord}
         />
       </CSSTransition>
 

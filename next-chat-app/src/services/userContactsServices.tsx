@@ -55,6 +55,25 @@ export async function muteUserContact(receiver: {}, muteDate: Date) {
 }
 
 /**
+ * disappear user message service
+ */
+export async function disappearContactUserMessage(
+  receiver: {},
+  disappearIn: string,
+  message: string
+) {
+  try {
+    const response = await axiosInterceptors.post(`/userContacts/disappear`, {
+      receiver,
+      disappearIn,
+      message,
+    });
+
+    return response;
+  } catch (error) {}
+}
+
+/**
  * View chat users service
  */
 export async function getChatUsers(token?: string) {

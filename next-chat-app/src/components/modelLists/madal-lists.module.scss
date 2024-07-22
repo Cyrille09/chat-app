@@ -187,7 +187,7 @@
   border-radius: 20px;
   margin-bottom: 20px;
   max-width: 250px;
-  max-height: 250px;
+  max-height: auto;
 }
 
 .sendImageMessage {
@@ -232,7 +232,6 @@
 .chatAreaCenter {
   margin-bottom: 20px;
   flex: 1;
-  overflow: scroll;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -240,6 +239,7 @@
   .message {
     display: flex;
     gap: 20px;
+    overflow: scroll;
 
     &.own {
       .chatAreaCenterTexts {
@@ -357,6 +357,15 @@
   }
   .documentTitle {
     margin: 0 10px 0 5px;
+  }
+
+  .documentTitle a {
+    color: #555;
+    text-decoration: none;
+  }
+
+  .documentTitle a:hover {
+    color: $blue;
   }
   .documentSaveDownload {
     background: $gray-500;

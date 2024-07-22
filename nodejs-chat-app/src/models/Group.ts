@@ -7,6 +7,7 @@ interface GroupModel {
   description: string;
   latestMessage: Types.ObjectId;
   latestSender: Types.ObjectId;
+  disappearIn: "" | "6 hours" | "1 day" | "1 week";
 }
 
 const groupSchema = new Schema<GroupModel>(
@@ -26,6 +27,10 @@ const groupSchema = new Schema<GroupModel>(
     latestSender: {
       type: Schema.Types.ObjectId,
       ref: "User",
+    },
+    disappearIn: {
+      type: String,
+      enum: ["", "6 hours", "1 day", "1 week"],
     },
   },
   { timestamps: true }

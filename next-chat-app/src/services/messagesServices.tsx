@@ -3,9 +3,18 @@ import axiosInterceptors from "../lib/axiosInterceptors";
 /**
  * Send message service
  */
-export async function sendMessage(message: string, receiver: {}) {
+export async function sendMessage(
+  messageSend: {
+    message: string;
+    disappear: string | undefined;
+    disappearTime: Date | undefined;
+  },
+  receiver: {}
+) {
   return await axiosInterceptors.post(`/messages/send`, {
-    message,
+    message: messageSend.message,
+    disappear: messageSend.disappear,
+    disappearTime: messageSend.disappearTime,
     receiver,
   });
 }
@@ -13,9 +22,18 @@ export async function sendMessage(message: string, receiver: {}) {
 /**
  * Send group message service
  */
-export async function sendGroupMessage(message: string, groupId: string) {
+export async function sendGroupMessage(
+  messageSend: {
+    message: string;
+    disappear: string | undefined;
+    disappearTime: Date | undefined;
+  },
+  groupId: string
+) {
   return await axiosInterceptors.post(`/messages/send/group`, {
-    message,
+    message: messageSend.message,
+    disappear: messageSend.disappear,
+    disappearTime: messageSend.disappearTime,
     groupId,
     isGroup: true,
   });
@@ -59,4 +77,27 @@ export async function getSenderAndReceiverMessages(secondUser: any) {
  */
 export async function getGroupMessages(groupId: string) {
   return await axiosInterceptors.get(`/messages/group/${groupId}`, {});
+}
+
+/**
+ * Update message service
+ */
+export async function updateMessage(messageDetail: any, id: string) {
+  return await axiosInterceptors.patch(`/messages/${id}`, {
+    ...messageDetail,
+  });
+}
+
+/**
+ * Add star to the  message service
+ */
+export async function addStarToMessage(id: string) {
+  return await axiosInterceptors.post(`/messages/star/${id}`, {});
+}
+
+/**
+ * Add star to the  message service
+ */
+export async function removeStarToMessage(id: string) {
+  return await axiosInterceptors.post(`/messages/unstar/${id}`, {});
 }

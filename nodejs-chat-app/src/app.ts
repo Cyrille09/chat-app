@@ -12,6 +12,7 @@ import messagesRoutes from "./routes/messagesRoutes";
 import userContactsRoutes from "./routes/userContactsRoutes";
 import groupsRoutes from "./routes/groupRoutes";
 import { SocketIO } from "../src/socket/socket";
+import { DisappearCronJob } from "./cronJob/cronJob";
 
 const logger = debug("app:log");
 const PORT = parseInt(`${process.env.PORT}`, 10) || 5007;
@@ -29,6 +30,7 @@ const mongooseConnection = async () => {
     logger("MongooDB connection failed");
   }
 };
+
 app.use(cors());
 app.use(json());
 
@@ -41,6 +43,8 @@ app.use("/api/groups", groupsRoutes);
 // Middleware to serve static files.
 app.use("/images", express.static("images"));
 app.use("/documents", express.static("documents"));
+
+DisappearCronJob.start();
 
 SocketIO(io);
 

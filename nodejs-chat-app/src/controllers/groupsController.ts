@@ -4,6 +4,7 @@ import UserContact from "../models/UserContact";
 import Group from "../models/Group";
 import GroupMember from "../models/GroupMember";
 import { recordNotFound } from "../errorMessages/errror";
+import Message from "../models/Message";
 
 /**
  * Create group
@@ -73,6 +74,15 @@ export const updateGroup: RequestHandler = async (req: any, res, next) => {
       { new: true }
     );
 
+    if (req.body.disappearIn !== undefined) {
+      req.body.sender = req.user;
+      req.body.group = req.params.id;
+      req.body.type = "action";
+      req.body.isGroup = true;
+
+      await addMessage(req.body);
+    }
+
     res.status(200).json(updateGroup);
   } catch (error) {
     next(error);
@@ -109,6 +119,13 @@ export const updateGroupMembers: RequestHandler = async (
         group: req.params.id,
       });
     }
+
+    req.body.sender = req.user;
+    req.body.group = req.params.id;
+    req.body.type = "action";
+    req.body.isGroup = true;
+
+    await addMessage(req.body);
 
     res.status(201).json({ success: true });
   } catch (error) {
@@ -235,8 +252,116 @@ export const exitFromGroupContact: RequestHandler = async (
         );
       }
     }
+
+    req.body.sender = req.user;
+    req.body.group = req.params.groupId;
+    req.body.type = "action";
+    req.body.isGroup = true;
+
+    await addMessage(req.body);
     res.status(200).json({ existFromGroup });
   } catch (error) {
     next(error);
   }
+};
+
+/**
+ * Assign group admin
+ */
+export const assignGroupAdmin: RequestHandler = async (req: any, res, next) => {
+  try {
+    const makeUserAdmin = await GroupMember.findOneAndUpdate(
+      { user: req.params.userId, group: req.params.groupId },
+      {
+        $set: { admin: true },
+      },
+      { new: true }
+    );
+
+    if (!makeUserAdmin) {
+      const notFound = await recordNotFound("User");
+      return res.status(notFound.status).json({ message: notFound });
+    }
+
+    req.body.sender = req.user;
+    req.body.group = req.params.groupId;
+    req.body.type = "action";
+    req.body.isGroup = true;
+
+    await addMessage(req.body);
+
+    res.status(200).json({ makeUserAdmin });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Remove user from group
+ */
+export const removeUserFromGroup: RequestHandler = async (
+  req: any,
+  res,
+  next
+) => {
+  try {
+    const deleteContactUser = await UserContact.findOneAndUpdate(
+      { user: req.params.userId },
+      {
+        $pull: {
+          users: { user: req.params.userId, group: req.params.groupId },
+        },
+      },
+      { new: true }
+    );
+
+    if (!deleteContactUser) {
+      const notFound = await recordNotFound("User");
+      return res.status(notFound.status).json({ message: notFound });
+    }
+
+    const existFromGroup = await GroupMember.findOneAndDelete({
+      user: req.params.userId,
+      group: req.params.groupId,
+    });
+
+    if (!existFromGroup) {
+      const notFound = await recordNotFound("User");
+      return res.status(notFound.status).json({ message: notFound });
+    }
+
+    const groupMembers = await GroupMember.find({
+      group: req.params.groupId,
+    });
+
+    if (groupMembers.length) {
+      const getAdminGroup = groupMembers.find((member: any) => member.admin);
+
+      if (!getAdminGroup) {
+        await GroupMember.findOneAndUpdate(
+          { user: groupMembers[0].user, group: req.params.groupId },
+          {
+            $set: { admin: true },
+          },
+          { new: true, upsert: true }
+        );
+      }
+    }
+
+    req.body.sender = req.user;
+    req.body.group = req.params.groupId;
+    req.body.type = "action";
+    req.body.isGroup = true;
+
+    await addMessage(req.body);
+
+    res.status(200).json({ existFromGroup });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const addMessage = async (body: any) => {
+  const newMessage = new Message(body);
+  await newMessage.save();
 };

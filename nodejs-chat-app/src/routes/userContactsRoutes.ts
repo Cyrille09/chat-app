@@ -9,6 +9,7 @@ import {
   getRequestUserContact,
   getUserContacts,
   muteUserContacts,
+  disappearContactUserMessage,
 } from "../controllers/userContactsController";
 
 const router = Router();
@@ -20,6 +21,8 @@ router.get("/request", verifyAccessToken, getRequestUserContact);
 router.post("/clearchat", verifyAccessToken, clearUserContactChat);
 router.post("/block", verifyAccessToken, blockUserContacts);
 router.post("/mute", verifyAccessToken, muteUserContacts);
+router.post("/disappear", verifyAccessToken, disappearContactUserMessage);
+
 router.post("/", verifyAccessToken, createUserContacts);
 
 // delete routes

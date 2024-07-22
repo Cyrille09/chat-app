@@ -4,6 +4,7 @@ import Message from "../models/Message";
 import mongoose from "mongoose";
 import Group from "../models/Group";
 import GroupMember from "../models/GroupMember";
+import { recordNotFound } from "../errorMessages/errror";
 
 /**
  * Get messages
@@ -232,6 +233,7 @@ export const getSenderAndReceiverMessages: RequestHandler = async (
       $and: [
         { sender: { $in: [req.user, req.body.secondUser] } },
         { receiver: { $in: [req.user, req.body.secondUser] } },
+        { disappear: { $ne: "disappeared" } },
         {
           "deleteMessage.user": {
             $nin: [req.body.secondUser],
@@ -250,6 +252,18 @@ export const getSenderAndReceiverMessages: RequestHandler = async (
     );
 
     const messages = await Message.find(query).populate("receiver sender");
+
+    const groupedMessages = messages.reduce((acc: any, message: any) => {
+      // Format the createdAt date to YYYY-MM-DD
+      const date = message.createdAt.toISOString().split("T")[0];
+
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(message);
+
+      return acc;
+    }, {});
 
     res.status(200).json(messages);
   } catch (error) {
@@ -494,9 +508,84 @@ export const getGroupMessages: RequestHandler = async (req: any, res, next) => {
     const messages = await Message.find({
       isGroup: true,
       group: req.params.groupId,
+      disappear: { $ne: "disappeared" },
     }).populate("receiver sender");
 
     res.status(200).json(messages);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Update message
+ */
+export const updateMessage: RequestHandler = async (req, res, next) => {
+  try {
+    const updateMessage = await Message.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    );
+
+    if (!updateMessage) {
+      const notFound = await recordNotFound("Message");
+      return res.status(notFound.status).json({ message: notFound });
+    }
+
+    res.status(200).json(updateMessage);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Add star to the message
+ */
+export const addStarToMessage: RequestHandler = async (req: any, res, next) => {
+  try {
+    const addStarToMessage = await Message.findByIdAndUpdate(
+      req.params.id,
+      { $push: { stars: { user: req.user } } },
+      { new: true }
+    );
+
+    console.log(addStarToMessage);
+
+    if (!addStarToMessage) {
+      const notFound = await recordNotFound("Message");
+      return res.status(notFound.status).json({ message: notFound });
+    }
+
+    res.status(200).json(addStarToMessage);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Add star to the message
+ */
+export const removeStarToMessage: RequestHandler = async (
+  req: any,
+  res,
+  next
+) => {
+  try {
+    const addStarToMessage = await Message.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { stars: { user: req.user } } },
+      { new: true }
+    );
+
+    if (!addStarToMessage) {
+      const notFound = await recordNotFound("Message");
+      return res.status(notFound.status).json({ message: notFound });
+    }
+
+    res.status(200).json(addStarToMessage);
   } catch (error) {
     next(error);
   }

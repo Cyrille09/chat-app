@@ -7,7 +7,6 @@ import {
   FaRegTrashAlt,
   FaStar,
   FaBell,
-  FaRedo,
   FaVolumeMute,
   FaVolumeUp,
   FaRegRegistered,
@@ -15,6 +14,7 @@ import {
   FaPlusSquare,
   FaTrash,
   FaChevronDown,
+  FaClock,
 } from "react-icons/fa";
 import { CSSTransition } from "react-transition-group";
 
@@ -24,15 +24,19 @@ import {
   BlockUser,
   ClearChat,
   DeleteContactUser,
-  DisappearingMessages,
+  DisappearMessages,
   DisplayAddNewGroupMembers,
   DisplayUserStars,
   EditGroupUser,
+  MakeGroupAdmin,
   MuteNotication,
+  RemoveDisappearMessages,
+  RemoveUserFromGroup,
   UnmuteNotication,
   UserMediaList,
+  ViewGroupUser,
 } from "../modelLists/ModalLists";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GlobalButton } from "../button/GlobalButton";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -43,9 +47,12 @@ import {
   successBlockUserActions,
   successClearChatActions,
   successDeleteUserActions,
+  successDisappearMessageActions,
   successEditGroupUserActions,
+  successMakeGroupAdminActions,
   successMediaActions,
   successMuteNotificationActions,
+  successRemoveUserFromGroupActions,
   successStarMessageActions,
   successUnmuteNotificationActions,
 } from "@/redux-toolkit/reducers/actionsSlice";
@@ -57,6 +64,7 @@ import {
   blockUserContact,
   clearUserContactChat,
   deleteContactUser,
+  disappearContactUserMessage,
   muteUserContact,
 } from "@/services/userContactsServices";
 import { socket } from "@/components/websocket/websocket";
@@ -66,10 +74,15 @@ import { selectedUserRecord } from "@/redux-toolkit/reducers/usersSlice";
 import { getSenderAndReceiverMessages } from "@/services/messagesServices";
 import { chatMessagesRecord } from "@/redux-toolkit/reducers/chatMessageSlice";
 import {
+  assignGroupAdmin,
   exitFromGroupContact,
   muteGroupContact,
+  removeUserFromGroup,
+  updateGroup,
 } from "@/services/groupsServices";
 import { UserInterfaceInfo } from "../globalTypes/GlobalTypes";
+import GroupMemberPopup from "../chatList/GroupMemberPopup";
+import { IoMdRemoveCircle } from "react-icons/io";
 
 const ContactInfo = ({ user, userContacts }: any) => {
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
@@ -87,6 +100,8 @@ const ContactInfo = ({ user, userContacts }: any) => {
   const dispatch = useDispatch();
   const selectedUser = usersSlice.selectedUser;
   const userRecord = user.user;
+  const [showPopup, setShowPopup] = useState(false);
+  const [memberId, setMemberId] = useState("");
 
   useEffect(() => {
     let isSubscribed = true;
@@ -284,9 +299,20 @@ const ContactInfo = ({ user, userContacts }: any) => {
     dispatch(isLoadingActions(true));
 
     if (selectedUser.isGroup) {
-      exitFromGroupContact(selectedUser._id, selectedUser.group._id)
+      exitFromGroupContact(
+        selectedUser._id,
+        selectedUser.group._id,
+        `${userRecord.name} left the group.`
+      )
         .then((response) => {
-          socket.emit("exitGroup", userRecord);
+          socket.emit("exitGroup", {
+            ...userRecord,
+            groupId: usersSlice.selectedUser.group._id,
+          });
+
+          socket.emit("messageGroup", {
+            groupId: usersSlice.selectedUser.group._id,
+          });
 
           dispatch(hideActions());
         })
@@ -378,14 +404,10 @@ const ContactInfo = ({ user, userContacts }: any) => {
     if (selectedUser.isGroup) {
       muteGroupContact(usersSlice.selectedUser._id, new Date())
         .then((response) => {
-          const receiverInfo = response?.data?.users.find(
-            (user: { user: string }) =>
-              user.user === usersSlice.selectedUser.user._id
-          );
-          socket.emit("updateContactUser", {
+          socket.emit("muteGroupMessage", {
             ...userRecord,
-            receiverInfo,
-            updatedType: "mute",
+            groupId: usersSlice.selectedUser.group._id,
+            muteDate: new Date(),
           });
           dispatch(hideActions());
         })
@@ -426,10 +448,145 @@ const ContactInfo = ({ user, userContacts }: any) => {
     }
   };
 
+  const assignGroupAdminData = async () => {
+    dispatch(isLoadingActions(true));
+
+    assignGroupAdmin(
+      selectedUser.group._id,
+      actionsSlice.successMakeGroupAdmin?.record?.user?._id,
+      `${userRecord.name} has assigned ${actionsSlice.successMakeGroupAdmin?.record?.user?.name} as a group admin.`
+    )
+      .then((response) => {
+        socket.emit("updateGroupMember", selectedUser.group);
+        socket.emit("messageGroup", {
+          groupId: selectedUser.group._id,
+        });
+
+        dispatch(hideActions());
+      })
+      .catch((error) => {
+        dispatch(isLoadingActions(false));
+        dispatch(
+          errorPopupActions({
+            status: true,
+            message: ACTIONS_ERROR_MESSAGE,
+            display: "",
+          })
+        );
+      });
+  };
+
+  const removeUserFromGroupData = async () => {
+    dispatch(isLoadingActions(true));
+
+    removeUserFromGroup(
+      selectedUser.group._id,
+      actionsSlice.successRemoveUserFromGroup?.record?.user?._id,
+      `${userRecord.name} has removed ${actionsSlice.successRemoveUserFromGroup?.record?.user?.name} from the group.`
+    )
+      .then((response) => {
+        socket.emit("removeUserFromGroup", {
+          group: selectedUser.group,
+          user: actionsSlice.successRemoveUserFromGroup?.record?.user,
+        });
+        socket.emit("messageGroup", {
+          groupId: selectedUser.group._id,
+        });
+
+        dispatch(hideActions());
+      })
+      .catch((error) => {
+        dispatch(isLoadingActions(false));
+        dispatch(
+          errorPopupActions({
+            status: true,
+            message: ACTIONS_ERROR_MESSAGE,
+            display: "",
+          })
+        );
+      });
+  };
+
+  const disappearMessageDetail = async () => {
+    dispatch(isLoadingActions(true));
+
+    if (usersSlice.selectedUser.isGroup) {
+      updateGroup(
+        {
+          disappearIn: "",
+          message: `${userRecord.name} has removed the disappear message.`,
+        },
+        usersSlice.selectedUser.group._id
+      )
+        .then((response) => {
+          dispatch(hideActions());
+
+          socket.emit("disappearGroupMessage", {
+            group: response.data,
+          });
+        })
+        .catch((error) => {
+          dispatch(isLoadingActions(false));
+          dispatch(
+            errorPopupActions({
+              status: true,
+              message: ACTIONS_ERROR_MESSAGE,
+              display: "",
+            })
+          );
+        });
+    } else {
+      disappearContactUserMessage(
+        usersSlice.selectedUser.user,
+        "",
+        `${userRecord.name} has removed the disappear message.`
+      )
+        .then((response) => {
+          dispatch(hideActions());
+          const receiverInfo = response?.data?.users.find(
+            (user: { user: string }) =>
+              user.user === usersSlice.selectedUser.user._id
+          );
+          socket.emit("updateContactUser", {
+            ...userRecord,
+            receiverInfo,
+            updatedType: "disappear",
+          });
+        })
+        .catch((error) => {
+          dispatch(isLoadingActions(false));
+          dispatch(
+            errorPopupActions({
+              status: true,
+              message: ACTIONS_ERROR_MESSAGE,
+              display: "",
+            })
+          );
+        });
+    }
+  };
+
   const getMediaLinksAndDocs = chatMessageSlice.chatMessages.filter(
     (message: { type: string }) =>
       ["image", "link", "document", "video"].includes(message.type)
   );
+
+  const handleIconClick = (memberId: string) => {
+    setShowPopup(!showPopup);
+    setMemberId(memberId);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setMemberId("");
+    dispatch(successMakeGroupAdminActions({ status: false, record: {} }));
+    dispatch(
+      successRemoveUserFromGroupActions({
+        status: false,
+        record: {},
+      })
+    );
+  };
 
   const getMedia = chatMessageSlice.chatMessages
     .map((data: any) => data)
@@ -493,6 +650,12 @@ const ContactInfo = ({ user, userContacts }: any) => {
     </>
   );
 
+  const getCurrentGroupMember = chatMessageSlice.chatGroupMembers.find(
+    (member: { user: { _id: string } }) => member.user._id === userRecord._id
+  );
+  const getUpToFiveAdmin = chatMessageSlice.chatGroupMembers.filter(
+    (member: any) => member.admin
+  );
   return (
     <>
       {selectedUser.status ? (
@@ -512,7 +675,10 @@ const ContactInfo = ({ user, userContacts }: any) => {
               unmountOnExit={true}
               mountOnEnter={true}
             >
-              <DisplayUserStars show={actionsSlice.successStarMessage.status} />
+              <DisplayUserStars
+                show={actionsSlice.successStarMessage.status}
+                user={userRecord}
+              />
             </CSSTransition>
 
             {/* Media */}
@@ -573,7 +739,25 @@ const ContactInfo = ({ user, userContacts }: any) => {
                 show={actionsSlice.successAddGroupMembers.status}
                 users={userContactsDetail}
                 groupMembers={chatMessageSlice.chatGroupMembers}
+                user={userRecord}
               />
+            </CSSTransition>
+
+            {/* View group user */}
+            <CSSTransition
+              in={actionsSlice.successViewGroupUser.status}
+              timeout={100}
+              classNames="panel-animate"
+              onEnter={() =>
+                document.body.classList.add("css-transition-modal-open")
+              }
+              onExited={() =>
+                document.body.classList.remove("css-transition-modal-open")
+              }
+              unmountOnExit={true}
+              mountOnEnter={true}
+            >
+              <ViewGroupUser show={actionsSlice.successViewGroupUser.status} />
             </CSSTransition>
 
             {/* Mute notification */}
@@ -637,33 +821,77 @@ const ContactInfo = ({ user, userContacts }: any) => {
               />
             )}
 
-            {/* Disappearing messages */}
-            {actionsSlice.successDisappearingMessage.status && (
-              <DisappearingMessages
-                show={actionsSlice.successDisappearingMessage.status}
-                handleClose={() => dispatch(hideActions())}
-                footer={
-                  <>
-                    <div className={styles.flexRowWrapModalFooter}>
-                      <div className={styles.footerLeft}>
-                        <GlobalButton
-                          format="white"
-                          size="sm"
-                          onClick={() => dispatch(hideActions())}
-                        >
-                          Cancel
-                        </GlobalButton>
+            {/* Disappear messages */}
+            {actionsSlice.successDisappearMessage.status &&
+              ((usersSlice.selectedUser.isGroup &&
+                !usersSlice.selectedUser?.group?.disappearIn) ||
+                (!usersSlice.selectedUser.isGroup &&
+                  !usersSlice.selectedUser.disappearIn)) && (
+                <DisappearMessages
+                  show={actionsSlice.successDisappearMessage.status}
+                  handleClose={() => dispatch(hideActions())}
+                  user={userRecord}
+                  footer={
+                    <>
+                      <div className={styles.flexRowWrapModalFooter}>
+                        <div className={styles.footerLeft}>
+                          <GlobalButton
+                            format="white"
+                            size="sm"
+                            onClick={() => dispatch(hideActions())}
+                          >
+                            Cancel
+                          </GlobalButton>
+                        </div>
+                        <div>
+                          <GlobalButton
+                            format="success"
+                            type="submit"
+                            size="sm"
+                          >
+                            Submit
+                          </GlobalButton>
+                        </div>
                       </div>
-                      <div>
-                        <GlobalButton format="success" type="submit" size="sm">
-                          Submit
-                        </GlobalButton>
+                    </>
+                  }
+                />
+              )}
+
+            {/* remove disappear messages */}
+            {actionsSlice.successDisappearMessage.status &&
+              (usersSlice.selectedUser?.group?.disappearIn ||
+                usersSlice.selectedUser.disappearIn) && (
+                <RemoveDisappearMessages
+                  show={actionsSlice.successDisappearMessage.status}
+                  handleClose={() => dispatch(hideActions())}
+                  user={userRecord}
+                  footer={
+                    <>
+                      <div className={styles.flexRowWrapModalFooter}>
+                        <div className={styles.footerLeft}>
+                          <GlobalButton
+                            format="white"
+                            size="sm"
+                            onClick={() => dispatch(hideActions())}
+                          >
+                            No
+                          </GlobalButton>
+                        </div>
+                        <div>
+                          <GlobalButton
+                            format="success"
+                            size="sm"
+                            onClick={() => disappearMessageDetail()}
+                          >
+                            Yes
+                          </GlobalButton>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                }
-              />
-            )}
+                    </>
+                  }
+                />
+              )}
 
             {/* Block user */}
             {actionsSlice.successBlockUser.status && (
@@ -760,6 +988,70 @@ const ContactInfo = ({ user, userContacts }: any) => {
                 }
               />
             )}
+
+            {/* Remove group admin */}
+            {actionsSlice.successRemoveUserFromGroup.status && (
+              <RemoveUserFromGroup
+                show={actionsSlice.successRemoveUserFromGroup.status}
+                handleClose={() => dispatch(hideActions())}
+                footer={
+                  <>
+                    <div className={styles.flexRowWrapModalFooter}>
+                      <div className={styles.footerLeft}>
+                        <GlobalButton
+                          format="white"
+                          size="sm"
+                          onClick={() => dispatch(hideActions())}
+                        >
+                          No
+                        </GlobalButton>
+                      </div>
+                      <div>
+                        <GlobalButton
+                          format="success"
+                          size="sm"
+                          onClick={() => removeUserFromGroupData()}
+                        >
+                          Yes
+                        </GlobalButton>
+                      </div>
+                    </div>
+                  </>
+                }
+              />
+            )}
+
+            {/* Make group admin */}
+            {actionsSlice.successMakeGroupAdmin.status && (
+              <MakeGroupAdmin
+                show={actionsSlice.successMakeGroupAdmin.status}
+                handleClose={() => dispatch(hideActions())}
+                footer={
+                  <>
+                    <div className={styles.flexRowWrapModalFooter}>
+                      <div className={styles.footerLeft}>
+                        <GlobalButton
+                          format="white"
+                          size="sm"
+                          onClick={() => dispatch(hideActions())}
+                        >
+                          No
+                        </GlobalButton>
+                      </div>
+                      <div>
+                        <GlobalButton
+                          format="success"
+                          size="sm"
+                          onClick={() => assignGroupAdminData()}
+                        >
+                          Yes
+                        </GlobalButton>
+                      </div>
+                    </div>
+                  </>
+                }
+              />
+            )}
           </>
           <div className="contactInfoTop">
             <h4>{selectedUser.isGroup ? "Group info" : "Contact info"}</h4>
@@ -822,20 +1114,22 @@ const ContactInfo = ({ user, userContacts }: any) => {
                       <span>{`${chatMessageSlice.chatGroupMembers.length} group members`}</span>
                     </div>
                     <div>
-                      <span>
-                        <FaPlusSquare
-                          className="contactInfoGroupMemberIcon"
-                          size={20}
-                          onClick={() =>
-                            dispatch(
-                              successAddGroupMembersActions({
-                                status: true,
-                                record: {},
-                              })
-                            )
-                          }
-                        />
-                      </span>
+                      {getCurrentGroupMember?.admin && (
+                        <span>
+                          <FaPlusSquare
+                            className="contactInfoGroupMemberIcon"
+                            size={20}
+                            onClick={() =>
+                              dispatch(
+                                successAddGroupMembersActions({
+                                  status: true,
+                                  record: {},
+                                })
+                              )
+                            }
+                          />
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -884,12 +1178,23 @@ const ContactInfo = ({ user, userContacts }: any) => {
                                 <span className="groupAdmin">
                                   {member.admin && <span>Group admin</span>}
                                 </span>
-                                <span>
-                                  {" "}
-                                  <FaChevronDown
-                                    className="contactInfoGroupMemberIcon"
-                                    onClick={() => alert("coming soon")}
-                                  />
+                                <FaChevronDown
+                                  className="contactInfoGroupMemberIcon"
+                                  onClick={() => {
+                                    handleIconClick(member.user._id);
+                                  }}
+                                />
+                                <span className="popup-message">
+                                  {showPopup &&
+                                    member.user._id === memberId && (
+                                      <GroupMemberPopup
+                                        member={member}
+                                        user={getCurrentGroupMember}
+                                        getUpToFiveAdmin={getUpToFiveAdmin}
+                                        currentUser={userRecord}
+                                        onClose={handleClosePopup}
+                                      />
+                                    )}
                                 </span>
                               </div>
                             </div>
@@ -960,7 +1265,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
                     <span>Starred messages</span>
                   </div>
                   <span>
-                    {"..."} <FaChevronRight />
+                    <FaChevronRight />
                   </span>
                 </div>
 
@@ -1009,28 +1314,36 @@ const ContactInfo = ({ user, userContacts }: any) => {
                 </div>
                 <div
                   className="eachAction"
-                  // onClick={() =>
-                  //   dispatch(
-                  //     successDisappearingMessageActions({
-                  //       status: true,
-                  //       record: {},
-                  //     })
-                  //   )
-                  // }
-                  onClick={() => alert("Coming soon")}
+                  onClick={() =>
+                    dispatch(
+                      successDisappearMessageActions({
+                        status: true,
+                        record: {},
+                      })
+                    )
+                  }
                 >
                   <div>
                     <span className="eachActionLeftIcon">
-                      <FaRedo />
+                      {usersSlice.selectedUser.disappearIn ||
+                      usersSlice.selectedUser.group?.disappearIn ? (
+                        <FaClock />
+                      ) : (
+                        <IoMdRemoveCircle size={18} />
+                      )}
                     </span>
-                    <span>Disappearing messages</span>
+                    <span>
+                      {usersSlice.selectedUser.disappearIn ||
+                      usersSlice.selectedUser.group?.disappearIn
+                        ? "Remove disappear messages"
+                        : "Disappear messages"}
+                    </span>
                   </div>
                   <span className="eachActionRightIcon">
                     <FaChevronRight />
                   </span>
                 </div>
 
-                {/*  */}
                 <hr />
                 {!selectedUser.isGroup && (
                   <>

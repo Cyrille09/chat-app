@@ -26,6 +26,7 @@ import {
 import { ACTIONS_ERROR_MESSAGE } from "@/constants/globalText";
 import {
   createUserContacts,
+  disappearContactUserMessage,
   muteUserContact,
 } from "@/services/userContactsServices";
 import {
@@ -41,12 +42,13 @@ import { Col, Row } from "react-bootstrap";
 import { GlobalButton } from "../button/GlobalButton";
 import {
   FaCheck,
-  FaDownload,
+  FaChevronDown,
   FaEdit,
   FaFile,
   FaFilePdf,
   FaFileWord,
   FaImage,
+  FaStar,
 } from "react-icons/fa";
 import { useContext, useRef, useState } from "react";
 import { Input } from "../fields/input";
@@ -60,20 +62,48 @@ import {
 import { socket } from "../websocket/websocket";
 import Link from "next/link";
 import { Toggle } from "../fields/toggle";
-import { SearchWithOptions } from "../fields/search";
 import {
   createGroup,
   deleteGroupPhoto,
   getGroupMmebers,
+  muteGroupContact,
   updateGroup,
   updateGroupMembers,
   updateGroupProfileImage,
 } from "@/services/groupsServices";
-import { current } from "@reduxjs/toolkit";
 import { selectedUserRecord } from "@/redux-toolkit/reducers/usersSlice";
 import { chatGroupMembersRecord } from "@/redux-toolkit/reducers/chatMessageSlice";
+import { updateMessage } from "@/services/messagesServices";
+import MessageActionsPopup from "../chatArea/MessageActionsPopup";
 
-export const DisplayUserStars = ({ show }: { show: boolean }) => {
+export const DisplayUserStars = ({
+  show,
+  user,
+}: {
+  show: boolean;
+  user: any;
+}) => {
+  const chatMessageSlice = useSelector(
+    (state: RootState) => state.chatMessageSlice
+  );
+  const [showPopup, setShowPopup] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [messageId, setMessageId] = useState("");
+
+  const starredMessages = chatMessageSlice.chatMessages.filter(
+    (startMessage: any) =>
+      startMessage.stars?.find((star: any) => star.user === user._id)
+  );
+  const handleIconClick = (messageId: string) => {
+    setShowPopup(!showPopup);
+    setMessageId(messageId);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setMessageId("");
+  };
+
   const dispatch = useDispatch();
   return (
     <Panel
@@ -85,7 +115,336 @@ export const DisplayUserStars = ({ show }: { show: boolean }) => {
       width="50%"
       maxWidth="25%"
     >
-      <p>Coming soon..</p>
+      <div>
+        <div className={styles.chatAreaCenter}>
+          {starredMessages?.map((message: any, index: number) => {
+            console.log(message.stars);
+
+            const showMessages = () => {
+              if (message.type === "image") {
+                return (
+                  <div className={styles.chatAreaCenterTexts}>
+                    <div className={styles.chatAreaCenterContent}>
+                      <div
+                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                      >
+                        <div
+                          className={styles.user}
+                          style={{ marginBottom: 5 }}
+                        >
+                          {message.sender.photoUrl ? (
+                            <Image
+                              height="35"
+                              width="35"
+                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                              alt=""
+                              className={styles.chatListTopImage}
+                            />
+                          ) : (
+                            <div className={styles.chatListUserInfoNoImage}>
+                              <p>
+                                {message.sender.name
+                                  .split(" ")
+                                  .map((data: string) => data.charAt(0))
+                                  .slice(0, 2)
+                                  .join("")}
+                              </p>
+                            </div>
+                          )}
+                          <span>{message.sender.name}</span>
+                        </div>
+                        <div className={styles.messageTime}>
+                          {format(message.createdAt, "dd/MM/yyyy")}
+
+                          <span
+                            className="popup-message"
+                            style={{ marginLeft: 10 }}
+                          >
+                            <FaChevronDown
+                              className="contactInfoGroupMemberIcon optionsBtn"
+                              onClick={() => {
+                                handleIconClick(message._id);
+                              }}
+                            />
+                            {showPopup && messageId === message._id && (
+                              <MessageActionsPopup
+                                currentUser={user}
+                                type="image"
+                                message={message}
+                                onClose={handleClosePopup}
+                              />
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={styles.chatAreaMessage}>
+                        <span className={styles.messageList}>
+                          <Image
+                            src={`${process.env.baseUrl}/images/messages/${message.message}`}
+                            height="250"
+                            width="250"
+                            alt=""
+                            className={styles.userProfileAvatar}
+                          />
+                        </span>{" "}
+                        <br />{" "}
+                        <div className={styles.messageTime}>
+                          {format(message.createdAt, "HH:mm")}
+                        </div>{" "}
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else if (message.type === "document") {
+                const ext = message.message.split(".").pop();
+                const documentFormat = () => {
+                  if (ext === "pdf") {
+                    return (
+                      <span className={styles.messageList}>
+                        <span>
+                          <FaFilePdf
+                            size={25}
+                            className={styles.documentSavePdf}
+                          />
+                          <span className={styles.documentTitle}>
+                            {message.message}
+                          </span>
+                        </span>
+                      </span>
+                    );
+                  } else if (["docx", "doc"].includes(ext)) {
+                    return (
+                      <span className={styles.messageList}>
+                        <span>
+                          <FaFileWord
+                            size={25}
+                            className={styles.documentSaveWord}
+                          />
+                          <span className={styles.documentTitle}>
+                            {message.message}
+                          </span>
+                        </span>
+                      </span>
+                    );
+                  }
+                };
+                return (
+                  <div className={styles.chatAreaCenterTexts}>
+                    <div className={styles.chatAreaCenterContent}>
+                      <div
+                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                        style={{ marginBottom: 10 }}
+                      >
+                        <div className={styles.user}>
+                          {message.sender.photoUrl ? (
+                            <Image
+                              height="35"
+                              width="35"
+                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                              alt=""
+                              className={styles.chatListTopImage}
+                            />
+                          ) : (
+                            <div className={styles.chatListUserInfoNoImage}>
+                              <p>
+                                {message.sender.name
+                                  .split(" ")
+                                  .map((data: string) => data.charAt(0))
+                                  .slice(0, 2)
+                                  .join("")}
+                              </p>
+                            </div>
+                          )}
+                          <span>{message.sender.name.split(" ")[0]}</span>
+                        </div>
+                        <div className={styles.messageTime}>
+                          {format(message.createdAt, "dd/MM/yyyy")}
+
+                          <span
+                            className="popup-message"
+                            style={{ marginLeft: 10 }}
+                          >
+                            <FaChevronDown
+                              className="contactInfoGroupMemberIcon optionsBtn"
+                              onClick={() => {
+                                handleIconClick(message._id);
+                              }}
+                            />
+                            {showPopup && messageId === message._id && (
+                              <MessageActionsPopup
+                                currentUser={user}
+                                type="document"
+                                message={message}
+                                onClose={handleClosePopup}
+                              />
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={styles.chatAreaMessage}>
+                        <span>{documentFormat()}</span> <br />{" "}
+                        <div className={styles.messageTime}>
+                          {<FaStar />} {format(message.createdAt, "HH:mm")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else if (message.type === "link") {
+                return (
+                  <div className={styles.chatAreaCenterTexts}>
+                    <div className={styles.chatAreaCenterContent}>
+                      <div
+                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                      >
+                        <div className={styles.user}>
+                          {message.sender.photoUrl ? (
+                            <Image
+                              height="35"
+                              width="35"
+                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                              alt=""
+                              className={styles.chatListTopImage}
+                            />
+                          ) : (
+                            <div className={styles.chatListUserInfoNoImage}>
+                              <p>
+                                {message.sender.name
+                                  .split(" ")
+                                  .map((data: string) => data.charAt(0))
+                                  .slice(0, 2)
+                                  .join("")}
+                              </p>
+                            </div>
+                          )}
+                          <span>{message.sender.name.split(" ")[0]}</span>
+                        </div>
+                        <div className={styles.messageTime}>
+                          {format(message.createdAt, "dd/MM/yyyy")}
+
+                          <span
+                            className="popup-message"
+                            style={{ marginLeft: 10 }}
+                          >
+                            <FaChevronDown
+                              className="contactInfoGroupMemberIcon optionsBtn"
+                              onClick={() => {
+                                handleIconClick(message._id);
+                              }}
+                            />
+                            {showPopup && messageId === message._id && (
+                              <MessageActionsPopup
+                                currentUser={user}
+                                type="link"
+                                message={message}
+                                onClose={handleClosePopup}
+                              />
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={styles.chatAreaMessage}>
+                        <span>
+                          <span className={styles.messageLink}>
+                            {message.message}
+                          </span>
+                        </span>{" "}
+                        <br />{" "}
+                        <div className={styles.messageTime}>
+                          {<FaStar />} {format(message.createdAt, "HH:mm")}
+                        </div>{" "}
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className={styles.chatAreaCenterTexts}>
+                    <div className={styles.chatAreaCenterContent}>
+                      <div
+                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                      >
+                        <div className={styles.user}>
+                          {message.sender.photoUrl ? (
+                            <Image
+                              height="35"
+                              width="35"
+                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                              alt=""
+                              className={styles.chatListTopImage}
+                            />
+                          ) : (
+                            <div className={styles.chatListUserInfoNoImage}>
+                              <p>
+                                {message.sender.name
+                                  .split(" ")
+                                  .map((data: string) => data.charAt(0))
+                                  .slice(0, 2)
+                                  .join("")}
+                              </p>
+                            </div>
+                          )}
+                          <span>{message.sender.name.split(" ")[0]}</span>
+                        </div>
+                        <div className={styles.messageTime}>
+                          {format(message.createdAt, "dd/MM/yyyy")}
+
+                          <span
+                            className="popup-message"
+                            style={{ marginLeft: 10 }}
+                          >
+                            <FaChevronDown
+                              className="contactInfoGroupMemberIcon optionsBtn"
+                              onClick={() => {
+                                handleIconClick(message._id);
+                              }}
+                            />
+                            {showPopup && messageId === message._id && (
+                              <MessageActionsPopup
+                                currentUser={user}
+                                type=""
+                                message={message}
+                                onClose={handleClosePopup}
+                              />
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={styles.chatAreaMessage}>
+                        <span className={styles.messageList}>
+                          {" "}
+                          {message.message}
+                        </span>{" "}
+                        <br />{" "}
+                        <div className={styles.messageTime}>
+                          {<FaStar />} {message.editMessage && "Edited"}{" "}
+                          {format(message.createdAt, "HH:mm")}
+                        </div>{" "}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+            };
+            return (
+              <div
+                className={
+                  message.sender._id === user?._id
+                    ? `${styles.message} ${styles.own}`
+                    : `${styles.message} ${styles.receiver}`
+                }
+                key={index}
+              >
+                <>{showMessages()}</>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </Panel>
   );
 };
@@ -167,7 +526,12 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
                             className={styles.documentSavePdf}
                           />
                           <span className={styles.documentTitle}>
-                            {message.message}
+                            <Link
+                              target="_blank"
+                              href={`${process.env.baseUrl}/documents/messages/${message.message}`}
+                            >
+                              {message.message}
+                            </Link>
                           </span>
                         </span>
                       </span>
@@ -181,7 +545,12 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
                             className={styles.documentSaveWord}
                           />
                           <span className={styles.documentTitle}>
-                            {message.message}
+                            <Link
+                              target="_blank"
+                              href={`${process.env.baseUrl}/documents/messages/${message.message}`}
+                            >
+                              {message.message}
+                            </Link>
                           </span>
                         </span>
                       </span>
@@ -348,29 +717,51 @@ export const MuteNotication = ({ footer, show, user, handleClose }: any) => {
 
   const muteUserContactDetail = async (values: { muteDate: Date }) => {
     dispatch(isLoadingActions(true));
-    muteUserContact(usersSlice.selectedUser.user, values.muteDate)
-      .then((response) => {
-        dispatch(hideActions());
-        const receiverInfo = response?.data?.users.find(
-          (user: { user: string }) =>
-            user.user === usersSlice.selectedUser.user._id
-        );
-        socket.emit("updateContactUser", {
-          ...user,
-          receiverInfo,
-          updatedType: "mute",
+    if (usersSlice.selectedUser.isGroup) {
+      muteGroupContact(usersSlice.selectedUser._id, values.muteDate)
+        .then((response) => {
+          socket.emit("muteGroupMessage", {
+            ...user,
+            groupId: usersSlice.selectedUser.group._id,
+            muteDate: values.muteDate,
+          });
+          dispatch(hideActions());
+        })
+        .catch((error) => {
+          dispatch(isLoadingActions(false));
+          dispatch(
+            errorPopupActions({
+              status: true,
+              message: ACTIONS_ERROR_MESSAGE,
+              display: "",
+            })
+          );
         });
-      })
-      .catch((error) => {
-        dispatch(isLoadingActions(false));
-        dispatch(
-          errorPopupActions({
-            status: true,
-            message: ACTIONS_ERROR_MESSAGE,
-            display: "",
-          })
-        );
-      });
+    } else {
+      muteUserContact(usersSlice.selectedUser.user, values.muteDate)
+        .then((response) => {
+          dispatch(hideActions());
+          const receiverInfo = response?.data?.users.find(
+            (user: { user: string }) =>
+              user.user === usersSlice.selectedUser.user._id
+          );
+          socket.emit("updateContactUser", {
+            ...user,
+            receiverInfo,
+            updatedType: "mute",
+          });
+        })
+        .catch((error) => {
+          dispatch(isLoadingActions(false));
+          dispatch(
+            errorPopupActions({
+              status: true,
+              message: ACTIONS_ERROR_MESSAGE,
+              display: "",
+            })
+          );
+        });
+    }
   };
 
   const muteLists: any = [
@@ -497,7 +888,7 @@ export const UnmuteNotication = ({ footer, show, user, handleClose }: any) => {
   );
 };
 
-export const DisappearingMessages = ({
+export const RemoveDisappearMessages = ({
   footer,
   show,
   user,
@@ -508,13 +899,17 @@ export const DisappearingMessages = ({
 
   return (
     <GlobalModal
-      title={`Disappearing ${usersSlice.selectedUser.user.name} Message`}
+      title={`Remove Disappear ${
+        usersSlice.selectedUser.isGroup
+          ? `${usersSlice.selectedUser.group.name} Group`
+          : "User"
+      } Mesaage`}
       show={show}
       handleClose={handleClose}
       footer={footer}
     >
       <div className={styles.modal}>
-        <p>Do you want to Disappear message?</p>
+        <p>Do you want to remove Disappear message?</p>
         <div>
           {actionsSlice.errorPopup.status && (
             <GlobalErrorMessage message={actionsSlice.errorPopup.message} />
@@ -523,6 +918,144 @@ export const DisappearingMessages = ({
         {actionsSlice.isLoading && <LoadingData />}
 
         {footer && <div className={styles.footer}>{footer}</div>}
+      </div>
+    </GlobalModal>
+  );
+};
+
+export const DisappearMessages = ({ footer, show, user, handleClose }: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+  const usersSlice = useSelector((state: RootState) => state.usersSlice);
+  const dispatch = useDispatch();
+
+  const disappearMessageDetail = async (values: { disappear: string }) => {
+    dispatch(isLoadingActions(true));
+
+    if (usersSlice.selectedUser.isGroup) {
+      updateGroup(
+        {
+          disappearIn: values.disappear,
+          message: `${user.name} has set the disappear message to ${values.disappear}`,
+        },
+        usersSlice.selectedUser.group._id
+      )
+        .then((response) => {
+          dispatch(hideActions());
+
+          socket.emit("disappearGroupMessage", {
+            group: response.data,
+          });
+        })
+        .catch((error) => {
+          dispatch(isLoadingActions(false));
+          dispatch(
+            errorPopupActions({
+              status: true,
+              message: ACTIONS_ERROR_MESSAGE,
+              display: "",
+            })
+          );
+        });
+    } else {
+      disappearContactUserMessage(
+        usersSlice.selectedUser.user,
+        values.disappear,
+        `${user.name} has set the disappear message to ${values.disappear}`
+      )
+        .then((response) => {
+          dispatch(hideActions());
+          const receiverInfo = response?.data?.users.find(
+            (user: { user: string }) =>
+              user.user === usersSlice.selectedUser.user._id
+          );
+          socket.emit("updateContactUser", {
+            ...user,
+            receiverInfo,
+            updatedType: "disappear",
+          });
+        })
+        .catch((error) => {
+          dispatch(isLoadingActions(false));
+          dispatch(
+            errorPopupActions({
+              status: true,
+              message: ACTIONS_ERROR_MESSAGE,
+              display: "",
+            })
+          );
+        });
+    }
+  };
+
+  const disappearLists: any = [
+    {
+      label: "6 Hours",
+      value: "6 hours",
+    },
+    {
+      label: "1 Day",
+      value: "1 day",
+    },
+    {
+      label: "1 Week",
+      value: "1 week",
+    },
+  ];
+
+  return (
+    <GlobalModal
+      title={`Disappear ${
+        usersSlice.selectedUser.isGroup
+          ? `${usersSlice.selectedUser.group.name} Group`
+          : "User"
+      } Mesaage`}
+      show={show}
+      handleClose={handleClose}
+      footer={footer}
+    >
+      <div className={styles.modal}>
+        <Formik
+          form
+          initialValues={{
+            disappear: disappearLists[0].value,
+          }}
+          onSubmit={disappearMessageDetail}
+          enableReinitialize
+        >
+          {({ handleChange, handleBlur, setFieldValue, values, errors }) => (
+            <Form>
+              <div>
+                <div>
+                  {actionsSlice.errorPopup.status && (
+                    <GlobalErrorMessage
+                      message={actionsSlice.errorPopup.message}
+                    />
+                  )}
+                </div>
+                {actionsSlice.isLoading && <LoadingData />}
+                <div>
+                  <div>
+                    <ReactSelect
+                      label="Disappear List"
+                      id="disappear"
+                      required
+                      name="disappear"
+                      options={disappearLists}
+                      onChange={(selected: any) => {
+                        if (selected && selected.value) {
+                          setFieldValue(`disappear`, selected.value);
+                        }
+                      }}
+                      defaultValue={disappearLists[0]}
+                    />
+                  </div>
+                </div>
+
+                {footer && <div className={styles.footer}>{footer}</div>}
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </GlobalModal>
   );
@@ -592,7 +1125,7 @@ export const DeleteContactUser = ({ footer, show, user, handleClose }: any) => {
   return (
     <GlobalModal
       title={`${
-        usersSlice.selectedUser.isGroup ? "Exist Group" : "Delete Contact User"
+        usersSlice.selectedUser.isGroup ? "Exit Group" : "Delete Contact User"
       }`}
       show={show}
       handleClose={handleClose}
@@ -601,8 +1134,7 @@ export const DeleteContactUser = ({ footer, show, user, handleClose }: any) => {
       <div className={styles.modal}>
         {usersSlice.selectedUser.isGroup ? (
           <p>
-            Do you want to exist from {usersSlice.selectedUser.group.name}{" "}
-            group?
+            Do you want to exit from {usersSlice.selectedUser.group.name} group?
           </p>
         ) : (
           <p>
@@ -656,7 +1188,21 @@ export const DisplayStoryStatus = ({ show }: { show: boolean }) => {
   );
 };
 
-export const DisplayStarredMessages = ({ show }: { show: boolean }) => {
+export const DisplayStarredMessages = ({
+  show,
+  user,
+}: {
+  show: boolean;
+  user: any;
+}) => {
+  const chatMessageSlice = useSelector(
+    (state: RootState) => state.chatMessageSlice
+  );
+  const starredMessages = chatMessageSlice.chatMessages.filter(
+    (startMessage: any) => startMessage
+  );
+  console.log(starredMessages);
+
   const dispatch = useDispatch();
   return (
     <Panel
@@ -945,6 +1491,7 @@ export const DisplayAddNewGroupMembers = ({
   show,
   users,
   groupMembers,
+  user,
   handleClose,
 }: any) => {
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
@@ -952,10 +1499,24 @@ export const DisplayAddNewGroupMembers = ({
   const dispatch = useDispatch();
 
   const addNewGroupMembersData = async (values: { groupUsers: [] }) => {
+    const joinMember = values.groupUsers
+      .map((member: { label: string }) => member.label)
+      .join(", ")
+      .replace(/,([^,]*)$/, " and$1");
+
     dispatch(isLoadingActions(true));
-    updateGroupMembers(values.groupUsers, usersSlice.selectedUser.group._id)
+    updateGroupMembers(
+      values.groupUsers,
+      usersSlice.selectedUser.group._id,
+      `${user.name} has added ${joinMember} to the group.`
+    )
       .then((response) => {
         socket.emit("addGroupMember", values.groupUsers);
+
+        socket.emit("messageGroup", {
+          groupId: usersSlice.selectedUser.group._id,
+        });
+
         dispatch(hideActions());
         getGroupMmebersData();
       })
@@ -1043,7 +1604,7 @@ export const DisplayAddNewGroupMembers = ({
                           format="white"
                           size="sm"
                           onClick={() => {
-                            hideActions();
+                            dispatch(hideActions());
                           }}
                         >
                           Close
@@ -2593,6 +3154,319 @@ export const SendDocumentMessage = ({ footer, show, handleClose }: any) => {
         </div>
       </div>
     </GlobalModal>
+  );
+};
+
+export const RemoveUserFromGroup = ({ footer, show, handleClose }: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+
+  return (
+    <GlobalModal
+      title={`Remove User From Group`}
+      show={show}
+      handleClose={handleClose}
+      footer={footer}
+    >
+      <div className={styles.modal}>
+        <p>
+          Do you want to remove{" "}
+          <b>{actionsSlice.successMakeGroupAdmin?.record?.user?.name}</b> from{" "}
+          <b>{actionsSlice.successMakeGroupAdmin?.record?.group?.name}</b>{" "}
+          group?
+        </p>
+        <div>
+          {actionsSlice.errorPopup.status && (
+            <GlobalErrorMessage message={actionsSlice.errorPopup.message} />
+          )}
+        </div>
+        {actionsSlice.isLoading && <LoadingData />}
+
+        {footer && <div className={styles.footer}>{footer}</div>}
+      </div>
+    </GlobalModal>
+  );
+};
+
+export const MakeGroupAdmin = ({ footer, show, handleClose }: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+
+  return (
+    <GlobalModal
+      title={`Group Admin`}
+      show={show}
+      handleClose={handleClose}
+      footer={footer}
+    >
+      <div className={styles.modal}>
+        <p>
+          Do you want to add{" "}
+          <b>{actionsSlice.successMakeGroupAdmin?.record?.user?.name}</b> as{" "}
+          <b>{actionsSlice.successMakeGroupAdmin?.record?.group?.name}</b> group
+          admin?
+        </p>
+        <div>
+          {actionsSlice.errorPopup.status && (
+            <GlobalErrorMessage message={actionsSlice.errorPopup.message} />
+          )}
+        </div>
+        {actionsSlice.isLoading && <LoadingData />}
+
+        {footer && <div className={styles.footer}>{footer}</div>}
+      </div>
+    </GlobalModal>
+  );
+};
+
+export const EditMessage = ({ footer, show, user, handleClose }: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+  const usersSlice = useSelector((state: RootState) => state.usersSlice);
+
+  const dispatch = useDispatch();
+
+  const editMessageData = (values: { message: string }) => {
+    dispatch(isLoadingActions(true));
+    updateMessage(
+      { message: values.message, editMessage: true },
+      actionsSlice.successEditMessage.record._id
+    )
+      .then((response) => {
+        dispatch(hideActions());
+        if (usersSlice.selectedUser.isGroup) {
+          socket.emit("updateGroupMessage", {
+            groupId: usersSlice.selectedUser.group._id,
+          });
+        } else {
+          socket.emit("updateMessage", { ...response.data });
+        }
+      })
+      .catch((error) => {
+        dispatch(isLoadingActions(false));
+        dispatch(
+          errorPopupActions({
+            status: true,
+            message: ` Your current password is incorrect, or ${ACTIONS_ERROR_MESSAGE.toLowerCase()}`,
+            display: "",
+          })
+        );
+      });
+  };
+
+  return (
+    <GlobalModal
+      title={`Edit message`}
+      show={show}
+      handleClose={handleClose}
+      footer={footer}
+    >
+      <div className={styles.modal}>
+        <Formik
+          form
+          initialValues={{
+            message: actionsSlice.successEditMessage.record.message,
+          }}
+          validationSchema={updateMessageForm}
+          onSubmit={editMessageData}
+          enableReinitialize
+        >
+          {({ handleChange, handleBlur, setFieldValue, values, errors }) => (
+            <Form>
+              <div>
+                <div>
+                  {actionsSlice.errorPopup.status && (
+                    <GlobalErrorMessage
+                      message={actionsSlice.errorPopup.message}
+                    />
+                  )}
+                </div>
+                {actionsSlice.isLoading && <LoadingData />}
+                <div>
+                  <div style={{ marginTop: 20, marginBottom: 20 }}>
+                    <Input
+                      name="message"
+                      required
+                      id="message"
+                      onBlur={handleBlur("message")}
+                      autoCapitalize="none"
+                      onChange={handleChange("message")}
+                      error={errors.message}
+                    />
+                  </div>
+                </div>
+
+                {footer && <div className={styles.footer}>{footer}</div>}
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>{" "}
+    </GlobalModal>
+  );
+};
+
+export const ViewGroupUser = ({ footer, show, user, handleClose }: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+  const dispatch = useDispatch();
+
+  return (
+    <Panel
+      show={show}
+      handleClose={() => {
+        dispatch(hideActions());
+      }}
+      title="View user"
+      width="50%"
+      maxWidth="25%"
+    >
+      <div className="container">
+        <div className={`${styles.userDetails}`}>
+          <div style={{ marginBottom: 20 }}>
+            <BoxShadowCard>
+              <div className={styles.userProfileDetailsInfo}>
+                <Formik
+                  form
+                  initialValues={{
+                    photoUrl: "",
+                  }}
+                  onSubmit={() => {}}
+                  enableReinitialize
+                >
+                  {({
+                    handleChange,
+                    handleBlur,
+                    setFieldValue,
+                    handleSubmit,
+                    values,
+                    errors,
+                  }) => {
+                    const displayImage = () => {
+                      if (
+                        actionsSlice.successViewGroupUser.record?.user?.photoUrl
+                      ) {
+                        return (
+                          <Image
+                            src={`${process.env.baseUrl}/images/profile/${actionsSlice.successViewGroupUser.record?.user?.photoUrl}`}
+                            height="250"
+                            width="250"
+                            alt=""
+                            className={styles.userProfileAvatar}
+                          />
+                        );
+                      } else {
+                        return (
+                          <Image
+                            width="250"
+                            height="250"
+                            style={{ height: "auto" }}
+                            src={userImagePlaceholder}
+                            alt=""
+                            className={styles.userProfileAvatar}
+                          />
+                        );
+                      }
+                    };
+                    return (
+                      <Form>
+                        <div>
+                          <div>
+                            {actionsSlice.errorPopup.status && (
+                              <GlobalErrorMessage
+                                message={actionsSlice.errorPopup.message}
+                              />
+                            )}
+                          </div>
+                          {actionsSlice.isLoading && <LoadingData />}
+                          <div className="row">
+                            <div className="col-sm-12">
+                              <h4>Profile picture</h4>
+                            </div>
+                            <hr />
+                            <div
+                              className={`${styles.userDetailsAvatar} ${styles.userProfileImageUpload}`}
+                            >
+                              <div className="col-sm-12">{displayImage()}</div>
+                              <div>
+                                <span>
+                                  {
+                                    actionsSlice.successViewGroupUser.record
+                                      ?.user?.email
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {footer && (
+                            <div className={styles.footer}>{footer}</div>
+                          )}
+                        </div>
+                      </Form>
+                    );
+                  }}
+                </Formik>
+              </div>
+            </BoxShadowCard>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <BoxShadowCard>
+              <div className={styles.userDetailsInfo}>
+                <div>
+                  <div>
+                    <div className="row">
+                      <div className="col-sm-12">
+                        <Row>
+                          <Col xs={10}>
+                            <h4>Your name</h4>
+                          </Col>
+                        </Row>
+                      </div>
+                      <hr />
+
+                      <>
+                        <p>
+                          {actionsSlice.successViewGroupUser.record?.user?.name}
+                        </p>
+                      </>
+                    </div>
+                  </div>
+
+                  {footer && <div className={styles.footer}>{footer}</div>}
+                </div>
+              </div>
+            </BoxShadowCard>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <BoxShadowCard>
+              <div className={styles.userDetailsInfo}>
+                <div>
+                  <div>
+                    <div>
+                      <div className="row">
+                        <div className="col-sm-12">
+                          <Row>
+                            <Col xs={10}>
+                              <h4>About</h4>
+                            </Col>
+                          </Row>
+                        </div>
+                        <hr />
+                        <>
+                          <p>
+                            {
+                              actionsSlice.successViewGroupUser.record?.user
+                                ?.message
+                            }
+                          </p>
+                        </>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </BoxShadowCard>
+          </div>
+        </div>
+      </div>
+    </Panel>
   );
 };
 

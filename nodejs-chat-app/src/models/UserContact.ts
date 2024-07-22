@@ -12,6 +12,7 @@ interface userContactModel {
       isGroup: boolean;
       group: Types.ObjectId;
       updatedAt: Date;
+      disappearIn: "" | "2 mins" | "6 hours" | "1 day" | "1 week";
     }
   ];
   user: Types.ObjectId;
@@ -53,6 +54,10 @@ const userContactSchema = new Schema<userContactModel>(
         updatedAt: {
           type: Date,
           default: new Date(),
+        },
+        disappearIn: {
+          type: String,
+          enum: ["", "2 mins", "6 hours", "1 day", "1 week"],
         },
       },
     ],
