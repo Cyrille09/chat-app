@@ -253,6 +253,22 @@
     .icons {
       margin-top: 10px;
     }
+    .recordingAudio {
+      span {
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+    }
+
+    .recordedAudio {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      span {
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+    }
 
     .icons {
       input {
@@ -273,6 +289,16 @@
       height: 20px;
       cursor: pointer;
       color: #555;
+    }
+    .recordingAudioPause {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      color: red;
+    }
+
+    .audioIcon {
+      cursor: pointer;
     }
 
     input {
@@ -308,6 +334,10 @@
       cursor: pointer;
     }
   }
+
+  .chatAreaBottomAudioInfo {
+    background: $white;
+  }
   .chatAreaBottomBlock {
     background-color: $gray-400;
     color: darkgray;
@@ -327,4 +357,27 @@
     border: none;
     border-radius: 50%;
   }
+}
+
+.wavesurfer-container {
+  margin: 1rem 0;
+}
+
+.wavesurfer-controls {
+  display: flex;
+  margin-top: 1.5rem;
+}
+.wavesurfer-controls button {
+  font-size: 1.5rem;
+  color: white;
+  margin: 0 0.5rem;
+}
+.wavesurfer-controls button:nth-child(2),
+.wavesurfer-controls button:nth-child(3) {
+  background-color: #f90;
+  background: linear-gradient(210deg, #f90, rgb(227, 180, 114));
+  border-radius: 2rem;
+  padding: 0.8rem;
+  background: #191b28;
+  box-shadow: inset 11px 11px 22px #0a0b10, inset -11px -11px 22px #282b40;
 }

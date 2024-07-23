@@ -45,8 +45,19 @@ export async function sendImage(data: any) {
   });
 }
 
+export async function sendAudio(data: any) {
+  return await axiosInterceptors.post(`/messages/send/audio`, data, {
+    headers: { multipartFormData: "multipart/form-data" },
+  });
+}
+
 export async function sendGroupImage(data: any) {
   return await axiosInterceptors.post(`/messages/send/image/group`, data, {
+    headers: { multipartFormData: "multipart/form-data" },
+  });
+}
+export async function sendGroupAudio(data: any) {
+  return await axiosInterceptors.post(`/messages/send/audio/group`, data, {
     headers: { multipartFormData: "multipart/form-data" },
   });
 }

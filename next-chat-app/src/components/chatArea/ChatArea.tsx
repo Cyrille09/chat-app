@@ -28,6 +28,9 @@ import {
   FaFileWord,
   FaAngleDown,
   FaChevronDown,
+  FaTrash,
+  FaRegPauseCircle,
+  FaPauseCircle,
 } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import { TiAttachmentOutline } from "react-icons/ti";
@@ -40,6 +43,7 @@ import { Form, Formik } from "formik";
 import { Input } from "../fields/input";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux-toolkit/store";
+
 import {
   EditMessage,
   SearchMessages,
@@ -63,6 +67,8 @@ import {
   sendImage,
   sendMessage,
   getGroupMessages,
+  sendAudio,
+  sendGroupAudio,
 } from "@/services/messagesServices";
 import { socket } from "@/components/websocket/websocket";
 import { chatMessagesRecord } from "@/redux-toolkit/reducers/chatMessageSlice";
@@ -83,19 +89,26 @@ const ChatArea = ({ user }: any) => {
   const [showPopup, setShowPopup] = useState(false);
   const [open, setOpen] = useState(false);
   const [messageId, setMessageId] = useState("");
+  const [audioToBeSent, setAudioToBeSent] = useState("");
 
-  // start audio
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
-  const audioChunks = useRef<Blob[]>([]);
   const userRecord = user.user;
   const selectedUser = usersSlice.selectedUser;
 
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const mediaRecorderRef: any = useRef(null);
+  const [showAudioInfo, setShowAudioInfo] = useState(false);
+
   useEffect(() => {
     let isSubscribed = true;
+
+    if (selectedUser._id !== audioToBeSent) {
+      setAudioToBeSent("");
+      setShowAudioInfo(false);
+      setAudioBlob(null);
+      setIsRecording(false);
+      mediaRecorderRef.current = null;
+    }
 
     const scrollToBottom = () => {
       if (chatListRef.current) {
@@ -386,6 +399,7 @@ const ChatArea = ({ user }: any) => {
     usersSlice.selectedUser,
     chatListRef,
     selectedUser,
+    audioToBeSent,
   ]);
 
   // start =========================
@@ -400,42 +414,42 @@ const ChatArea = ({ user }: any) => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    const disableDevToolsShortcuts = (e: any) => {
-      if (
-        e.key === "F12" ||
-        (e.ctrlKey &&
-          e.shiftKey &&
-          (e.key === "I" || e.key === "J" || e.key === "C")) ||
-        (e.ctrlKey && e.key === "U")
-      ) {
-        e.preventDefault();
-      }
-    };
+  // useEffect(() => {
+  //   const disableDevToolsShortcuts = (e: any) => {
+  //     if (
+  //       e.key === "F12" ||
+  //       (e.ctrlKey &&
+  //         e.shiftKey &&
+  //         (e.key === "I" || e.key === "J" || e.key === "C")) ||
+  //       (e.ctrlKey && e.key === "U")
+  //     ) {
+  //       e.preventDefault();
+  //     }
+  //   };
 
-    document.addEventListener("keydown", disableDevToolsShortcuts);
+  //   document.addEventListener("keydown", disableDevToolsShortcuts);
 
-    return () => {
-      document.removeEventListener("keydown", disableDevToolsShortcuts);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("keydown", disableDevToolsShortcuts);
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    const checkDevTools = () => {
-      if (
-        window.outerWidth - window.innerWidth > 200 ||
-        window.outerHeight - window.innerHeight > 200
-      ) {
-        alert("Developer tools are open. Please close them.");
-      }
-    };
+  // useEffect(() => {
+  //   const checkDevTools = () => {
+  //     if (
+  //       window.outerWidth - window.innerWidth > 200 ||
+  //       window.outerHeight - window.innerHeight > 200
+  //     ) {
+  //       alert("Developer tools are open. Please close them.");
+  //     }
+  //   };
 
-    const interval = setInterval(checkDevTools, 1000);
+  //   const interval = setInterval(checkDevTools, 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, []);
 
   // useEffect(() => {
   //   const disableSelectAndCopy = (e: any) => {
@@ -452,14 +466,6 @@ const ChatArea = ({ user }: any) => {
   // }, []);
   // end =========================
 
-  useEffect(() => {
-    if (isRecording) {
-      startRecording();
-    } else if (mediaRecorder) {
-      mediaRecorder.stop();
-    }
-  }, [isRecording, mediaRecorder]);
-
   const scrollToTop = () => {
     if (chatListRef.current) {
       chatListRef.current.scrollTop = chatListRef.current.scrollHeight;
@@ -467,40 +473,46 @@ const ChatArea = ({ user }: any) => {
   };
 
   const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    setMediaRecorder(recorder);
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      mediaRecorderRef.current.start();
 
-    recorder.ondataavailable = (event) => {
-      audioChunks.current.push(event.data);
-    };
+      let chunks: any = [];
+      mediaRecorderRef.current.ondataavailable = (e: any) => {
+        chunks.push(e.data);
+      };
 
-    recorder.onstop = () => {
-      const audioBlob = new Blob(audioChunks.current, { type: "audio/wav" });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      setAudioUrl(audioUrl);
-      audioChunks.current = [];
-    };
+      mediaRecorderRef.current.onstop = () => {
+        const blob: any = new Blob(chunks, { type: "audio/wav" });
+        setAudioBlob(blob);
+        chunks = [];
+      };
 
-    recorder.start();
-  };
-
-  const handleStartRecording = () => {
-    setIsRecording(true);
-  };
-
-  const handleStopRecording = () => {
-    setIsRecording(false);
-  };
-
-  const handleSendAudio = () => {
-    if (audioUrl) {
-      // Here you can send the audio to your server or another destination
-      console.log("Audio URL:", audioUrl);
+      setIsRecording(true);
+      setShowAudioInfo(true);
+      setAudioToBeSent(selectedUser._id);
     }
   };
 
-  // end of audio
+  const stopRecording = () => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      mediaRecorderRef.current.stop();
+    }
+
+    setIsRecording(false);
+  };
+
+  const deleteRecording = () => {
+    setIsRecording(false);
+    setShowAudioInfo(false);
+    setAudioBlob(null);
+    mediaRecorderRef.current = null;
+    setAudioToBeSent("");
+  };
 
   const endRef = useRef(null);
   const photoInputRef: any = useRef(null);
@@ -676,6 +688,94 @@ const ChatArea = ({ user }: any) => {
               },
             })
           );
+        })
+        .catch((error) => {});
+    }
+  };
+
+  const handleMessageSendAudio = () => {
+    const data: any = new FormData();
+    data.append("message", audioBlob, "recording.wav");
+
+    if (selectedUser.isGroup) {
+      if (selectedUser.group?.disappearIn) {
+        data.append("disappear", "yes");
+
+        if (selectedUser.group.disappearIn === "6 hours") {
+          data.append("disappearTime", addHours(new Date(), 6));
+        }
+
+        if (selectedUser.group.disappearIn === "1 day") {
+          data.append("disappearTime", addDays(new Date(), 1));
+        }
+
+        if (selectedUser.group.disappearIn === "1 week") {
+          data.append("disappearTime", addWeeks(new Date(), 1));
+        }
+      }
+
+      data.append("isGroup", true);
+      data.append("groupId", selectedUser.group._id);
+
+      sendGroupAudio(data)
+        .then((response) => {
+          socket.emit("messageGroup", {
+            groupId: selectedUser.group._id,
+          });
+          dispatch(
+            successSendImageMessageActions({
+              status: false,
+              record: {
+                selectedImage: "",
+                message: "",
+                saveButton: false,
+              },
+            })
+          );
+          setShowAudioInfo(false);
+          mediaRecorderRef.current = null;
+          setAudioToBeSent("");
+          setAudioBlob(null);
+          setIsRecording(false);
+        })
+        .catch((error) => {});
+    } else {
+      data.append("receiver", JSON.stringify(selectedUser.user));
+
+      if (selectedUser.disappearIn) {
+        data.append("disappear", "yes");
+
+        if (selectedUser.disappearIn === "6 hours") {
+          data.append("disappearTime", addHours(new Date(), 6));
+        }
+
+        if (selectedUser.disappearIn === "1 day") {
+          data.append("disappearTime", addDays(new Date(), 1));
+        }
+
+        if (selectedUser.disappearIn === "1 week") {
+          data.append("disappearTime", addWeeks(new Date(), 1));
+        }
+      }
+
+      sendAudio(data)
+        .then((response) => {
+          socket.emit("message", { ...response.data, currentUser: userRecord });
+          dispatch(
+            successSendImageMessageActions({
+              status: false,
+              record: {
+                selectedImage: "",
+                message: "",
+                saveButton: false,
+              },
+            })
+          );
+          setShowAudioInfo(false);
+          mediaRecorderRef.current = null;
+          setAudioToBeSent("");
+          setAudioBlob(null);
+          setIsRecording(false);
         })
         .catch((error) => {});
     }
@@ -910,6 +1010,8 @@ const ChatArea = ({ user }: any) => {
     setShowPopup(false);
     setMessageId("");
   };
+
+  console.log("current:", mediaRecorderRef.current);
 
   return (
     <>
@@ -1306,6 +1408,53 @@ const ChatArea = ({ user }: any) => {
                         </div>
                       </div>
                     );
+                  } else if (message.type === "audio") {
+                    return (
+                      <div className="chatAreaCenterTexts">
+                        <div className="chatAreaCenterContent">
+                          <div className="chatAreaCenterOptionsIcon">
+                            <span className="optionsSpan">*</span>
+                            <span className="popup-message">
+                              <FaChevronDown
+                                className="contactInfoGroupMemberIcon optionsBtn"
+                                onClick={() => {
+                                  handleIconClick(message._id);
+                                }}
+                              />
+                              {showPopup && messageId === message._id && (
+                                <MessageActionsPopup
+                                  currentUser={userRecord}
+                                  type="audio"
+                                  message={message}
+                                  onClose={handleClosePopup}
+                                />
+                              )}
+                            </span>
+                          </div>
+                          <div className="chatAreaMessage">
+                            {message.isGroup &&
+                              message.sender._id !== userRecord._id && (
+                                <div className="groupMemberName">
+                                  <span>{message.sender.name}</span>
+                                </div>
+                              )}
+                            <span>
+                              <span className="messageLink">
+                                <audio
+                                  controls
+                                  src={`${process.env.baseUrl}/audio/messages/${message.message}`}
+                                ></audio>
+                              </span>
+                            </span>{" "}
+                            <br />{" "}
+                            <div className="messageTime">
+                              {getStarMessage && <FaStar />}{" "}
+                              {format(message.createdAt, "dd/MM/yyyy HH:mm")}
+                            </div>{" "}
+                          </div>
+                        </div>
+                      </div>
+                    );
                   } else {
                     return (
                       <div className="chatAreaCenterTexts">
@@ -1383,7 +1532,7 @@ const ChatArea = ({ user }: any) => {
           <div
             className={`chatAreaBottom ${
               selectedUser.blockStatus && "chatAreaBottomBlock"
-            }`}
+            } ${showAudioInfo && "chatAreaBottomAudioInfo"}`}
           >
             <Formik
               initialValues={{ message: "" }}
@@ -1410,43 +1559,12 @@ const ChatArea = ({ user }: any) => {
                   } else {
                     if (!isRecording) {
                       return (
-                        <FaMicrophone
-                          className="chatAreaBottomIcon"
-                          // onClick={handleStartRecording}
-                          onClick={() => alert("coming soon")}
-                        />
-                      );
-                    } else {
-                      return (
-                        <div>
-                          {audioUrl && (
-                            <div>
-                              <audio controls src={audioUrl}></audio>
-                              {/* <button onClick={handleSendAudio}>
-                                Send Audio
-                              </button> */}
-                            </div>
-                          )}
-                          <FaRegStopCircle
+                        <>
+                          <FaMicrophone
                             className="chatAreaBottomIcon"
-                            onClick={handleStopRecording}
+                            onClick={startRecording}
                           />
-
-                          <IoMdSend
-                            className="chatAreaBottomSendIcon"
-                            onClick={() => {
-                              handleSubmit();
-                            }}
-                          />
-                          {/* {
-                        audioUrl && (
-                          <div>
-                            <audio controls src={audioUrl}></audio>
-                            <button onClick={handleSendAudio}>Send Audio</button>
-                          </div>
-                        );
-                      } */}
-                        </div>
+                        </>
                       );
                     }
                   }
@@ -1455,112 +1573,159 @@ const ChatArea = ({ user }: any) => {
                 return (
                   <Form>
                     <div className="row">
-                      <div className="col-sm-2 icons">
-                        <input
-                          ref={photoInputRef}
-                          type="file"
-                          id="message"
-                          name="message"
-                          placeholder="message image"
-                          accept=".jpg, .png, .jpeg"
-                          required
-                          onBlur={handleBlur("message")}
-                          autoCapitalize="none"
-                          onChange={handleChangePicture}
-                          multiple={true}
-                        />
-                        <FaImage
-                          className={`chatAreaBottomImage`}
-                          onClick={() => {
-                            !selectedUser.blockStatus && handleButtonClick();
-                          }}
-                        />
-
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          id="message"
-                          name="message"
-                          placeholder="message file"
-                          accept="application/pdf, .docx, .doc"
-                          required
-                          onBlur={handleBlur("message")}
-                          autoCapitalize="none"
-                          onChange={handleChangeFile}
-                          multiple={true}
-                        />
-                        <TiAttachmentOutline
-                          className="chatAreaBottomImage"
-                          onClick={() => {
-                            !selectedUser.blockStatus &&
-                              handleFileButtonClick();
-                          }}
-                        />
-                        {actionsSlice.successDisplayEmoji.status ? (
-                          <FaMixer
-                            className="chatAreaBottomImage"
-                            onClick={() => {
-                              // setOpen((prev) => !prev);
-                              setOpen(false);
-                              dispatch(
-                                successDisplayEmojiActions({
-                                  status: false,
-                                  record: {},
-                                })
-                              );
-                            }}
-                          />
-                        ) : (
-                          <FaSmile
-                            className="chatAreaBottomImage"
-                            onClick={() => {
-                              if (!selectedUser.blockStatus) {
-                                setOpen(true);
-                                dispatch(
-                                  successDisplayEmojiActions({
-                                    status: true,
-                                    record: {},
-                                  })
-                                );
-                              }
-                            }}
-                          />
-                        )}
-                        <div className="emoji">
-                          <div className="picker">
-                            <EmojiPicker
-                              open={open}
-                              onEmojiClick={(value) => {
-                                if (!selectedUser.blockStatus) {
-                                  setFieldValue(
-                                    "message",
-                                    values.message + value.emoji
-                                  );
-                                }
+                      {!showAudioInfo ? (
+                        <>
+                          <div className="col-sm-2 icons">
+                            <input
+                              ref={photoInputRef}
+                              type="file"
+                              id="message"
+                              name="message"
+                              placeholder="message image"
+                              accept=".jpg, .png, .jpeg"
+                              required
+                              onBlur={handleBlur("message")}
+                              autoCapitalize="none"
+                              onChange={handleChangePicture}
+                              multiple={true}
+                            />
+                            <FaImage
+                              className={`chatAreaBottomImage`}
+                              onClick={() => {
+                                !selectedUser.blockStatus &&
+                                  handleButtonClick();
                               }}
                             />
+
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              id="message"
+                              name="message"
+                              placeholder="message file"
+                              accept="application/pdf, .docx, .doc"
+                              required
+                              onBlur={handleBlur("message")}
+                              autoCapitalize="none"
+                              onChange={handleChangeFile}
+                              multiple={true}
+                            />
+                            <TiAttachmentOutline
+                              className="chatAreaBottomImage"
+                              onClick={() => {
+                                !selectedUser.blockStatus &&
+                                  handleFileButtonClick();
+                              }}
+                            />
+                            {actionsSlice.successDisplayEmoji.status ? (
+                              <FaMixer
+                                className="chatAreaBottomImage"
+                                onClick={() => {
+                                  // setOpen((prev) => !prev);
+                                  setOpen(false);
+                                  dispatch(
+                                    successDisplayEmojiActions({
+                                      status: false,
+                                      record: {},
+                                    })
+                                  );
+                                }}
+                              />
+                            ) : (
+                              <FaSmile
+                                className="chatAreaBottomImage"
+                                onClick={() => {
+                                  if (!selectedUser.blockStatus) {
+                                    setOpen(true);
+                                    dispatch(
+                                      successDisplayEmojiActions({
+                                        status: true,
+                                        record: {},
+                                      })
+                                    );
+                                  }
+                                }}
+                              />
+                            )}
+                            <div className="emoji">
+                              <div className="picker">
+                                <EmojiPicker
+                                  open={open}
+                                  onEmojiClick={(value) => {
+                                    if (!selectedUser.blockStatus) {
+                                      setFieldValue(
+                                        "message",
+                                        values.message + value.emoji
+                                      );
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
                           </div>
+                          <div className="col-sm-9">
+                            <div>
+                              <Input
+                                placeholder="Type a message..."
+                                name="message"
+                                required
+                                id="message"
+                                onBlur={handleBlur("message")}
+                                autoCapitalize="none"
+                                onChange={handleChange("message")}
+                                error={errors.message}
+                                onKeyDown={handleKeyDown}
+                                disabled={
+                                  selectedUser.blockStatus ? true : false
+                                }
+                              />
+                            </div>
+                          </div>
+                          <div className="col-sm-1 chatAreaSend">
+                            <div>
+                              {!selectedUser.blockStatus && sendAndAudio()}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="icons">
+                          {isRecording && (
+                            <div className="recordingAudio">
+                              <FaTrash
+                                className="audioIcon"
+                                onClick={deleteRecording}
+                              />
+                              <span>Recording...</span>
+
+                              <FaPauseCircle
+                                className="recordingAudioPause"
+                                onClick={stopRecording}
+                              />
+                            </div>
+                          )}
+
+                          {audioBlob && (
+                            <div className="recordedAudio">
+                              <FaTrash
+                                className="audioIcon"
+                                onClick={deleteRecording}
+                              />
+
+                              <span>
+                                <audio
+                                  controls
+                                  src={URL.createObjectURL(audioBlob)}
+                                ></audio>
+                              </span>
+
+                              <IoMdSend
+                                className="chatAreaBottomSendIcon"
+                                onClick={handleMessageSendAudio}
+                              />
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      <div className="col-sm-9">
-                        <div>
-                          <Input
-                            placeholder="Type a message..."
-                            name="message"
-                            required
-                            id="message"
-                            onBlur={handleBlur("message")}
-                            autoCapitalize="none"
-                            onChange={handleChange("message")}
-                            error={errors.message}
-                            onKeyDown={handleKeyDown}
-                            disabled={selectedUser.blockStatus ? true : false}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-sm-1 chatAreaSend">
-                        <div>{!selectedUser.blockStatus && sendAndAudio()}</div>
-                      </div>
+                      )}
                     </div>
                   </Form>
                 );

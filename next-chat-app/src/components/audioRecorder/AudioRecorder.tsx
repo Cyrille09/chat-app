@@ -16,7 +16,9 @@ const AudioRecorder = () => {
     } else if (mediaRecorder) {
       mediaRecorder.stop();
     }
-  }, [isRecording, mediaRecorder]);
+  }, [isRecording]);
+
+  console.log("audioUrl", audioUrl);
 
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -63,7 +65,7 @@ const AudioRecorder = () => {
       {audioUrl && (
         <div>
           <audio controls src={audioUrl}></audio>
-          <button onClick={handleSendAudio}>Send Audio</button>
+          <button onClick={handleSendAudio}>....Send Audio</button>
         </div>
       )}
     </div>
