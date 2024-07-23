@@ -117,332 +117,411 @@ export const DisplayUserStars = ({
     >
       <div>
         <div className={styles.chatAreaCenter}>
-          {starredMessages?.map((message: any, index: number) => {
-            console.log(message.stars);
+          {starredMessages?.length ? (
+            starredMessages?.map((message: any, index: number) => {
+              console.log(message.stars);
 
-            const showMessages = () => {
-              if (message.type === "image") {
-                return (
-                  <div className={styles.chatAreaCenterTexts}>
-                    <div className={styles.chatAreaCenterContent}>
-                      <div
-                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
-                      >
+              const showMessages = () => {
+                if (message.type === "image") {
+                  return (
+                    <div className={styles.chatAreaCenterTexts}>
+                      <div className={styles.chatAreaCenterContent}>
                         <div
-                          className={styles.user}
-                          style={{ marginBottom: 5 }}
+                          className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
                         >
-                          {message.sender.photoUrl ? (
-                            <Image
-                              height="35"
-                              width="35"
-                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
-                              alt=""
-                              className={styles.chatListTopImage}
-                            />
-                          ) : (
-                            <div className={styles.chatListUserInfoNoImage}>
-                              <p>
-                                {message.sender.name
-                                  .split(" ")
-                                  .map((data: string) => data.charAt(0))
-                                  .slice(0, 2)
-                                  .join("")}
-                              </p>
-                            </div>
-                          )}
-                          <span>{message.sender.name}</span>
-                        </div>
-                        <div className={styles.messageTime}>
-                          {format(message.createdAt, "dd/MM/yyyy")}
-
-                          <span
-                            className="popup-message"
-                            style={{ marginLeft: 10 }}
+                          <div
+                            className={styles.user}
+                            style={{ marginBottom: 5 }}
                           >
-                            <FaChevronDown
-                              className="contactInfoGroupMemberIcon optionsBtn"
-                              onClick={() => {
-                                handleIconClick(message._id);
-                              }}
-                            />
-                            {showPopup && messageId === message._id && (
-                              <MessageActionsPopup
-                                currentUser={user}
-                                type="image"
-                                message={message}
-                                onClose={handleClosePopup}
+                            {message.sender.photoUrl ? (
+                              <Image
+                                height="35"
+                                width="35"
+                                src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                                alt=""
+                                className={styles.chatListTopImage}
                               />
+                            ) : (
+                              <div className={styles.chatListUserInfoNoImage}>
+                                <p>
+                                  {message.sender.name
+                                    .split(" ")
+                                    .map((data: string) => data.charAt(0))
+                                    .slice(0, 2)
+                                    .join("")}
+                                </p>
+                              </div>
                             )}
-                          </span>
-                        </div>
-                      </div>
+                            <span>{message.sender.name}</span>
+                          </div>
+                          <div className={styles.messageTime}>
+                            {format(message.createdAt, "dd/MM/yyyy")}
 
-                      <div className={styles.chatAreaMessage}>
-                        <span className={styles.messageList}>
-                          <Image
-                            src={`${process.env.baseUrl}/images/messages/${message.message}`}
-                            height="250"
-                            width="250"
-                            alt=""
-                            className={styles.userProfileAvatar}
-                          />
-                        </span>{" "}
-                        <br />{" "}
-                        <div className={styles.messageTime}>
-                          {format(message.createdAt, "HH:mm")}
-                        </div>{" "}
+                            <span
+                              className="popup-message"
+                              style={{ marginLeft: 10 }}
+                            >
+                              <FaChevronDown
+                                className="contactInfoGroupMemberIcon optionsBtn"
+                                onClick={() => {
+                                  handleIconClick(message._id);
+                                }}
+                              />
+                              {showPopup && messageId === message._id && (
+                                <MessageActionsPopup
+                                  currentUser={user}
+                                  type="image"
+                                  message={message}
+                                  onClose={handleClosePopup}
+                                />
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className={styles.chatAreaMessage}>
+                          <span className={styles.messageList}>
+                            <Image
+                              src={`${process.env.baseUrl}/images/messages/${message.message}`}
+                              height="250"
+                              width="250"
+                              alt=""
+                              className={styles.userProfileAvatar}
+                            />
+                          </span>{" "}
+                          <br />{" "}
+                          <div className={styles.messageTime}>
+                            {format(message.createdAt, "HH:mm")}
+                          </div>{" "}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              } else if (message.type === "document") {
-                const ext = message.message.split(".").pop();
-                const documentFormat = () => {
-                  if (ext === "pdf") {
-                    return (
-                      <span className={styles.messageList}>
-                        <span>
-                          <FaFilePdf
-                            size={25}
-                            className={styles.documentSavePdf}
-                          />
-                          <span className={styles.documentTitle}>
-                            {message.message}
+                  );
+                } else if (message.type === "document") {
+                  const ext = message.message.split(".").pop();
+                  const documentFormat = () => {
+                    if (ext === "pdf") {
+                      return (
+                        <span className={styles.messageList}>
+                          <span>
+                            <FaFilePdf
+                              size={25}
+                              className={styles.documentSavePdf}
+                            />
+                            <span className={styles.documentTitle}>
+                              {message.message}
+                            </span>
                           </span>
                         </span>
-                      </span>
-                    );
-                  } else if (["docx", "doc"].includes(ext)) {
-                    return (
-                      <span className={styles.messageList}>
-                        <span>
-                          <FaFileWord
-                            size={25}
-                            className={styles.documentSaveWord}
-                          />
-                          <span className={styles.documentTitle}>
-                            {message.message}
+                      );
+                    } else if (["docx", "doc"].includes(ext)) {
+                      return (
+                        <span className={styles.messageList}>
+                          <span>
+                            <FaFileWord
+                              size={25}
+                              className={styles.documentSaveWord}
+                            />
+                            <span className={styles.documentTitle}>
+                              {message.message}
+                            </span>
                           </span>
                         </span>
-                      </span>
-                    );
-                  }
-                };
-                return (
-                  <div className={styles.chatAreaCenterTexts}>
-                    <div className={styles.chatAreaCenterContent}>
-                      <div
-                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
-                        style={{ marginBottom: 10 }}
-                      >
-                        <div className={styles.user}>
-                          {message.sender.photoUrl ? (
-                            <Image
-                              height="35"
-                              width="35"
-                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
-                              alt=""
-                              className={styles.chatListTopImage}
-                            />
-                          ) : (
-                            <div className={styles.chatListUserInfoNoImage}>
-                              <p>
-                                {message.sender.name
-                                  .split(" ")
-                                  .map((data: string) => data.charAt(0))
-                                  .slice(0, 2)
-                                  .join("")}
-                              </p>
-                            </div>
-                          )}
-                          <span>{message.sender.name.split(" ")[0]}</span>
-                        </div>
-                        <div className={styles.messageTime}>
-                          {format(message.createdAt, "dd/MM/yyyy")}
-
-                          <span
-                            className="popup-message"
-                            style={{ marginLeft: 10 }}
-                          >
-                            <FaChevronDown
-                              className="contactInfoGroupMemberIcon optionsBtn"
-                              onClick={() => {
-                                handleIconClick(message._id);
-                              }}
-                            />
-                            {showPopup && messageId === message._id && (
-                              <MessageActionsPopup
-                                currentUser={user}
-                                type="document"
-                                message={message}
-                                onClose={handleClosePopup}
+                      );
+                    }
+                  };
+                  return (
+                    <div className={styles.chatAreaCenterTexts}>
+                      <div className={styles.chatAreaCenterContent}>
+                        <div
+                          className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                          style={{ marginBottom: 10 }}
+                        >
+                          <div className={styles.user}>
+                            {message.sender.photoUrl ? (
+                              <Image
+                                height="35"
+                                width="35"
+                                src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                                alt=""
+                                className={styles.chatListTopImage}
                               />
+                            ) : (
+                              <div className={styles.chatListUserInfoNoImage}>
+                                <p>
+                                  {message.sender.name
+                                    .split(" ")
+                                    .map((data: string) => data.charAt(0))
+                                    .slice(0, 2)
+                                    .join("")}
+                                </p>
+                              </div>
                             )}
-                          </span>
-                        </div>
-                      </div>
+                            <span>{message.sender.name.split(" ")[0]}</span>
+                          </div>
+                          <div className={styles.messageTime}>
+                            {format(message.createdAt, "dd/MM/yyyy")}
 
-                      <div className={styles.chatAreaMessage}>
-                        <span>{documentFormat()}</span> <br />{" "}
-                        <div className={styles.messageTime}>
-                          {<FaStar />} {format(message.createdAt, "HH:mm")}
+                            <span
+                              className="popup-message"
+                              style={{ marginLeft: 10 }}
+                            >
+                              <FaChevronDown
+                                className="contactInfoGroupMemberIcon optionsBtn"
+                                onClick={() => {
+                                  handleIconClick(message._id);
+                                }}
+                              />
+                              {showPopup && messageId === message._id && (
+                                <MessageActionsPopup
+                                  currentUser={user}
+                                  type="document"
+                                  message={message}
+                                  onClose={handleClosePopup}
+                                />
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className={styles.chatAreaMessage}>
+                          <span>{documentFormat()}</span> <br />{" "}
+                          <div className={styles.messageTime}>
+                            {<FaStar />} {format(message.createdAt, "HH:mm")}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              } else if (message.type === "link") {
-                return (
-                  <div className={styles.chatAreaCenterTexts}>
-                    <div className={styles.chatAreaCenterContent}>
-                      <div
-                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
-                      >
-                        <div className={styles.user}>
-                          {message.sender.photoUrl ? (
-                            <Image
-                              height="35"
-                              width="35"
-                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
-                              alt=""
-                              className={styles.chatListTopImage}
-                            />
-                          ) : (
-                            <div className={styles.chatListUserInfoNoImage}>
-                              <p>
-                                {message.sender.name
-                                  .split(" ")
-                                  .map((data: string) => data.charAt(0))
-                                  .slice(0, 2)
-                                  .join("")}
-                              </p>
-                            </div>
-                          )}
-                          <span>{message.sender.name.split(" ")[0]}</span>
-                        </div>
-                        <div className={styles.messageTime}>
-                          {format(message.createdAt, "dd/MM/yyyy")}
-
-                          <span
-                            className="popup-message"
-                            style={{ marginLeft: 10 }}
-                          >
-                            <FaChevronDown
-                              className="contactInfoGroupMemberIcon optionsBtn"
-                              onClick={() => {
-                                handleIconClick(message._id);
-                              }}
-                            />
-                            {showPopup && messageId === message._id && (
-                              <MessageActionsPopup
-                                currentUser={user}
-                                type="link"
-                                message={message}
-                                onClose={handleClosePopup}
+                  );
+                } else if (message.type === "link") {
+                  return (
+                    <div className={styles.chatAreaCenterTexts}>
+                      <div className={styles.chatAreaCenterContent}>
+                        <div
+                          className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                        >
+                          <div className={styles.user}>
+                            {message.sender.photoUrl ? (
+                              <Image
+                                height="35"
+                                width="35"
+                                src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                                alt=""
+                                className={styles.chatListTopImage}
                               />
+                            ) : (
+                              <div className={styles.chatListUserInfoNoImage}>
+                                <p>
+                                  {message.sender.name
+                                    .split(" ")
+                                    .map((data: string) => data.charAt(0))
+                                    .slice(0, 2)
+                                    .join("")}
+                                </p>
+                              </div>
                             )}
-                          </span>
+                            <span>{message.sender.name.split(" ")[0]}</span>
+                          </div>
+                          <div className={styles.messageTime}>
+                            {format(message.createdAt, "dd/MM/yyyy")}
+
+                            <span
+                              className="popup-message"
+                              style={{ marginLeft: 10 }}
+                            >
+                              <FaChevronDown
+                                className="contactInfoGroupMemberIcon optionsBtn"
+                                onClick={() => {
+                                  handleIconClick(message._id);
+                                }}
+                              />
+                              {showPopup && messageId === message._id && (
+                                <MessageActionsPopup
+                                  currentUser={user}
+                                  type="link"
+                                  message={message}
+                                  onClose={handleClosePopup}
+                                />
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className={styles.chatAreaMessage}>
+                          <span>
+                            <span className={styles.messageLink}>
+                              {message.message}
+                            </span>
+                          </span>{" "}
+                          <br />{" "}
+                          <div className={styles.messageTime}>
+                            {<FaStar />} {format(message.createdAt, "HH:mm")}
+                          </div>{" "}
                         </div>
                       </div>
+                    </div>
+                  );
+                } else if (message.type === "audio") {
+                  return (
+                    <div className={styles.chatAreaCenterTexts}>
+                      <div className={styles.chatAreaCenterContent}>
+                        <div
+                          className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                        >
+                          <div className={styles.user}>
+                            {message.sender.photoUrl ? (
+                              <Image
+                                height="35"
+                                width="35"
+                                src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                                alt=""
+                                className={styles.chatListTopImage}
+                              />
+                            ) : (
+                              <div className={styles.chatListUserInfoNoImage}>
+                                <p>
+                                  {message.sender.name
+                                    .split(" ")
+                                    .map((data: string) => data.charAt(0))
+                                    .slice(0, 2)
+                                    .join("")}
+                                </p>
+                              </div>
+                            )}
+                            <span>{message.sender.name.split(" ")[0]}</span>
+                          </div>
+                          <div className={styles.messageTime}>
+                            {format(message.createdAt, "dd/MM/yyyy")}
 
-                      <div className={styles.chatAreaMessage}>
-                        <span>
-                          <span className={styles.messageLink}>
+                            <span
+                              className="popup-message"
+                              style={{ marginLeft: 10 }}
+                            >
+                              <FaChevronDown
+                                className="contactInfoGroupMemberIcon optionsBtn"
+                                onClick={() => {
+                                  handleIconClick(message._id);
+                                }}
+                              />
+                              {showPopup && messageId === message._id && (
+                                <MessageActionsPopup
+                                  currentUser={user}
+                                  type="link"
+                                  message={message}
+                                  onClose={handleClosePopup}
+                                />
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className={styles.chatAreaMessage}>
+                          <span>
+                            <span className={styles.messageLink}>
+                              <span className="messageLink">
+                                <audio
+                                  controls
+                                  src={`${process.env.baseUrl}/audio/messages/${message.message}`}
+                                ></audio>
+                              </span>
+                            </span>
+                          </span>{" "}
+                          <br />{" "}
+                          <div className={styles.messageTime}>
+                            {<FaStar />} {format(message.createdAt, "HH:mm")}
+                          </div>{" "}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className={styles.chatAreaCenterTexts}>
+                      <div className={styles.chatAreaCenterContent}>
+                        <div
+                          className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                        >
+                          <div className={styles.user}>
+                            {message.sender.photoUrl ? (
+                              <Image
+                                height="35"
+                                width="35"
+                                src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                                alt=""
+                                className={styles.chatListTopImage}
+                              />
+                            ) : (
+                              <div className={styles.chatListUserInfoNoImage}>
+                                <p>
+                                  {message.sender.name
+                                    .split(" ")
+                                    .map((data: string) => data.charAt(0))
+                                    .slice(0, 2)
+                                    .join("")}
+                                </p>
+                              </div>
+                            )}
+                            <span>{message.sender.name.split(" ")[0]}</span>
+                          </div>
+                          <div className={styles.messageTime}>
+                            {format(message.createdAt, "dd/MM/yyyy")}
+
+                            <span
+                              className="popup-message"
+                              style={{ marginLeft: 10 }}
+                            >
+                              <FaChevronDown
+                                className="contactInfoGroupMemberIcon optionsBtn"
+                                onClick={() => {
+                                  handleIconClick(message._id);
+                                }}
+                              />
+                              {showPopup && messageId === message._id && (
+                                <MessageActionsPopup
+                                  currentUser={user}
+                                  type=""
+                                  message={message}
+                                  onClose={handleClosePopup}
+                                />
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className={styles.chatAreaMessage}>
+                          <span className={styles.messageList}>
+                            {" "}
                             {message.message}
-                          </span>
-                        </span>{" "}
-                        <br />{" "}
-                        <div className={styles.messageTime}>
-                          {<FaStar />} {format(message.createdAt, "HH:mm")}
-                        </div>{" "}
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else {
-                return (
-                  <div className={styles.chatAreaCenterTexts}>
-                    <div className={styles.chatAreaCenterContent}>
-                      <div
-                        className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
-                      >
-                        <div className={styles.user}>
-                          {message.sender.photoUrl ? (
-                            <Image
-                              height="35"
-                              width="35"
-                              src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
-                              alt=""
-                              className={styles.chatListTopImage}
-                            />
-                          ) : (
-                            <div className={styles.chatListUserInfoNoImage}>
-                              <p>
-                                {message.sender.name
-                                  .split(" ")
-                                  .map((data: string) => data.charAt(0))
-                                  .slice(0, 2)
-                                  .join("")}
-                              </p>
-                            </div>
-                          )}
-                          <span>{message.sender.name.split(" ")[0]}</span>
-                        </div>
-                        <div className={styles.messageTime}>
-                          {format(message.createdAt, "dd/MM/yyyy")}
-
-                          <span
-                            className="popup-message"
-                            style={{ marginLeft: 10 }}
-                          >
-                            <FaChevronDown
-                              className="contactInfoGroupMemberIcon optionsBtn"
-                              onClick={() => {
-                                handleIconClick(message._id);
-                              }}
-                            />
-                            {showPopup && messageId === message._id && (
-                              <MessageActionsPopup
-                                currentUser={user}
-                                type=""
-                                message={message}
-                                onClose={handleClosePopup}
-                              />
-                            )}
-                          </span>
+                          </span>{" "}
+                          <br />{" "}
+                          <div className={styles.messageTime}>
+                            {<FaStar />} {message.editMessage && "Edited"}{" "}
+                            {format(message.createdAt, "HH:mm")}
+                          </div>{" "}
                         </div>
                       </div>
-
-                      <div className={styles.chatAreaMessage}>
-                        <span className={styles.messageList}>
-                          {" "}
-                          {message.message}
-                        </span>{" "}
-                        <br />{" "}
-                        <div className={styles.messageTime}>
-                          {<FaStar />} {message.editMessage && "Edited"}{" "}
-                          {format(message.createdAt, "HH:mm")}
-                        </div>{" "}
-                      </div>
                     </div>
-                  </div>
-                );
-              }
-            };
-            return (
-              <div
-                className={
-                  message.sender._id === user?._id
-                    ? `${styles.message} ${styles.own}`
-                    : `${styles.message} ${styles.receiver}`
+                  );
                 }
-                key={index}
-              >
-                <>{showMessages()}</>
-              </div>
-            );
-          })}
+              };
+              return (
+                <div
+                  className={
+                    message.sender._id === user?._id
+                      ? `${styles.message} ${styles.own}`
+                      : `${styles.message} ${styles.receiver}`
+                  }
+                  key={index}
+                >
+                  <>{showMessages()}</>
+                </div>
+              );
+            })
+          ) : (
+            <div className={styles.noRecord}>
+              <p>No starred messages</p>
+            </div>
+          )}
         </div>
       </div>
     </Panel>
@@ -481,227 +560,251 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
           fill
         >
           <Tab eventKey="media" title="Media">
-            <div className={`${styles.modalMediaItems}`}>
-              {getMedia.map((message: { _id: string; message: string }) => {
-                return (
-                  <div key={message._id}>
-                    <div className={styles.modalMediaItem}>
-                      <Image
-                        height="100"
-                        width="100"
-                        src={`${process.env.baseUrl}/images/messages/${message.message}`}
-                        alt="Media"
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <>
+              {getLinks.length ? (
+                <div className={`${styles.modalMediaItems}`}>
+                  {getMedia.map((message: { _id: string; message: string }) => {
+                    return (
+                      <div key={message._id}>
+                        <div className={styles.modalMediaItem}>
+                          <Image
+                            height="100"
+                            width="100"
+                            src={`${process.env.baseUrl}/images/messages/${message.message}`}
+                            alt="Media"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className={styles.noRecord}>
+                  <p>No media</p>
+                </div>
+              )}
+            </>
           </Tab>
           <Tab eventKey="docs" title="Docs">
-            {getDocs.map(
-              (message: {
-                _id: string;
-                message: string;
-                createdAt: string;
-                sender: {
+            {getDocs.length ? (
+              getDocs.map(
+                (message: {
                   _id: string;
-                  name: string;
-                  photoUrl: string;
-                };
-                receiver: {
-                  _id: string;
-                  name: string;
-                  photoUrl: string;
-                };
-              }) => {
-                const documentFormat = () => {
-                  const ext: any = message.message.split(".").pop();
-                  if (ext === "pdf") {
-                    return (
-                      <span className={styles.messageList}>
-                        <span>
-                          <FaFilePdf
-                            size={25}
-                            className={styles.documentSavePdf}
-                          />
-                          <span className={styles.documentTitle}>
-                            <Link
-                              target="_blank"
-                              href={`${process.env.baseUrl}/documents/messages/${message.message}`}
-                            >
-                              {message.message}
-                            </Link>
+                  message: string;
+                  createdAt: string;
+                  sender: {
+                    _id: string;
+                    name: string;
+                    photoUrl: string;
+                  };
+                  receiver: {
+                    _id: string;
+                    name: string;
+                    photoUrl: string;
+                  };
+                }) => {
+                  const documentFormat = () => {
+                    const ext: any = message.message.split(".").pop();
+                    if (ext === "pdf") {
+                      return (
+                        <span className={styles.messageList}>
+                          <span>
+                            <FaFilePdf
+                              size={25}
+                              className={styles.documentSavePdf}
+                            />
+                            <span className={styles.documentTitle}>
+                              <Link
+                                target="_blank"
+                                href={`${process.env.baseUrl}/documents/messages/${message.message}`}
+                              >
+                                {message.message}
+                              </Link>
+                            </span>
                           </span>
                         </span>
-                      </span>
-                    );
-                  } else if (["docx", "doc"].includes(ext)) {
-                    return (
-                      <span className={styles.messageList}>
-                        <span>
-                          <FaFileWord
-                            size={25}
-                            className={styles.documentSaveWord}
-                          />
-                          <span className={styles.documentTitle}>
-                            <Link
-                              target="_blank"
-                              href={`${process.env.baseUrl}/documents/messages/${message.message}`}
-                            >
-                              {message.message}
-                            </Link>
+                      );
+                    } else if (["docx", "doc"].includes(ext)) {
+                      return (
+                        <span className={styles.messageList}>
+                          <span>
+                            <FaFileWord
+                              size={25}
+                              className={styles.documentSaveWord}
+                            />
+                            <span className={styles.documentTitle}>
+                              <Link
+                                target="_blank"
+                                href={`${process.env.baseUrl}/documents/messages/${message.message}`}
+                              >
+                                {message.message}
+                              </Link>
+                            </span>
                           </span>
                         </span>
-                      </span>
-                    );
-                  }
-                };
+                      );
+                    }
+                  };
 
-                return (
-                  <div key={message._id} className="">
-                    <div className={styles.chatAreaCenter}>
-                      <div
-                        className={
-                          message.sender._id === user?._id
-                            ? `${styles.message} ${styles.own}`
-                            : `${styles.message} ${styles.receiver}`
-                        }
-                        key={message._id}
-                      >
-                        <div className={styles.chatAreaCenterTexts}>
-                          <div className={styles.chatAreaCenterContent}>
-                            <div
-                              className={`${styles.userInfo} ${styles.userInfoTop}`}
-                            >
-                              <div className={styles.user}>
-                                {message.sender.photoUrl ? (
-                                  <Image
-                                    height="35"
-                                    width="35"
-                                    src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
-                                    alt=""
-                                    className={styles.chatListTopImage}
-                                  />
-                                ) : (
-                                  <div
-                                    className={styles.chatListUserInfoNoImage}
-                                  >
-                                    <p>
-                                      {message.sender.name
-                                        .split(" ")
-                                        .map((data: string) => data.charAt(0))
-                                        .slice(0, 2)
-                                        .join("")}
-                                    </p>
-                                  </div>
-                                )}
-                                <span>{message.sender.name.split(" ")[0]}</span>
+                  return (
+                    <div key={message._id} className="">
+                      <div className={styles.chatAreaCenter}>
+                        <div
+                          className={
+                            message.sender._id === user?._id
+                              ? `${styles.message} ${styles.own}`
+                              : `${styles.message} ${styles.receiver}`
+                          }
+                          key={message._id}
+                        >
+                          <div className={styles.chatAreaCenterTexts}>
+                            <div className={styles.chatAreaCenterContent}>
+                              <div
+                                className={`${styles.userInfo} ${styles.userInfoTop}`}
+                              >
+                                <div className={styles.user}>
+                                  {message.sender.photoUrl ? (
+                                    <Image
+                                      height="35"
+                                      width="35"
+                                      src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                                      alt=""
+                                      className={styles.chatListTopImage}
+                                    />
+                                  ) : (
+                                    <div
+                                      className={styles.chatListUserInfoNoImage}
+                                    >
+                                      <p>
+                                        {message.sender.name
+                                          .split(" ")
+                                          .map((data: string) => data.charAt(0))
+                                          .slice(0, 2)
+                                          .join("")}
+                                      </p>
+                                    </div>
+                                  )}
+                                  <span>
+                                    {message.sender.name.split(" ")[0]}
+                                  </span>
+                                </div>
+                                <div className={styles.messageTime}>
+                                  {format(message.createdAt, "dd/MM/yyyy")}
+                                </div>
                               </div>
-                              <div className={styles.messageTime}>
-                                {format(message.createdAt, "dd/MM/yyyy")}
-                              </div>
-                            </div>
 
-                            <div className={styles.chatAreaMessage}>
-                              <span>{documentFormat()}</span> <br />{" "}
-                              <div className={styles.messageTime}>
-                                {" "}
-                                {format(message.createdAt, "HH:mm")}
-                              </div>{" "}
+                              <div className={styles.chatAreaMessage}>
+                                <span>{documentFormat()}</span> <br />{" "}
+                                <div className={styles.messageTime}>
+                                  {" "}
+                                  {format(message.createdAt, "HH:mm")}
+                                </div>{" "}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              }
+                  );
+                }
+              )
+            ) : (
+              <div className={styles.noRecord}>
+                <p>No docs</p>
+              </div>
             )}
           </Tab>
           <Tab eventKey="links" title="Links">
-            {getLinks.map(
-              (message: {
-                _id: string;
-                message: string;
-                createdAt: string;
-                sender: {
+            {getLinks.length ? (
+              getLinks.map(
+                (message: {
                   _id: string;
-                  name: string;
-                  photoUrl: string;
-                };
-                receiver: {
-                  _id: string;
-                  name: string;
-                  photoUrl: string;
-                };
-              }) => {
-                return (
-                  <div key={message._id} className="">
-                    <div className={styles.chatAreaCenter}>
-                      <div
-                        className={
-                          message.sender._id === user?._id
-                            ? `${styles.message} ${styles.own}`
-                            : `${styles.message} ${styles.receiver}`
-                        }
-                        key={message._id}
-                      >
-                        <div className={styles.chatAreaCenterTexts}>
-                          <div className={styles.chatAreaCenterContent}>
-                            <div
-                              className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
-                            >
-                              <div className={styles.user}>
-                                {message.sender.photoUrl ? (
-                                  <Image
-                                    height="35"
-                                    width="35"
-                                    src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
-                                    alt=""
-                                    className={styles.chatListTopImage}
-                                  />
-                                ) : (
-                                  <div
-                                    className={styles.chatListUserInfoNoImage}
-                                  >
-                                    <p>
-                                      {message.sender.name
-                                        .split(" ")
-                                        .map((data: string) => data.charAt(0))
-                                        .slice(0, 2)
-                                        .join("")}
-                                    </p>
-                                  </div>
-                                )}
-                                <span>{message.sender.name.split(" ")[0]}</span>
-                              </div>
-                              <div className={styles.messageTime}>
-                                {format(message.createdAt, "dd/MM/yyyy")}
-                              </div>
-                            </div>
-
-                            <div className={styles.chatAreaMessage}>
-                              <span>
-                                <Link href={message.message} target="_blank">
-                                  <span className={styles.messageLink}>
-                                    {message.message}
+                  message: string;
+                  createdAt: string;
+                  sender: {
+                    _id: string;
+                    name: string;
+                    photoUrl: string;
+                  };
+                  receiver: {
+                    _id: string;
+                    name: string;
+                    photoUrl: string;
+                  };
+                }) => {
+                  return (
+                    <div key={message._id} className="">
+                      <div className={styles.chatAreaCenter}>
+                        <div
+                          className={
+                            message.sender._id === user?._id
+                              ? `${styles.message} ${styles.own}`
+                              : `${styles.message} ${styles.receiver}`
+                          }
+                          key={message._id}
+                        >
+                          <div className={styles.chatAreaCenterTexts}>
+                            <div className={styles.chatAreaCenterContent}>
+                              <div
+                                className={`${styles.userInfo} ${styles.userInfoLinkTop}`}
+                              >
+                                <div className={styles.user}>
+                                  {message.sender.photoUrl ? (
+                                    <Image
+                                      height="35"
+                                      width="35"
+                                      src={`${process.env.baseUrl}/images/profile/${message.sender.photoUrl}`}
+                                      alt=""
+                                      className={styles.chatListTopImage}
+                                    />
+                                  ) : (
+                                    <div
+                                      className={styles.chatListUserInfoNoImage}
+                                    >
+                                      <p>
+                                        {message.sender.name
+                                          .split(" ")
+                                          .map((data: string) => data.charAt(0))
+                                          .slice(0, 2)
+                                          .join("")}
+                                      </p>
+                                    </div>
+                                  )}
+                                  <span>
+                                    {message.sender.name.split(" ")[0]}
                                   </span>
-                                </Link>
-                              </span>{" "}
-                              <br />{" "}
-                              <div className={styles.messageTime}>
-                                {" "}
-                                {format(message.createdAt, "HH:mm")}
-                              </div>{" "}
+                                </div>
+                                <div className={styles.messageTime}>
+                                  {format(message.createdAt, "dd/MM/yyyy")}
+                                </div>
+                              </div>
+
+                              <div className={styles.chatAreaMessage}>
+                                <span>
+                                  <Link href={message.message} target="_blank">
+                                    <span className={styles.messageLink}>
+                                      {message.message}
+                                    </span>
+                                  </Link>
+                                </span>{" "}
+                                <br />{" "}
+                                <div className={styles.messageTime}>
+                                  {" "}
+                                  {format(message.createdAt, "HH:mm")}
+                                </div>{" "}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              }
+                  );
+                }
+              )
+            ) : (
+              <div className={styles.noRecord}>
+                <p>No links</p>
+              </div>
             )}
           </Tab>
         </Tabs>

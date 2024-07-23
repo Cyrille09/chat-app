@@ -221,6 +221,71 @@ export const sendDocument: RequestHandler = async (req: any, res, next) => {
 };
 
 /**
+ * Send audio
+ */
+export const sendAudio: RequestHandler = async (req: any, res, next) => {
+  try {
+    req.body.sender = req.user;
+    const secondUser = JSON.parse(req.body.receiver);
+    req.body.receiver = secondUser._id;
+    req.body.message = req.file.filename;
+    req.body.type = "audio";
+
+    const newMessage = new Message(req.body);
+
+    const findReceiverContacts: any = await UserContact.findOne({
+      user: req.body.receiver,
+    });
+
+    if (
+      !findReceiverContacts ||
+      (findReceiverContacts &&
+        !findReceiverContacts?.users.some(
+          (user: { user: mongoose.Types.ObjectId }) =>
+            user?.user.toString() === req.user._id.toString()
+        ))
+    ) {
+      await UserContact.findOneAndUpdate(
+        { user: req.body.receiver },
+        { $push: { users: { user: req.user } } },
+        { new: true, upsert: true }
+      );
+    }
+    const message = await newMessage.save();
+
+    // sender
+    await UserContact.findOneAndUpdate(
+      { user: req.user._id, "users.user": req.body.receiver },
+      {
+        $set: {
+          "users.$.latestMessage": message._id,
+          "users.$.updatedAt": new Date(),
+        },
+      },
+      { new: true, upsert: true }
+    );
+
+    // receiver
+    await UserContact.findOneAndUpdate(
+      { user: req.body.receiver, "users.user": req.user._id },
+      {
+        $set: {
+          "users.$.latestMessage": message._id,
+          "users.$.updatedAt": new Date(),
+        },
+        $inc: { "users.$.messageUnreadCount": 1 },
+      },
+
+      { new: true, upsert: true }
+    );
+
+    res.status(201).json({ message, secondUser });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Get sender and receiver messages
  */
 export const getSenderAndReceiverMessages: RequestHandler = async (
@@ -427,6 +492,76 @@ export const sendGroupDocument: RequestHandler = async (
     req.body.group = req.body.groupId;
     req.body.message = req.file.filename;
     req.body.type = "document";
+
+    const newMessage = new Message(req.body);
+    const message = await newMessage.save();
+
+    // add the latest message to into the group
+    await Group.findOneAndUpdate(
+      {
+        _id: req.body.groupId,
+      },
+      {
+        $set: {
+          latestMessage: message._id,
+          latestSender: req.user,
+        },
+      },
+      { new: true, upsert: true }
+    );
+
+    const groupMembers = await GroupMember.find({
+      group: req.body.groupId,
+      user: { $nin: [req.user._id] },
+    }).populate("user group");
+
+    await UserContact.findOneAndUpdate(
+      {
+        user: req.user._id,
+        "users.group": req.body.groupId,
+      },
+      {
+        $set: {
+          "users.$.updatedAt": new Date(),
+        },
+      },
+
+      { new: true, upsert: true }
+    );
+
+    for (const groupMember of groupMembers) {
+      await UserContact.findOneAndUpdate(
+        {
+          user: groupMember.user._id,
+          "users.group": groupMember.group._id,
+        },
+        {
+          $set: {
+            "users.$.latestMessage": message._id,
+            "users.$.updatedAt": new Date(),
+          },
+          $inc: { "users.$.messageUnreadCount": 1 },
+        },
+
+        { new: true, upsert: true }
+      );
+    }
+
+    res.status(201).json({ message });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Send group image
+ */
+export const sendGroupAudio: RequestHandler = async (req: any, res, next) => {
+  try {
+    req.body.sender = req.user;
+    req.body.group = req.body.groupId;
+    req.body.message = req.file.filename;
+    req.body.type = "audio";
 
     const newMessage = new Message(req.body);
     const message = await newMessage.save();

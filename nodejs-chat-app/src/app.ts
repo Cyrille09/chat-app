@@ -43,6 +43,7 @@ app.use("/api/groups", groupsRoutes);
 // Middleware to serve static files.
 app.use("/images", express.static("images"));
 app.use("/documents", express.static("documents"));
+app.use("/audio", express.static("audio"));
 
 DisappearCronJob.start();
 
