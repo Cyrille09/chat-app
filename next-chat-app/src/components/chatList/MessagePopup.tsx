@@ -3,11 +3,12 @@ import {
   successCreateNewGroupMessagesActions,
   successEditUserActions,
   successLogoutActions,
+  successPreferLanguageActions,
 } from "@/redux-toolkit/reducers/actionsSlice";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
-const MessagePopup = ({ onClose }: any) => {
+const MessagePopup = ({ onClose, userRecord }: any) => {
   const popupRef: any = useRef();
   const dispatch = useDispatch();
 
@@ -58,6 +59,16 @@ const MessagePopup = ({ onClose }: any) => {
           }}
         >
           Change password
+        </li>
+        <li
+          onClick={() => {
+            handleOptionClick();
+            dispatch(
+              successPreferLanguageActions({ status: true, record: userRecord })
+            );
+          }}
+        >
+          Prefer language
         </li>
         <li
           onClick={() => {

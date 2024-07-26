@@ -46,10 +46,12 @@ export interface ActionsState {
     status: boolean;
     record: { message: string; _id: string };
   };
+  successPreferLanguage: {
+    status: boolean;
+    record: any;
+  };
 
   isLoading: boolean;
-
-  //
 }
 
 const initialState: ActionsState = {
@@ -90,6 +92,7 @@ const initialState: ActionsState = {
     record: { selectedImage: "", message: { name: "" }, saveButton: false },
   },
   successEditMessage: { status: false, record: { message: "", _id: "" } },
+  successPreferLanguage: { status: false, record: {} },
 
   isLoading: false,
 };
@@ -170,6 +173,9 @@ export const ActionsSlice = createSlice({
     successEditMessageActions: (state, action: PayloadAction<any>) => {
       state.successEditMessage = action.payload;
     },
+    successPreferLanguageActions: (state, action: PayloadAction<any>) => {
+      state.successPreferLanguage = action.payload;
+    },
 
     successLogoutActions: (state, action: PayloadAction<any>) => {
       state.successLogout = action.payload;
@@ -248,6 +254,10 @@ export const ActionsSlice = createSlice({
         status: false,
         record: { message: "", _id: "" },
       };
+      state.successPreferLanguage = {
+        status: false,
+        record: {},
+      };
 
       state.isLoading = false;
     },
@@ -290,6 +300,7 @@ export const {
   successPopupActions,
   errorPopupActions,
   successEditMessageActions,
+  successPreferLanguageActions,
   isLoadingActions,
 } = ActionsSlice.actions;
 

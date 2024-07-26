@@ -15,6 +15,10 @@ interface userModel {
     status: boolean;
     date: Date;
   };
+  preferLanguage: {
+    language: string;
+    isoCode: string;
+  };
 }
 
 const userSchema = new Schema<userModel>(
@@ -64,6 +68,16 @@ const userSchema = new Schema<userModel>(
       },
       date: {
         type: Date,
+      },
+    },
+    preferLanguage: {
+      language: {
+        type: String,
+        default: "",
+      },
+      isoCode: {
+        type: String,
+        default: "",
       },
     },
   },

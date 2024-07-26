@@ -21,6 +21,16 @@ interface MessageModel {
       user: Types.ObjectId;
     }
   ];
+  translatedMessage: [
+    {
+      user: Types.ObjectId;
+      message: string;
+      preferLanguage: {
+        language: string;
+        isoCode: string;
+      };
+    }
+  ];
 }
 
 const messageSchema = new Schema<MessageModel>(
@@ -53,6 +63,25 @@ const messageSchema = new Schema<MessageModel>(
         },
         date: {
           type: Date,
+        },
+      },
+    ],
+    translatedMessage: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+        preferLanguage: {
+          language: {
+            type: String,
+          },
+          isoCode: {
+            type: String,
+          },
+        },
+        message: {
+          type: String,
         },
       },
     ],

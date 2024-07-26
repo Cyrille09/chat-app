@@ -12,6 +12,10 @@ export interface UserInterface {
       status: boolean;
       date: any;
     };
+    preferLanguage: {
+      language: string;
+      isoCode: string;
+    };
   };
   blockStatus: boolean;
   muteNotification: string;
@@ -47,6 +51,10 @@ export const UserInterfaceInfo: UserInterface = {
     lastSeen: {
       status: false,
       date: "",
+    },
+    preferLanguage: {
+      language: "",
+      isoCode: "",
     },
   },
   blockStatus: false,

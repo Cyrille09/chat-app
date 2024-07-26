@@ -2,11 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Formik } from "formik";
-import { CSSTransition } from "react-transition-group";
-import Cookies from "js-cookie";
 import { format } from "date-fns";
-
-import "./chatList.scss";
 import { SearchWithOptions } from "../fields/search";
 import { BsSearch } from "react-icons/bs";
 import { GlobalButton } from "../button/GlobalButton";
@@ -24,28 +20,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux-toolkit/store";
 import {
-  hideActions,
-  isLoadingActions,
   successAddNewUsersActions,
   successEditUserActions,
   successStoryStatusActions,
 } from "@/redux-toolkit/reducers/actionsSlice";
-import {
-  AddNewContactUser,
-  ChangePassword,
-  DisplayCreateNewGroup,
-  DisplaySelectChats,
-  DisplayStarredMessages,
-  DisplayStoryStatus,
-  EditUser,
-  LogoutUser,
-  UserSettings,
-} from "../modelLists/ModalLists";
 
-import styles from "../modelLists/madal-lists.module.scss";
-import { signInPage } from "@/constants/routePath";
 import { useRouter } from "next/navigation";
-import { LOCAL_STORAGE_USER_TOKEN } from "@/constants/defaultValues";
 import { selectedUserRecord } from "@/redux-toolkit/reducers/usersSlice";
 import {
   getGroupMessages,
@@ -56,7 +36,7 @@ import {
   chatMessagesRecord,
 } from "@/redux-toolkit/reducers/chatMessageSlice";
 import { socket } from "@/components/websocket/websocket";
-import { getUserProfile, updateUserProfile } from "@/services/usersServices";
+import { getUserProfile } from "@/services/usersServices";
 import {
   getRequestUserContact,
   getUserContacts,
@@ -64,6 +44,8 @@ import {
 import MessagePopup from "./MessagePopup";
 import { getGroupMmebers } from "@/services/groupsServices";
 import { UserInterface, UserInterfaceInfo } from "../globalTypes/GlobalTypes";
+import ChatListActions from "./ChatListActions";
+import "./chatList.scss";
 
 const ChatList = ({
   user,
@@ -91,7 +73,6 @@ const ChatList = ({
     useState<[]>(requestUserContact);
 
   const dispatch = useDispatch();
-  const router = useRouter();
   const currentUser = user.user;
 
   useEffect(() => {
@@ -520,24 +501,6 @@ const ChatList = ({
     socket.emit("contactUser", currentUser);
   };
 
-  const logoutUserData = () => {
-    const lastSeen = {
-      status: false,
-      date: new Date(),
-    };
-    dispatch(isLoadingActions(true));
-    updateUserProfile({ lastSeen })
-      .then((response) => {
-        dispatch(hideActions());
-        socket.emit("userStatus", response.data);
-        Cookies.remove(LOCAL_STORAGE_USER_TOKEN);
-        router.push(signInPage);
-      })
-      .catch((error) => {
-        dispatch(isLoadingActions(false));
-      });
-  };
-
   const [showPopup, setShowPopup] = useState(false);
 
   const handleIconClick = () => {
@@ -550,209 +513,12 @@ const ChatList = ({
 
   return (
     <>
-      {/* Display story status */}
-      <CSSTransition
-        in={actionsSlice.successStoryStatus.status}
-        timeout={100}
-        classNames="panel-animate"
-        onEnter={() => document.body.classList.add("css-transition-modal-open")}
-        onExited={() =>
-          document.body.classList.remove("css-transition-modal-open")
-        }
-        unmountOnExit={true}
-        mountOnEnter={true}
-      >
-        <DisplayStoryStatus show={actionsSlice.successStoryStatus.status} />
-      </CSSTransition>
-
-      {/* Create new group */}
-      <CSSTransition
-        in={actionsSlice.successCreateNewGroup.status}
-        timeout={100}
-        classNames="panel-animate"
-        onEnter={() => document.body.classList.add("css-transition-modal-open")}
-        onExited={() =>
-          document.body.classList.remove("css-transition-modal-open")
-        }
-        unmountOnExit={true}
-        mountOnEnter={true}
-      >
-        <DisplayCreateNewGroup
-          show={actionsSlice.successCreateNewGroup.status}
-          users={userContactsRecord}
-          currentUser={currentUser}
-        />
-      </CSSTransition>
-
-      {/* Starred messages */}
-      <CSSTransition
-        in={actionsSlice.successStarMessages.status}
-        timeout={100}
-        classNames="panel-animate"
-        onEnter={() => document.body.classList.add("css-transition-modal-open")}
-        onExited={() =>
-          document.body.classList.remove("css-transition-modal-open")
-        }
-        unmountOnExit={true}
-        mountOnEnter={true}
-      >
-        <DisplayStarredMessages
-          show={actionsSlice.successStarMessages.status}
-          user={userRecord}
-        />
-      </CSSTransition>
-
-      {/* Selected chats */}
-      <CSSTransition
-        in={actionsSlice.successSelectChats.status}
-        timeout={100}
-        classNames="panel-animate"
-        onEnter={() => document.body.classList.add("css-transition-modal-open")}
-        onExited={() =>
-          document.body.classList.remove("css-transition-modal-open")
-        }
-        unmountOnExit={true}
-        mountOnEnter={true}
-      >
-        <DisplaySelectChats show={actionsSlice.successSelectChats.status} />
-      </CSSTransition>
-
-      {/* Edit user */}
-      <CSSTransition
-        in={actionsSlice.successEditUser.status}
-        timeout={100}
-        classNames="panel-animate"
-        onEnter={() => document.body.classList.add("css-transition-modal-open")}
-        onExited={() =>
-          document.body.classList.remove("css-transition-modal-open")
-        }
-        unmountOnExit={true}
-        mountOnEnter={true}
-      >
-        <EditUser
-          show={actionsSlice.successEditUser.status}
-          user={userRecord}
-        />
-      </CSSTransition>
-
-      {/* Add contact user */}
-      {actionsSlice.successAddNewUsers.status && (
-        <AddNewContactUser
-          show={actionsSlice.successAddNewUsers.status}
-          handleClose={() => dispatch(hideActions())}
-          users={requestUserContactRecord}
-          currentUser={userRecord}
-          footer={
-            <>
-              <div className={styles.flexRowWrapModalFooter}>
-                <div className={styles.footerLeft}>
-                  <GlobalButton
-                    format="white"
-                    size="sm"
-                    onClick={() => dispatch(hideActions())}
-                  >
-                    Cancel
-                  </GlobalButton>
-                </div>
-                <div>
-                  <GlobalButton format="success" type="submit" size="sm">
-                    Submit
-                  </GlobalButton>
-                </div>
-              </div>
-            </>
-          }
-        />
-      )}
-
-      {/* Change password */}
-      {actionsSlice.successChangePassword.status && (
-        <ChangePassword
-          show={actionsSlice.successChangePassword.status}
-          handleClose={() => dispatch(hideActions())}
-          footer={
-            <>
-              <div className={styles.flexRowWrapModalFooter}>
-                <div className={styles.footerLeft}>
-                  <GlobalButton
-                    format="white"
-                    size="sm"
-                    onClick={() => dispatch(hideActions())}
-                  >
-                    Cancel
-                  </GlobalButton>
-                </div>
-                <div>
-                  <GlobalButton format="success" type="submit" size="sm">
-                    Submit
-                  </GlobalButton>
-                </div>
-              </div>
-            </>
-          }
-        />
-      )}
-
-      {/* User settings */}
-      {actionsSlice.successUserSettings.status && (
-        <UserSettings
-          show={actionsSlice.successUserSettings.status}
-          handleClose={() => dispatch(hideActions())}
-          footer={
-            <>
-              <div className={styles.flexRowWrapModalFooter}>
-                <div className={styles.footerLeft}>
-                  <GlobalButton
-                    format="white"
-                    size="sm"
-                    onClick={() => dispatch(hideActions())}
-                  >
-                    Cancel
-                  </GlobalButton>
-                </div>
-                <div>
-                  <GlobalButton format="success" type="submit" size="sm">
-                    Submit
-                  </GlobalButton>
-                </div>
-              </div>
-            </>
-          }
-        />
-      )}
-
-      {/* Logout user */}
-      {actionsSlice.successLogout.status && (
-        <LogoutUser
-          show={actionsSlice.successLogout.status}
-          handleClose={() => dispatch(hideActions())}
-          footer={
-            <>
-              <div className={styles.flexRowWrapModalFooter}>
-                <div className={styles.footerLeft}>
-                  <GlobalButton
-                    format="white"
-                    size="sm"
-                    onClick={() => dispatch(hideActions())}
-                  >
-                    No
-                  </GlobalButton>
-                </div>
-                <div>
-                  <GlobalButton
-                    format="success"
-                    size="sm"
-                    onClick={() => logoutUserData()}
-                  >
-                    Yes
-                  </GlobalButton>
-                </div>
-              </div>
-            </>
-          }
-        />
-      )}
-
+      <ChatListActions
+        user={user}
+        requestUserContactRecord={requestUserContactRecord}
+        userRecord={userRecord}
+        userContactsRecord={userContactsRecord}
+      />
       <div className="chatList">
         <Formik initialValues={{ name: "" }} onSubmit={() => {}}>
           {({ values, setFieldValue }) => {
@@ -1121,7 +887,10 @@ const ChatList = ({
                           }}
                         />
                         {showPopup && (
-                          <MessagePopup onClose={handleClosePopup} />
+                          <MessagePopup
+                            onClose={handleClosePopup}
+                            userRecord={userRecord}
+                          />
                         )}
                       </div>
                     </div>
