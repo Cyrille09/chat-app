@@ -1,10 +1,13 @@
 import { RequestHandler } from "express";
+import translate from "@iamtraction/google-translate";
 import UserContact from "../models/UserContact";
 import Message from "../models/Message";
 import mongoose from "mongoose";
 import Group from "../models/Group";
 import GroupMember from "../models/GroupMember";
 import { recordNotFound } from "../errorMessages/errror";
+import User from "../models/User";
+import { Console } from "console";
 
 /**
  * Get messages
@@ -83,6 +86,46 @@ export const sendMessage: RequestHandler = async (req: any, res, next) => {
 
       { new: true, upsert: true }
     );
+
+    if (req.user?.preferLanguage?.isoCode) {
+      const translatedMessage = await translate(req.body.message, {
+        to: `${req.user?.preferLanguage?.isoCode}`,
+      });
+
+      await Message.findOneAndUpdate(
+        { _id: message._id },
+        {
+          $push: {
+            translatedMessage: {
+              user: req.user,
+              message: translatedMessage.text,
+              preferLanguage: req.user?.preferLanguage,
+            },
+          },
+        },
+        { new: true, upsert: true }
+      );
+    }
+
+    if (secondUser?.preferLanguage?.isoCode) {
+      const translatedMessage = await translate(req.body.message, {
+        to: `${secondUser?.preferLanguage?.isoCode}`,
+      });
+
+      await Message.findOneAndUpdate(
+        { _id: message._id },
+        {
+          $push: {
+            translatedMessage: {
+              user: secondUser._id,
+              message: translatedMessage.text,
+              preferLanguage: secondUser?.preferLanguage,
+            },
+          },
+        },
+        { new: true, upsert: true }
+      );
+    }
 
     res.status(201).json({ message, secondUser });
   } catch (error) {
@@ -385,6 +428,26 @@ export const sendGroupMessage: RequestHandler = async (req: any, res, next) => {
       { new: true, upsert: true }
     );
 
+    if (req.user?.preferLanguage?.isoCode) {
+      const translatedMessage = await translate(req.body.message, {
+        to: `${req.user?.preferLanguage?.isoCode}`,
+      });
+
+      await Message.findOneAndUpdate(
+        { _id: message._id },
+        {
+          $push: {
+            translatedMessage: {
+              user: req.user,
+              message: translatedMessage.text,
+              preferLanguage: req.user?.preferLanguage,
+            },
+          },
+        },
+        { new: true, upsert: true }
+      );
+    }
+
     for (const groupMember of groupMembers) {
       await UserContact.findOneAndUpdate(
         {
@@ -401,6 +464,28 @@ export const sendGroupMessage: RequestHandler = async (req: any, res, next) => {
 
         { new: true, upsert: true }
       );
+
+      const userMember: any = groupMember;
+
+      if (userMember?.user?.preferLanguage?.isoCode) {
+        const translatedMessage = await translate(req.body.message, {
+          to: `${userMember?.user?.preferLanguage?.isoCode}`,
+        });
+
+        await Message.findOneAndUpdate(
+          { _id: message._id },
+          {
+            $push: {
+              translatedMessage: {
+                user: userMember?.user._id,
+                message: translatedMessage.text,
+                preferLanguage: userMember?.user?.preferLanguage,
+              },
+            },
+          },
+          { new: true, upsert: true }
+        );
+      }
     }
 
     res.status(201).json({ message });
@@ -670,6 +755,26 @@ export const updateMessage: RequestHandler = async (req, res, next) => {
       return res.status(notFound.status).json({ message: notFound });
     }
 
+    if (updateMessage.translatedMessage.length) {
+      for (const messageTranslated of updateMessage.translatedMessage) {
+        const translatedMessage = await translate(req.body.message, {
+          to: `${messageTranslated.preferLanguage?.isoCode}`,
+        });
+
+        await Message.updateOne(
+          {
+            _id: req.params.id,
+            "translatedMessage.user": messageTranslated.user,
+          },
+          {
+            $set: {
+              "translatedMessage.$.message": translatedMessage.text,
+            },
+          }
+        );
+      }
+    }
+
     res.status(200).json(updateMessage);
   } catch (error) {
     next(error);
@@ -686,8 +791,6 @@ export const addStarToMessage: RequestHandler = async (req: any, res, next) => {
       { $push: { stars: { user: req.user } } },
       { new: true }
     );
-
-    console.log(addStarToMessage);
 
     if (!addStarToMessage) {
       const notFound = await recordNotFound("Message");

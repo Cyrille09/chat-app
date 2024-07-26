@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@iamtraction/google-translate": "github:iamtraction/google-translate",
     "@types/debug": "^4.1.12",
     "@types/multer": "^1.4.11",
     "bcrypt": "^5.1.1",

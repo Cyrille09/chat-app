@@ -119,8 +119,6 @@ export const DisplayUserStars = ({
         <div className={styles.chatAreaCenter}>
           {starredMessages?.length ? (
             starredMessages?.map((message: any, index: number) => {
-              console.log(message.stars);
-
               const showMessages = () => {
                 if (message.type === "image") {
                   return (
@@ -1304,7 +1302,6 @@ export const DisplayStarredMessages = ({
   const starredMessages = chatMessageSlice.chatMessages.filter(
     (startMessage: any) => startMessage
   );
-  console.log(starredMessages);
 
   const dispatch = useDispatch();
   return (
@@ -3570,6 +3567,142 @@ export const ViewGroupUser = ({ footer, show, user, handleClose }: any) => {
         </div>
       </div>
     </Panel>
+  );
+};
+
+export const PreferLanguage = ({ footer, show, user, handleClose }: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+  const dispatch = useDispatch();
+
+  const updateUserProfilePreferLanguageData = async (values: {
+    preferLanguage: { label: string; value: string };
+  }) => {
+    const preferLanguage = {
+      language:
+        values.preferLanguage.label === "None"
+          ? ""
+          : values.preferLanguage.label,
+      isoCode: values.preferLanguage.value,
+    };
+    dispatch(isLoadingActions(true));
+    updateUserProfile({
+      preferLanguage,
+    })
+      .then((response) => {
+        dispatch(isLoadingActions(false));
+        socket.emit("updateUser", response.data);
+        dispatch(hideActions());
+      })
+      .catch((error) => {
+        dispatch(isLoadingActions(false));
+        dispatch(
+          errorPopupActions({
+            status: true,
+            message: ACTIONS_ERROR_MESSAGE,
+            display: "",
+          })
+        );
+      });
+  };
+
+  const languages: any = [
+    {
+      label: "None",
+      value: "",
+    },
+    {
+      label: "English",
+      value: "en",
+    },
+    {
+      label: "Frensh",
+      value: "fr",
+    },
+    {
+      label: "Portuguese",
+      value: "pt",
+    },
+    {
+      label: "Spanish",
+      value: "es",
+    },
+    {
+      label: "German",
+      value: "de",
+    },
+    {
+      label: "Italian",
+      value: "it",
+    },
+    {
+      label: "Portuguese",
+      value: "pt",
+    },
+    {
+      label: "Twi",
+      value: "tw",
+    },
+    {
+      label: "Yoruba",
+      value: "yo",
+    },
+  ];
+
+  return (
+    <GlobalModal
+      title={`Prefer Language`}
+      show={show}
+      handleClose={handleClose}
+      footer={footer}
+    >
+      <div className={styles.modal}>
+        <Formik
+          form
+          initialValues={{
+            preferLanguage: user?.preferLanguage?.isoCode,
+          }}
+          onSubmit={updateUserProfilePreferLanguageData}
+          enableReinitialize
+        >
+          {({ handleChange, handleBlur, setFieldValue, values, errors }) => (
+            <Form>
+              <div>
+                <div>
+                  {actionsSlice.errorPopup.status && (
+                    <GlobalErrorMessage
+                      message={actionsSlice.errorPopup.message}
+                    />
+                  )}
+                </div>
+                {actionsSlice.isLoading && <LoadingData />}
+                <div>
+                  <div>
+                    <ReactSelect
+                      label="Language List"
+                      id="preferLanguage"
+                      required
+                      name="preferLanguage"
+                      options={languages}
+                      onChange={(selected: any) =>
+                        selected &&
+                        selected.value &&
+                        setFieldValue(`preferLanguage`, selected)
+                      }
+                      defaultValue={languages.find(
+                        (language: any) =>
+                          language.value === values.preferLanguage
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {footer && <div className={styles.footer}>{footer}</div>}
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </GlobalModal>
   );
 };
 

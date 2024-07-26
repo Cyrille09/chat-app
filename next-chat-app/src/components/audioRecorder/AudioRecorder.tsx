@@ -18,8 +18,6 @@ const AudioRecorder = () => {
     }
   }, [isRecording]);
 
-  console.log("audioUrl", audioUrl);
-
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
