@@ -1,6 +1,6 @@
-import { successSearchMessagesActions } from "@/redux-toolkit/reducers/actionsSlice";
+// import { successSearchMessagesActions } from "@/redux-toolkit/reducers/actionsSlice";
 import { format } from "date-fns";
-import { FaPhoneAlt, FaSearch, FaVideo } from "react-icons/fa";
+// import { FaPhoneAlt, FaSearch, FaVideo } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import Image from "next/image";
 
@@ -105,7 +105,9 @@ const ChatAreaTopLevel = ({
         {setProfileImage}
         <div className="chatAreaTopTexts">{displayStatus()}</div>
       </div>
-      <div className="icons">
+      {/* Audio call, video call and search  message will be ready soon*/}
+
+      {/* <div className="icons">
         <FaVideo
           className="chartTopIcon"
           onClick={() => alert("Coming soon")}
@@ -120,7 +122,7 @@ const ChatAreaTopLevel = ({
             dispatch(successSearchMessagesActions({ status: true, record: {} }))
           }
         />
-      </div>
+      </div> */}
     </>
   );
 };

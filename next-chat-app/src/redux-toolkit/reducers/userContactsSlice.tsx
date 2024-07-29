@@ -3,10 +3,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserContactsState {
   userContacts: [];
+  userContactStoryFeeds: [];
 }
 
 const initialState: UserContactsState = {
   userContacts: [],
+  userContactStoryFeeds: [],
 };
 
 export const userContactsSlice = createSlice({
@@ -16,9 +18,13 @@ export const userContactsSlice = createSlice({
     userContactsRecord: (state, action: PayloadAction<any>) => {
       state.userContacts = action.payload;
     },
+    userContactStoryFeedsRecord: (state, action: PayloadAction<any>) => {
+      state.userContactStoryFeeds = action.payload;
+    },
   },
 });
 
-export const { userContactsRecord } = userContactsSlice.actions;
+export const { userContactsRecord, userContactStoryFeedsRecord } =
+  userContactsSlice.actions;
 
 export default userContactsSlice.reducer;

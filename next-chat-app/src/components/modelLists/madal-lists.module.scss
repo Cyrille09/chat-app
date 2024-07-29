@@ -444,6 +444,37 @@
   }
 }
 
+// add story feed
+.addStoryFeedMessage {
+  margin: 20px;
+  min-height: 250px;
+}
+.addStoryFeedEmoji {
+  text-align: right;
+}
+.addStoryFeedEmojiOpenAndClose {
+  cursor: pointer;
+  color: #555;
+  margin-left: 10px;
+  margin-top: 5px;
+}
+
+.addStoryEmoji {
+  position: relative;
+
+  .addStoryPicker {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+  }
+}
+
+.storyFeedImageDisplay {
+  margin: 20px;
+  min-height: 250px;
+}
+
+// no record
 .noRecord {
   display: flex;
   align-items: center;

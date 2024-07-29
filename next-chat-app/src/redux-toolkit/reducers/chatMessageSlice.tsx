@@ -2,13 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface ChatMessagesState {
-  chatMessages: any;
+  chatMessages: { messages: any; groupedMessages: any };
   chatGroupMembers: any;
   chatMessagesGroupByDate: any;
 }
 
 const initialState: ChatMessagesState = {
-  chatMessages: [],
+  chatMessages: { messages: [], groupedMessages: [] },
   chatGroupMembers: [],
   chatMessagesGroupByDate: {},
 };

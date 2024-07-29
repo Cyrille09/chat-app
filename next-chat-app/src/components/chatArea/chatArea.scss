@@ -98,7 +98,18 @@
       }
     }
   }
-
+  .groupedDate {
+    align-self: center;
+    max-width: 50%;
+    text-align: center;
+    span {
+      color: $gray-800;
+      font-size: 13px;
+    }
+    background-color: $white;
+    padding: 0 10px;
+    border-radius: 5px;
+  }
   .chatAreaCenter {
     padding: 20px;
     flex: 1;
@@ -284,6 +295,12 @@
       margin-left: 10px;
     }
 
+    .chatAreaBottomImageClose {
+      cursor: pointer;
+      color: #555;
+      margin-left: 10px;
+    }
+
     .chatAreaBottomIcon {
       width: 20px;
       height: 20px;
@@ -350,9 +367,14 @@
     height: 35px;
     width: 35px;
     font-size: 20px;
-    background: $gray-300;
+    background: $gray-500;
     border: none;
     border-radius: 50%;
+    cursor: pointer;
+  }
+  .backToTopIcon {
+    margin-top: -15px;
+    margin-left: -1px;
   }
 }
 

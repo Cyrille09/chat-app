@@ -19,11 +19,12 @@ import { IoMdSend } from "react-icons/io";
 import {
   FaImage,
   FaMicrophone,
-  FaMixer,
   FaPauseCircle,
   FaSmile,
   FaTrash,
 } from "react-icons/fa";
+import { IoCloseSharp } from "react-icons/io5";
+
 import { TiAttachmentOutline } from "react-icons/ti";
 import EmojiPicker from "emoji-picker-react";
 import { Input } from "../fields/input";
@@ -401,8 +402,9 @@ const ChatAreaBottomLevel = ({ user }: { user: UserInterface }) => {
                         }}
                       />
                       {actionsSlice.successDisplayEmoji.status ? (
-                        <FaMixer
-                          className="chatAreaBottomImage"
+                        <IoCloseSharp
+                          size={26}
+                          className="chatAreaBottomImageClose"
                           onClick={() => {
                             // setOpen((prev) => !prev);
                             setOpen(false);

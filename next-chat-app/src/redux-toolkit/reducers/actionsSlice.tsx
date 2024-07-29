@@ -50,6 +50,15 @@ export interface ActionsState {
     status: boolean;
     record: any;
   };
+  successAddStoryFeed: {
+    status: boolean;
+    record: { text: boolean; imageOrVideo: boolean };
+  };
+
+  successStoryFeedUserStatus: {
+    status: boolean;
+    record: { index: number; status: any };
+  };
 
   isLoading: boolean;
 }
@@ -93,6 +102,14 @@ const initialState: ActionsState = {
   },
   successEditMessage: { status: false, record: { message: "", _id: "" } },
   successPreferLanguage: { status: false, record: {} },
+  successAddStoryFeed: {
+    status: false,
+    record: { text: false, imageOrVideo: false },
+  },
+  successStoryFeedUserStatus: {
+    status: false,
+    record: { index: 0, status: {} },
+  },
 
   isLoading: false,
 };
@@ -177,6 +194,13 @@ export const ActionsSlice = createSlice({
       state.successPreferLanguage = action.payload;
     },
 
+    successAddStoryFeedActions: (state, action: PayloadAction<any>) => {
+      state.successAddStoryFeed = action.payload;
+    },
+    successStoryFeedUserStatusActions: (state, action: PayloadAction<any>) => {
+      state.successStoryFeedUserStatus = action.payload;
+    },
+
     successLogoutActions: (state, action: PayloadAction<any>) => {
       state.successLogout = action.payload;
     },
@@ -258,6 +282,14 @@ export const ActionsSlice = createSlice({
         status: false,
         record: {},
       };
+      state.successAddStoryFeed = {
+        status: false,
+        record: { text: false, imageOrVideo: false },
+      };
+      state.successStoryFeedUserStatus = {
+        status: false,
+        record: { index: 0, status: {} },
+      };
 
       state.isLoading = false;
     },
@@ -301,6 +333,8 @@ export const {
   errorPopupActions,
   successEditMessageActions,
   successPreferLanguageActions,
+  successAddStoryFeedActions,
+  successStoryFeedUserStatusActions,
   isLoadingActions,
 } = ActionsSlice.actions;
 

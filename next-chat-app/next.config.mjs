@@ -7,7 +7,7 @@ const nextConfig = {
     environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
   },
   images: {
-    domains: ["localhost"],
+    domains: ["localhost", "via.placeholder.com"],
   },
 };
 

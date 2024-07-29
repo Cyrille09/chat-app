@@ -6,8 +6,6 @@ import mongoose from "mongoose";
 import Group from "../models/Group";
 import GroupMember from "../models/GroupMember";
 import { recordNotFound } from "../errorMessages/errror";
-import User from "../models/User";
-import { Console } from "console";
 
 /**
  * Get messages
@@ -361,19 +359,21 @@ export const getSenderAndReceiverMessages: RequestHandler = async (
 
     const messages = await Message.find(query).populate("receiver sender");
 
-    const groupedMessages = messages.reduce((acc: any, message: any) => {
-      // Format the createdAt date to YYYY-MM-DD
-      const date = message.createdAt.toISOString().split("T")[0];
+    const groupedMessages = Object.values(
+      messages.reduce((acc: any, message: any) => {
+        // Format the createdAt date to YYYY-MM-DD
+        const date = message.createdAt.toISOString().split("T")[0];
 
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(message);
+        if (!acc[date]) {
+          acc[date] = { date: date, messages: [] };
+        }
+        acc[date].messages.push(message);
 
-      return acc;
-    }, {});
+        return acc;
+      }, {})
+    );
 
-    res.status(200).json(messages);
+    res.status(200).json({ messages, groupedMessages });
   } catch (error) {
     next(error);
   }
@@ -731,7 +731,21 @@ export const getGroupMessages: RequestHandler = async (req: any, res, next) => {
       disappear: { $ne: "disappeared" },
     }).populate("receiver sender");
 
-    res.status(200).json(messages);
+    const groupedMessages = Object.values(
+      messages.reduce((acc: any, message: any) => {
+        // Format the createdAt date to YYYY-MM-DD
+        const date = message.createdAt.toISOString().split("T")[0];
+
+        if (!acc[date]) {
+          acc[date] = { date: date, messages: [] };
+        }
+        acc[date].messages.push(message);
+
+        return acc;
+      }, {})
+    );
+
+    res.status(200).json({ messages, groupedMessages });
   } catch (error) {
     next(error);
   }

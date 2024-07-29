@@ -4,10 +4,13 @@ import { CSSTransition } from "react-transition-group";
 import {
   hideActions,
   isLoadingActions,
+  successAddStoryFeedActions,
 } from "@/redux-toolkit/reducers/actionsSlice";
 import Cookies from "js-cookie";
 import {
+  AddImageOrVideoStoryStatus,
   AddNewContactUser,
+  AddTextStoryStatus,
   ChangePassword,
   DisplayCreateNewGroup,
   DisplaySelectChats,
@@ -79,7 +82,10 @@ const ChatListActions = ({
         unmountOnExit={true}
         mountOnEnter={true}
       >
-        <DisplayStoryStatus show={actionsSlice.successStoryStatus.status} />
+        <DisplayStoryStatus
+          show={actionsSlice.successStoryStatus.status}
+          userRecord={userRecord}
+        />
       </CSSTransition>
 
       {/* Create new group */}
@@ -298,6 +304,40 @@ const ChatListActions = ({
           }
         />
       )}
+
+      {/* Add text story feed */}
+      {actionsSlice.successAddStoryFeed.status &&
+        actionsSlice.successAddStoryFeed.record.text && (
+          <AddTextStoryStatus
+            show={actionsSlice.successAddStoryFeed.status}
+            handleClose={() =>
+              dispatch(
+                successAddStoryFeedActions({
+                  status: false,
+                  record: { text: false, imageOrVideo: false },
+                })
+              )
+            }
+            user={userRecord}
+          />
+        )}
+
+      {/* Add image or video story feed */}
+      {actionsSlice.successAddStoryFeed.status &&
+        actionsSlice.successAddStoryFeed.record.imageOrVideo && (
+          <AddImageOrVideoStoryStatus
+            show={actionsSlice.successAddStoryFeed.status}
+            handleClose={() =>
+              dispatch(
+                successAddStoryFeedActions({
+                  status: false,
+                  record: { text: false, imageOrVideo: false },
+                })
+              )
+            }
+            user={userRecord}
+          />
+        )}
     </>
   );
 };

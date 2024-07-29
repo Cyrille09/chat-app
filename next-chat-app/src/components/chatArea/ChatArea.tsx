@@ -163,19 +163,29 @@ const ChatArea = ({ user }: any) => {
           selectedUser.group._id
         );
         if (isSubscribed) {
-          if (chatMessages?.data?.length) {
-            dispatch(chatMessagesRecord(chatMessages.data));
+          if (chatMessages?.data?.messages.length) {
+            dispatch(
+              chatMessagesRecord({
+                messages: chatMessages.data.messages,
+                groupedMessages: chatMessages.data.groupedMessages,
+              })
+            );
           } else {
-            dispatch(chatMessagesRecord([]));
+            dispatch(chatMessagesRecord({ messages: [], groupedMessages: [] }));
           }
         }
       } else {
         const chatMessages: any = await getSenderAndReceiverMessages(user);
         if (isSubscribed) {
-          if (chatMessages?.data?.length) {
-            dispatch(chatMessagesRecord(chatMessages.data));
+          if (chatMessages?.data?.messages.length) {
+            dispatch(
+              chatMessagesRecord({
+                messages: chatMessages.data.messages,
+                groupedMessages: chatMessages.data.groupedMessages,
+              })
+            );
           } else {
-            dispatch(chatMessagesRecord([]));
+            dispatch(chatMessagesRecord({ messages: [], groupedMessages: [] }));
           }
         }
       }
@@ -413,7 +423,11 @@ const ChatArea = ({ user }: any) => {
               <div ref={endRef}></div>
               <div className="">
                 <button className="backToTop" onClick={() => scrollToTop()}>
-                  <FaAngleDown />
+                  <FaAngleDown
+                    className="backToTopIcon"
+                    // onClick={() => scrollToTop()}
+                    size={20}
+                  />
                 </button>
               </div>
             </>
