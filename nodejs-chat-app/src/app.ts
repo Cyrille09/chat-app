@@ -11,8 +11,9 @@ import usersRoutes from "./routes/usersRoutes";
 import messagesRoutes from "./routes/messagesRoutes";
 import userContactsRoutes from "./routes/userContactsRoutes";
 import groupsRoutes from "./routes/groupRoutes";
+import storyFeedsRoutes from "./routes/storyFeedRoutes";
 import { SocketIO } from "../src/socket/socket";
-import { DisappearCronJob } from "./cronJob/cronJob";
+import { DeletestoryFeedsCronJob, DisappearCronJob } from "./cronJob/cronJob";
 
 const logger = debug("app:log");
 const PORT = parseInt(`${process.env.PORT}`, 10) || 5007;
@@ -39,6 +40,7 @@ app.use("/api/users", usersRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/api/userContacts", userContactsRoutes);
 app.use("/api/groups", groupsRoutes);
+app.use("/api/storyFeeds", storyFeedsRoutes);
 
 // Middleware to serve static files.
 app.use("/images", express.static("images"));
@@ -46,6 +48,7 @@ app.use("/documents", express.static("documents"));
 app.use("/audio", express.static("audio"));
 
 DisappearCronJob.start();
+DeletestoryFeedsCronJob.start();
 
 SocketIO(io);
 

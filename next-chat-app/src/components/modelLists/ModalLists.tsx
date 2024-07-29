@@ -4,6 +4,7 @@ import {
   errorPopupActions,
   hideActions,
   isLoadingActions,
+  successAddStoryFeedActions,
   successDeleteGroupUserPhotoActions,
   successDeleteUserPhotoActions,
 } from "@/redux-toolkit/reducers/actionsSlice";
@@ -36,6 +37,10 @@ import {
   addYears,
   addWeeks,
   addDays,
+  parseISO,
+  isToday,
+  isYesterday,
+  isThisWeek,
 } from "date-fns";
 import { BoxShadowCard } from "../cards";
 import { Col, Row } from "react-bootstrap";
@@ -48,9 +53,12 @@ import {
   FaFilePdf,
   FaFileWord,
   FaImage,
+  FaSmile,
   FaStar,
 } from "react-icons/fa";
-import { useContext, useRef, useState } from "react";
+import { IoCloseSharp } from "react-icons/io5";
+
+import { useEffect, useRef, useState } from "react";
 import { Input } from "../fields/input";
 import userImagePlaceholder from "../../assets/images/placeholder.png";
 import {
@@ -75,6 +83,17 @@ import { selectedUserRecord } from "@/redux-toolkit/reducers/usersSlice";
 import { chatGroupMembersRecord } from "@/redux-toolkit/reducers/chatMessageSlice";
 import { updateMessage } from "@/services/messagesServices";
 import MessageActionsPopup from "../chatArea/MessageActionsPopup";
+import StoriesFeed from "../storiesFeed/StoriesFeed";
+import "../storiesFeed/stories.scss";
+import UserStatus from "../storiesFeed/status/UserStatus";
+import {
+  getContactUserStoryFeeds,
+  sendStoryFeed,
+  sendStoryFeedImageOrVideo,
+} from "@/services/storyFeedsServices";
+import EmojiPicker from "emoji-picker-react";
+import { IoMdSend } from "react-icons/io";
+import { userContactStoryFeedsRecord } from "@/redux-toolkit/reducers/userContactsSlice";
 
 export const DisplayUserStars = ({
   show,
@@ -90,7 +109,7 @@ export const DisplayUserStars = ({
   const [open, setOpen] = useState(false);
   const [messageId, setMessageId] = useState("");
 
-  const starredMessages = chatMessageSlice.chatMessages.filter(
+  const starredMessages = chatMessageSlice.chatMessages.messages?.filter(
     (startMessage: any) =>
       startMessage.stars?.find((star: any) => star.user === user._id)
   );
@@ -119,6 +138,19 @@ export const DisplayUserStars = ({
         <div className={styles.chatAreaCenter}>
           {starredMessages?.length ? (
             starredMessages?.map((message: any, index: number) => {
+              const dateCreated = () => {
+                const date = parseISO(message.createdAt);
+                if (isToday(date)) {
+                  return `Today`;
+                } else if (isYesterday(date)) {
+                  return `Yesterday`;
+                } else if (isThisWeek(date)) {
+                  return `${format(date, "EEEE")}`;
+                } else {
+                  return `${format(date, "dd/MM/yyyy")}`;
+                }
+              };
+
               const showMessages = () => {
                 if (message.type === "image") {
                   return (
@@ -389,7 +421,7 @@ export const DisplayUserStars = ({
                             <span>{message.sender.name.split(" ")[0]}</span>
                           </div>
                           <div className={styles.messageTime}>
-                            {format(message.createdAt, "dd/MM/yyyy")}
+                            {dateCreated()}
 
                             <span
                               className="popup-message"
@@ -462,7 +494,7 @@ export const DisplayUserStars = ({
                             <span>{message.sender.name.split(" ")[0]}</span>
                           </div>
                           <div className={styles.messageTime}>
-                            {format(message.createdAt, "dd/MM/yyyy")}
+                            {dateCreated()}
 
                             <span
                               className="popup-message"
@@ -601,6 +633,19 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
                     photoUrl: string;
                   };
                 }) => {
+                  const dateCreated = () => {
+                    const date = parseISO(message.createdAt);
+                    if (isToday(date)) {
+                      return `Today`;
+                    } else if (isYesterday(date)) {
+                      return `Yesterday`;
+                    } else if (isThisWeek(date)) {
+                      return `${format(date, "EEEE")}`;
+                    } else {
+                      return `${format(date, "dd/MM/yyyy")}`;
+                    }
+                  };
+
                   const documentFormat = () => {
                     const ext: any = message.message.split(".").pop();
                     if (ext === "pdf") {
@@ -687,16 +732,13 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
                                   </span>
                                 </div>
                                 <div className={styles.messageTime}>
-                                  {format(message.createdAt, "dd/MM/yyyy")}
+                                  {dateCreated()}
                                 </div>
                               </div>
 
                               <div className={styles.chatAreaMessage}>
                                 <span>{documentFormat()}</span> <br />{" "}
-                                <div className={styles.messageTime}>
-                                  {" "}
-                                  {format(message.createdAt, "HH:mm")}
-                                </div>{" "}
+                                <div className={styles.messageTime}></div>
                               </div>
                             </div>
                           </div>
@@ -730,6 +772,18 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
                     photoUrl: string;
                   };
                 }) => {
+                  const dateCreated = () => {
+                    const date = parseISO(message.createdAt);
+                    if (isToday(date)) {
+                      return `Today`;
+                    } else if (isYesterday(date)) {
+                      return `Yesterday`;
+                    } else if (isThisWeek(date)) {
+                      return `${format(date, "EEEE")}`;
+                    } else {
+                      return `${format(date, "dd/MM/yyyy")}`;
+                    }
+                  };
                   return (
                     <div key={message._id} className="">
                       <div className={styles.chatAreaCenter}>
@@ -773,7 +827,7 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
                                   </span>
                                 </div>
                                 <div className={styles.messageTime}>
-                                  {format(message.createdAt, "dd/MM/yyyy")}
+                                  {dateCreated()}
                                 </div>
                               </div>
 
@@ -786,10 +840,7 @@ export const UserMediaList = ({ show, user }: { show: boolean; user: any }) => {
                                   </Link>
                                 </span>{" "}
                                 <br />{" "}
-                                <div className={styles.messageTime}>
-                                  {" "}
-                                  {format(message.createdAt, "HH:mm")}
-                                </div>{" "}
+                                <div className={styles.messageTime}></div>
                               </div>
                             </div>
                           </div>
@@ -1272,20 +1323,434 @@ export const SearchMessages = ({ show }: { show: boolean }) => {
   );
 };
 
-export const DisplayStoryStatus = ({ show }: { show: boolean }) => {
+export const DisplayStoryStatus = ({
+  show,
+  userRecord,
+}: {
+  show: boolean;
+  userRecord: any;
+}) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+  const userContactsSlice = useSelector(
+    (state: RootState) => state.userContactsSlice
+  );
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getContactUserStoryFeedsData = async () => {
+      getContactUserStoryFeeds()
+        .then((response) => {
+          dispatch(userContactStoryFeedsRecord(response.data));
+        })
+        .catch((error) => {});
+    };
+
+    getContactUserStoryFeedsData();
+  }, []);
+
   return (
     <Panel
       show={show}
       handleClose={() => {
         dispatch(hideActions());
       }}
-      title="Story Status"
+      title="Story Feed"
       width="50%"
-      maxWidth="25%"
+      maxWidth={`${
+        actionsSlice.successStoryFeedUserStatus.status ? "50%" : "25%"
+      }`}
     >
-      <p>Coming soon..</p>
+      <>
+        {actionsSlice.successStoryFeedUserStatus.status ? (
+          <div className="storyList">
+            {userContactsSlice.userContactStoryFeeds.length > 0 ? (
+              <StoriesFeed users={userContactsSlice.userContactStoryFeeds} />
+            ) : (
+              <p>Loading stories...</p>
+            )}
+          </div>
+        ) : (
+          <div>
+            <UserStatus
+              usersStatuses={userContactsSlice.userContactStoryFeeds}
+              userRecord={userRecord}
+            />
+          </div>
+        )}
+      </>
     </Panel>
+  );
+};
+
+export const AddTextStoryStatus = ({
+  footer,
+  show,
+  user,
+  handleClose,
+}: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const sendStoryFeedData = (values: { message: string }) => {
+    sendStoryFeed(values.message)
+      .then((response) => {
+        socket.emit("storyFeed", response.data);
+        dispatch(
+          successAddStoryFeedActions({
+            status: false,
+            record: { text: false, imageOrVideo: false },
+          })
+        );
+      })
+      .catch((error) => {
+        dispatch(isLoadingActions(false));
+        dispatch(
+          errorPopupActions({
+            status: true,
+            message: ACTIONS_ERROR_MESSAGE,
+            display: "",
+          })
+        );
+      });
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      event.target.form.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true })
+      );
+    }
+  };
+
+  return (
+    <GlobalModal
+      title={`Add story feed`}
+      show={show}
+      handleClose={handleClose}
+      footer={footer}
+      size="lg"
+    >
+      <div className={styles.modal}>
+        <Formik
+          form
+          initialValues={{
+            message: "",
+            displayEmoji: false,
+          }}
+          onSubmit={sendStoryFeedData}
+          enableReinitialize
+        >
+          {({
+            handleChange,
+            handleBlur,
+            setFieldValue,
+            handleSubmit,
+            values,
+            errors,
+          }) => {
+            return (
+              <Form>
+                <div>
+                  <div>
+                    {actionsSlice.errorPopup.status && (
+                      <GlobalErrorMessage
+                        message={actionsSlice.errorPopup.message}
+                      />
+                    )}
+                  </div>
+                  {actionsSlice.isLoading && <LoadingData />}
+                  <div>
+                    <div className={styles.addStoryFeedMessage}>
+                      <p>{values.message}</p>
+                    </div>
+
+                    <div className="row">
+                      <div className={`col-sm-1  ${styles.addStoryFeedEmoji}`}>
+                        {values.displayEmoji ? (
+                          <IoCloseSharp
+                            size={30}
+                            className={styles.addStoryFeedEmojiOpenAndClose}
+                            onClick={() => {
+                              setOpen(false);
+                              setFieldValue("displayEmoji", false);
+                            }}
+                          />
+                        ) : (
+                          <FaSmile
+                            size={20}
+                            className={styles.addStoryFeedEmojiOpenAndClose}
+                            onClick={() => {
+                              setOpen(true);
+                              setFieldValue("displayEmoji", true);
+                            }}
+                          />
+                        )}
+                        <div className={styles.addStoryEmoji}>
+                          <div className={styles.addStoryPicker}>
+                            <EmojiPicker
+                              open={open}
+                              onEmojiClick={(value) => {
+                                setFieldValue(
+                                  "message",
+                                  values.message + value.emoji
+                                );
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-sm-10">
+                        <div>
+                          <Input
+                            placeholder="Type a message..."
+                            name="message"
+                            required
+                            id="message"
+                            onBlur={handleBlur("message")}
+                            autoCapitalize="none"
+                            onChange={handleChange("message")}
+                            error={errors.message}
+                            onKeyDown={handleKeyDown}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-sm-1">
+                        <GlobalButton
+                          disabled={!values.message}
+                          format="success"
+                        >
+                          <IoMdSend
+                            onClick={() => {
+                              handleSubmit();
+                            }}
+                          />
+                        </GlobalButton>
+                      </div>
+                    </div>
+                  </div>
+
+                  {footer && <div className={styles.footer}>{footer}</div>}
+                </div>
+              </Form>
+            );
+          }}
+        </Formik>
+      </div>
+    </GlobalModal>
+  );
+};
+
+export const AddImageOrVideoStoryStatus = ({
+  footer,
+  show,
+  user,
+  handleClose,
+}: any) => {
+  const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
+  const usersSlice = useSelector((state: RootState) => state.usersSlice);
+
+  const fileInputRef: any = useRef(null);
+  const [showImage, setShowImage] = useState<{
+    selectedImage: any;
+    photoUrl: string;
+    saveButton: boolean;
+  }>({
+    selectedImage: "",
+    photoUrl: "",
+    saveButton: true,
+  });
+
+  const dispatch = useDispatch();
+
+  const sendStoryFeedImageImageData = () => {
+    let data = new FormData();
+    data.append("message", showImage.photoUrl);
+    dispatch(isLoadingActions(true));
+    sendStoryFeedImageOrVideo(data)
+      .then((response) => {
+        socket.emit("storyFeed", response.data);
+        setShowImage({
+          selectedImage: "",
+          photoUrl: "",
+          saveButton: true,
+        });
+        dispatch(
+          successAddStoryFeedActions({
+            status: false,
+            record: { text: false, imageOrVideo: false },
+          })
+        );
+      })
+      .catch((error) => {
+        dispatch(isLoadingActions(false));
+        dispatch(
+          errorPopupActions({
+            status: true,
+            message: ACTIONS_ERROR_MESSAGE,
+            display: "",
+          })
+        );
+      });
+  };
+
+  const displayImage = () => {
+    if (showImage.selectedImage) {
+      return (
+        <Image
+          src={showImage.selectedImage}
+          height="250"
+          width="250"
+          style={{ height: "auto" }}
+          alt="test"
+          className={styles.userProfileAvatar}
+        />
+      );
+    }
+  };
+
+  const handleChangePicture = (e: any) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setShowImage({
+          ...showImage,
+          selectedImage: reader.result,
+          photoUrl: file,
+          saveButton: false,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePicture = () => {
+    setShowImage({
+      selectedImage: "",
+      photoUrl: "",
+      saveButton: true,
+    });
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  return (
+    <GlobalModal
+      title={`Add story feed`}
+      show={show}
+      handleClose={handleClose}
+      footer={footer}
+      size="xl"
+    >
+      <div className={styles.modal}>
+        <Formik
+          form
+          initialValues={{
+            message: "",
+          }}
+          onSubmit={sendStoryFeedImageImageData}
+          enableReinitialize
+        >
+          {({
+            handleChange,
+            handleBlur,
+            setFieldValue,
+            handleSubmit,
+            values,
+            errors,
+          }) => (
+            <Form>
+              <div>
+                <div>
+                  {actionsSlice.errorPopup.status && (
+                    <GlobalErrorMessage
+                      message={actionsSlice.errorPopup.message}
+                    />
+                  )}
+                </div>
+                {actionsSlice.isLoading && <LoadingData />}
+                <div>
+                  <div
+                    className={`${styles.userDetailsAvatar} ${styles.userProfileImageUpload}`}
+                  >
+                    <div
+                      className={`col-sm-12 ${styles.storyFeedImageDisplay}`}
+                    >
+                      {displayImage()}
+                    </div>
+                    <Row>
+                      <Col xs={4}>
+                        <GlobalButton
+                          onClick={() => handleSubmit()}
+                          format="info"
+                          size="sm"
+                          disabled={showImage.photoUrl ? false : true}
+                        >
+                          Save
+                          <span>
+                            <FaEdit className="button-icon" />
+                          </span>
+                        </GlobalButton>
+                      </Col>
+
+                      <Col xs={4}>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          id="photoUrl"
+                          name="photoUrl"
+                          placeholder="user profile"
+                          accept=".jpg, .png, .jpeg"
+                          required
+                          onBlur={handleBlur("photoUrl")}
+                          autoCapitalize="none"
+                          onChange={handleChangePicture}
+                          multiple={true}
+                        />
+                        <GlobalButton
+                          disabled={showImage.photoUrl ? true : false}
+                          size="sm"
+                          format="success"
+                          onClick={handleButtonClick}
+                        >
+                          Add
+                          <span>
+                            <FaImage className="button-icon" />
+                          </span>
+                        </GlobalButton>
+                      </Col>
+
+                      <Col xs={4}>
+                        <GlobalButton
+                          onClick={() => handleRemovePicture()}
+                          format="danger"
+                          size="sm"
+                          disabled={showImage.photoUrl ? false : true}
+                        >
+                          Remove
+                          <span>
+                            <MdDelete className="button-icon" />
+                          </span>
+                        </GlobalButton>
+                      </Col>
+                    </Row>
+                  </div>
+                </div>
+
+                {footer && <div className={styles.footer}>{footer}</div>}
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </GlobalModal>
   );
 };
 
@@ -1299,7 +1764,7 @@ export const DisplayStarredMessages = ({
   const chatMessageSlice = useSelector(
     (state: RootState) => state.chatMessageSlice
   );
-  const starredMessages = chatMessageSlice.chatMessages.filter(
+  const starredMessages = chatMessageSlice.chatMessages.messages?.filter(
     (startMessage: any) => startMessage
   );
 
@@ -3637,10 +4102,6 @@ export const PreferLanguage = ({ footer, show, user, handleClose }: any) => {
     {
       label: "Portuguese",
       value: "pt",
-    },
-    {
-      label: "Twi",
-      value: "tw",
     },
     {
       label: "Yoruba",

@@ -1,5 +1,6 @@
 import { CronJob } from "cron";
 import Message from "../models/Message";
+import StoryFeed from "../models/StoryFeed";
 
 export const DisappearCronJob = new CronJob("0 0-23/1 * * *", async () => {
   await Message.updateMany(
@@ -12,3 +13,12 @@ export const DisappearCronJob = new CronJob("0 0-23/1 * * *", async () => {
     }
   );
 });
+
+export const DeletestoryFeedsCronJob = new CronJob(
+  "0 0-23/1 * * *",
+  async () => {
+    await StoryFeed.deleteMany({
+      toBedeletedAt: { $type: "date", $lt: new Date() },
+    });
+  }
+);

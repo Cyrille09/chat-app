@@ -75,19 +75,6 @@ const ContactInfo = ({ user, userContacts }: any) => {
       }
     });
 
-    // message
-    socket.on("message", (response: any) => {
-      if (
-        isSubscribed &&
-        ["image", "video", "document", "link"].includes(
-          response.message.type
-        ) &&
-        response.secondUser._id === usersSlice.selectedUser.user._id
-      ) {
-        getSenderAndReceiverMessagesData(response.secondUser);
-      }
-    });
-
     // contact user
     socket.on("updateContactUser", (response: any) => {
       if (
@@ -165,8 +152,14 @@ const ContactInfo = ({ user, userContacts }: any) => {
       getSenderAndReceiverMessages(user)
         .then((response) => {
           if (response?.data?.length)
-            dispatch(chatMessagesRecord(response.data));
-          else dispatch(chatMessagesRecord([]));
+            dispatch(
+              chatMessagesRecord({
+                messages: response.data.messages,
+                groupedMessages: response.data.groupedMessages,
+              })
+            );
+          else
+            dispatch(chatMessagesRecord({ messages: [], groupedMessages: [] }));
         })
         .catch((error) => {});
     };
@@ -178,19 +171,6 @@ const ContactInfo = ({ user, userContacts }: any) => {
       socket.off("updateUser", (response: any) => {
         if (isSubscribed && response._id === selectedUser.user._id)
           getUserData();
-      });
-
-      // message
-      socket.off("message", (response: any) => {
-        if (
-          isSubscribed &&
-          ["image", "video", "document", "link"].includes(
-            response.message.type
-          ) &&
-          response.secondUser._id === usersSlice.selectedUser.user._id
-        ) {
-          getSenderAndReceiverMessagesData(usersSlice.selectedUser.user);
-        }
       });
 
       // contact user
@@ -257,7 +237,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
     usersSlice.selectedUser.user,
   ]);
 
-  const getMediaLinksAndDocs = chatMessageSlice.chatMessages.filter(
+  const getMediaLinksAndDocs = chatMessageSlice.chatMessages?.messages?.filter(
     (message: { type: string }) =>
       ["image", "link", "document", "video"].includes(message.type)
   );
@@ -279,7 +259,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
     );
   };
 
-  const getMedia = chatMessageSlice.chatMessages
+  const getMedia = chatMessageSlice.chatMessages?.messages
     .map((data: any) => data)
     .reverse()
     .filter((message: { type: string }) =>

@@ -1,0 +1,116 @@
+@import "/src/styles/variables";
+
+.storyList {
+  text-align: center;
+}
+
+.stories-feed {
+  position: relative;
+  max-width: 400px;
+  margin: auto;
+}
+.stories-feed-action {
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-stories {
+  position: relative;
+}
+
+.story-image-video {
+  width: 100%;
+  height: auto;
+}
+.story-text {
+  min-height: 300px;
+}
+
+.navigation,
+.user-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 10;
+}
+
+.userStoryContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 5px;
+}
+
+.userStoryList {
+  padding: 10px 0;
+  width: 100%;
+}
+
+.story-header {
+  padding: 5px 10px 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $gray-50;
+}
+
+.story-header-top {
+  display: flex;
+}
+
+.user-story-name {
+  text-align: left;
+}
+.user-story-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.user-story-timestamp {
+  font-size: 13px;
+}
+
+button {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.story p {
+  padding: 20px;
+  background-color: #eee;
+  border-radius: 10px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 5px;
+  background: $gray-500;
+}
+
+.progress {
+  height: 100%;
+  background: $gray-500;
+}
+
+.active-progress {
+  height: 100%;
+  background: $success;
+  animation: progressBar linear;
+}
+
+@keyframes progressBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}

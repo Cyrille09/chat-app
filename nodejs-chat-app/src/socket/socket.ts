@@ -99,6 +99,11 @@ export async function SocketIO(io: any) {
     socket.on("updateGroupMessage", (ms: any) => {
       io.emit("updateGroupMessage", ms);
     });
+
+    // create story feed
+    socket.on("storyFeed", (ms: any) => {
+      io.emit("storyFeed", ms);
+    });
   });
   return io;
 }

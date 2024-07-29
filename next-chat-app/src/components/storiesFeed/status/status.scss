@@ -1,0 +1,103 @@
+@import "/src/styles/variables";
+
+.status-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-name {
+  font-weight: bold;
+}
+
+.status-timestamp {
+  color: gray;
+  font-size: 13px;
+}
+
+.status-list {
+  margin: 20px 0;
+}
+
+.status-main {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.status-header {
+  padding: 5px 10px 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $gray-50;
+}
+
+.status-header-top {
+  display: flex;
+  h5 {
+    margin-top: 15px;
+  }
+}
+
+.add-status {
+  background-color: #25d366;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.add-status:hover {
+  background-color: #128c7e;
+}
+.delete-story-feed {
+  cursor: pointer;
+  font-size: 13px;
+  background-color: $danger;
+  color: $white;
+  padding: 3px 5px;
+  border-radius: 5px;
+}
+
+.show-story-feed {
+  cursor: pointer;
+  font-size: 13px;
+  background-color: $success;
+  color: $white;
+  padding: 3px 5px;
+  border-radius: 5px;
+}
+.status-story-delete {
+  text-align: right;
+}
+.status-story {
+  margin-top: 20px;
+}
+
+.status-story-image {
+  min-width: 100%;
+  max-width: 200px;
+}
+.delete-status-story-error {
+  margin-bottom: 20px;
+}

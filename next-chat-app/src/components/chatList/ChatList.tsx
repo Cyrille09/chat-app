@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Formik } from "formik";
-import { format } from "date-fns";
+import { format, isThisWeek, isToday, isYesterday, parseISO } from "date-fns";
 import { SearchWithOptions } from "../fields/search";
 import { BsSearch } from "react-icons/bs";
 import { GlobalButton } from "../button/GlobalButton";
@@ -46,6 +46,8 @@ import { getGroupMmebers } from "@/services/groupsServices";
 import { UserInterface, UserInterfaceInfo } from "../globalTypes/GlobalTypes";
 import ChatListActions from "./ChatListActions";
 import "./chatList.scss";
+import { getContactUserStoryFeeds } from "@/services/storyFeedsServices";
+import { userContactStoryFeedsRecord } from "@/redux-toolkit/reducers/userContactsSlice";
 
 const ChatList = ({
   user,
@@ -77,6 +79,8 @@ const ChatList = ({
 
   useEffect(() => {
     let isSubscribed = true;
+
+    //
 
     // user
     socket.on("user", (response: any) => {
@@ -259,6 +263,12 @@ const ChatList = ({
       }
     });
 
+    socket.on("storyFeed", (response: any) => {
+      if (isSubscribed && response.user._id === currentUser._id) {
+        getContactUserStoryFeedsData();
+      }
+    });
+
     const getContactUserData = async () => {
       getUserContacts("")
         .then((response) => {
@@ -289,6 +299,15 @@ const ChatList = ({
       } else {
         dispatch(chatGroupMembersRecord([]));
       }
+    };
+
+    const getContactUserStoryFeedsData = async () => {
+      getContactUserStoryFeeds()
+        .then((response) => {
+          if (isSubscribed)
+            dispatch(userContactStoryFeedsRecord(response.data));
+        })
+        .catch((error) => {});
     };
 
     return () => {
@@ -435,6 +454,12 @@ const ChatList = ({
           getGroupMmebersData();
         }
       });
+
+      socket.off("storyFeed", (response: any) => {
+        if (isSubscribed && response.user._id === currentUser._id) {
+          getContactUserStoryFeedsData();
+        }
+      });
     };
   }, [userContactsRecord, userRecord._id]);
 
@@ -487,9 +512,14 @@ const ChatList = ({
       chatMessages = await getSenderAndReceiverMessages(chat.user);
     }
 
-    if (chatMessages?.data?.length)
-      dispatch(chatMessagesRecord(chatMessages.data));
-    else dispatch(chatMessagesRecord([]));
+    if (chatMessages?.data?.messages.length)
+      dispatch(
+        chatMessagesRecord({
+          messages: chatMessages.data.messages,
+          groupedMessages: chatMessages.data.groupedMessages,
+        })
+      );
+    else dispatch(chatMessagesRecord({ messages: [], groupedMessages: [] }));
 
     dispatch(
       selectedUserRecord({
@@ -569,18 +599,29 @@ const ChatList = ({
                       (user: any) => user.user === chat.user._id
                     );
 
+                  const latestMessageTimeDateCreated = (createdAt: any) => {
+                    const date = parseISO(createdAt);
+                    if (isToday(date)) {
+                      return `Today`;
+                    } else if (isYesterday(date)) {
+                      return `Yesterday`;
+                    } else if (isThisWeek(date)) {
+                      return `${format(date, "EEEE")}`;
+                    } else {
+                      return `${format(date, "dd/MM/yyyy")}`;
+                    }
+                  };
+
                   const latestMessageTime =
                     chat.latestMessage && !findClearChat
-                      ? format(
-                          new Date(chat.latestMessage.createdAt),
-                          "dd/MM/yyyy"
+                      ? latestMessageTimeDateCreated(
+                          chat.latestMessage.createdAt
                         )
                       : "";
 
                   const groupLatestMessageTime = chat.group?.latestMessage
-                    ? format(
-                        new Date(chat.group.latestMessage.createdAt),
-                        "dd/MM/yyyy"
+                    ? latestMessageTimeDateCreated(
+                        chat.group.latestMessage.createdAt
                       )
                     : "";
 
