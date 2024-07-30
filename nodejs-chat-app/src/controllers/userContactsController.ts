@@ -3,6 +3,7 @@ import User from "../models/User";
 import UserContact from "../models/UserContact";
 import { recordNotFound } from "../errorMessages/errror";
 import Message from "../models/Message";
+import BlockContactUser from "../models/BlockContactUser";
 
 /**
  * Create user contacts
@@ -40,13 +41,46 @@ export const blockUserContacts: RequestHandler = async (
     if (!req.body.receiver)
       return res.status(400).json({ status: 401, message: "user required!" });
 
-    const blockUser = await UserContact.findOneAndUpdate(
-      { user: req.user, "users.user": req.body.receiver },
-      {
-        $set: { "users.$.blockStatus": req.body.status },
-      },
-      { new: true, upsert: true }
-    );
+    const blockUser = await UserContact.findOne({
+      user: req.user,
+      "users.user": req.body.receiver,
+    });
+
+    if (req.body.status) {
+      await BlockContactUser.create({
+        user: req.user,
+        userBlock: req.body.receiver,
+      });
+    } else {
+      await BlockContactUser.deleteMany({
+        user: req.user,
+        userBlock: req.body.receiver,
+      });
+    }
+
+    res.status(201).json(blockUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get block user contact
+ */
+export const getBlockUserContacts: RequestHandler = async (
+  req: any,
+  res,
+  next
+) => {
+  try {
+    const query = {
+      $or: [
+        { user: req.user, userBlock: req.params.receiverId },
+        { user: req.params.receiverId, userBlock: req.user },
+      ],
+    };
+
+    const blockUser = await BlockContactUser.findOne(query);
 
     res.status(201).json(blockUser);
   } catch (error) {

@@ -355,8 +355,9 @@
   .chatAreaBottomBlock {
     background-color: $gray-400;
     color: darkgray;
-    opacity: 0.6;
     cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.4;
   }
 
   .backToTop {

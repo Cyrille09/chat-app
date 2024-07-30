@@ -41,7 +41,7 @@ const UserStatus: React.FC<StatusItemProps> = ({
               height={50}
             />
           ) : (
-            <Image
+            <img
               src={"https://via.placeholder.com/150"}
               alt={`profile`}
               width={50}
@@ -91,7 +91,7 @@ const UserStatus: React.FC<StatusItemProps> = ({
       </div>
       <div className="delete-status-story-content">
         {showDeleteStory ? (
-          <CurrentUserStories stories={currentUserStatuses.stories} />
+          <CurrentUserStories stories={currentUserStatuses?.stories} />
         ) : (
           <StatusList statuses={usersStatuses} />
         )}

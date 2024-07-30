@@ -101,6 +101,13 @@ export async function getRequestUserContact(token?: string) {
 }
 
 /**
+ * Get block user service
+ */
+export async function getBlockUserContacts(receiverId: string) {
+  return await axiosInterceptors.get(`/userContacts/block/${receiverId}`, {});
+}
+
+/**
  * Delete contact user service
  */
 export async function deleteContactUser(id: string) {

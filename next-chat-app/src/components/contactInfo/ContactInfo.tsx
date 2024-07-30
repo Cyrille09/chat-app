@@ -327,6 +327,40 @@ const ContactInfo = ({ user, userContacts }: any) => {
   const getUpToFiveAdmin = chatMessageSlice.chatGroupMembers.filter(
     (member: any) => member.admin
   );
+
+  const blockUserContactData = () => {
+    if (
+      userContactsSlice.blockUserContact.status &&
+      userContactsSlice.blockUserContact.user === userRecord._id
+    ) {
+      return (
+        <div>
+          <span className="eachActionLeftIconInRed">
+            <FaRegRegistered />
+          </span>
+          <span>Unblock user</span>
+        </div>
+      );
+    } else if (userContactsSlice.blockUserContact.status) {
+      return (
+        <div>
+          <span className="eachActionLeftIconInRed">
+            <FaRegRegistered />
+          </span>
+          <span>Blocked</span>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <span className="eachActionLeftIconInRed">
+            <FaBan />
+          </span>
+          <span>Block user</span>
+        </div>
+      );
+    }
+  };
   return (
     <>
       {selectedUser.status ? (
@@ -633,27 +667,23 @@ const ContactInfo = ({ user, userContacts }: any) => {
                   <>
                     <div
                       className="eachActionInRed"
-                      onClick={() =>
-                        dispatch(
-                          successBlockUserActions({ status: true, record: {} })
-                        )
-                      }
+                      onClick={() => {
+                        if (
+                          (userContactsSlice.blockUserContact.status &&
+                            userContactsSlice.blockUserContact.userBlock !==
+                              userRecord._id) ||
+                          !userContactsSlice.blockUserContact.status
+                        ) {
+                          dispatch(
+                            successBlockUserActions({
+                              status: true,
+                              record: {},
+                            })
+                          );
+                        }
+                      }}
                     >
-                      {selectedUser.blockStatus ? (
-                        <div>
-                          <span className="eachActionLeftIconInRed">
-                            <FaRegRegistered />
-                          </span>
-                          <span>Unblock user</span>
-                        </div>
-                      ) : (
-                        <div>
-                          <span className="eachActionLeftIconInRed">
-                            <FaBan />
-                          </span>
-                          <span>Block user</span>
-                        </div>
-                      )}
+                      {blockUserContactData()}
                     </div>
                     <div
                       className="eachActionInRed"

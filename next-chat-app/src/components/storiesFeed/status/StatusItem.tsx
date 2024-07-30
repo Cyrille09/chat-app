@@ -55,7 +55,7 @@ const StatusItem: React.FC<StatusItemProps> = ({
           height={50}
         />
       ) : (
-        <Image
+        <img
           src={"https://via.placeholder.com/150"}
           alt={`profile`}
           width={50}

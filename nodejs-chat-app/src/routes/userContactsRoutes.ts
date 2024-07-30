@@ -10,12 +10,14 @@ import {
   getUserContacts,
   muteUserContacts,
   disappearContactUserMessage,
+  getBlockUserContacts,
 } from "../controllers/userContactsController";
 
 const router = Router();
 // get routes
 router.get("/list", verifyAccessToken, getUserContacts);
 router.get("/request", verifyAccessToken, getRequestUserContact);
+router.get("/block/:receiverId", verifyAccessToken, getBlockUserContacts);
 
 //post routes
 router.post("/clearchat", verifyAccessToken, clearUserContactChat);

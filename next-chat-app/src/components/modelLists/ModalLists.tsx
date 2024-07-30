@@ -1216,11 +1216,14 @@ export const DisappearMessages = ({ footer, show, user, handleClose }: any) => {
 export const BlockUser = ({ footer, show, user, handleClose }: any) => {
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
+  const userContactsSlice = useSelector(
+    (state: RootState) => state.userContactsSlice
+  );
 
   return (
     <GlobalModal
       title={`${
-        usersSlice.selectedUser.blockStatus ? "Unblock" : "Block"
+        userContactsSlice.blockUserContact.status ? "Unblock" : "Block"
       } Contact User`}
       show={show}
       handleClose={handleClose}
@@ -1229,7 +1232,7 @@ export const BlockUser = ({ footer, show, user, handleClose }: any) => {
       <div className={styles.modal}>
         <p>
           Do you want to{" "}
-          {usersSlice.selectedUser.blockStatus ? "unblock" : "block"}{" "}
+          {userContactsSlice.blockUserContact.status ? "unblock" : "block"}{" "}
           {usersSlice.selectedUser.user.name} contact?
         </p>
         <div>
