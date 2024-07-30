@@ -45,7 +45,7 @@ const CurrentUserStories: React.FC<CurrentUserStoriesProps> = ({ stories }) => {
 
   return (
     <div className="status-story">
-      {stories.map((story: any) => {
+      {stories?.map((story: any) => {
         const displayStoryContent = () => {
           if (story.type === "text") {
             return <p>{story.message}</p>;

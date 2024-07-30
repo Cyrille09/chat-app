@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { FaChevronDown, FaFilePdf, FaFileWord, FaStar } from "react-icons/fa";
 import Image from "next/image";
 import MessageActionsPopup from "./MessageActionsPopup";
@@ -36,7 +36,7 @@ const ChatAreaCenterLevel = ({ chatMessageSlice, userRecord }: any) => {
           };
 
           return (
-            <>
+            <Fragment key={index}>
               <div className="groupedDate">
                 <span> {dateCreated()}</span>
               </div>
@@ -372,7 +372,7 @@ const ChatAreaCenterLevel = ({ chatMessageSlice, userRecord }: any) => {
                   </div>
                 );
               })}
-            </>
+            </Fragment>
           );
         }
       )}

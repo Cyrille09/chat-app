@@ -63,6 +63,7 @@ const ChatListActions = ({
         socket.emit("userStatus", response.data);
         Cookies.remove(LOCAL_STORAGE_USER_TOKEN);
         router.push(signInPage);
+        window.location.reload();
       })
       .catch((error) => {
         dispatch(isLoadingActions(false));

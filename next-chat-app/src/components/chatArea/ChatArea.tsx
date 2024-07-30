@@ -18,6 +18,10 @@ import "./chatArea.scss";
 
 const ChatArea = ({ user }: any) => {
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
+  const userContactsSlice = useSelector(
+    (state: RootState) => state.userContactsSlice
+  );
+
   const chatMessageSlice = useSelector(
     (state: RootState) => state.chatMessageSlice
   );
@@ -435,7 +439,7 @@ const ChatArea = ({ user }: any) => {
 
           <div
             className={`chatAreaBottom ${
-              selectedUser.blockStatus && "chatAreaBottomBlock"
+              userContactsSlice.blockUserContact.status && "chatAreaBottomBlock"
             } `}
           >
             <>

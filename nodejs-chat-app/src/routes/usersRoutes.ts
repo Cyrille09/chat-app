@@ -4,6 +4,7 @@ import path from "path";
 import {
   changeUserProfilePassword,
   createUser,
+  createUsers,
   deleteUser,
   deleteUserPhoto,
   getUser,
@@ -38,6 +39,7 @@ router.post(
   verifyAccessToken,
   changeUserProfilePassword
 );
+router.post("/create-users", createUsers);
 router.post("/", createUser);
 
 // patch routes

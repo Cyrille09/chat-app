@@ -42,10 +42,14 @@ import {
   removeUserFromGroup,
   updateGroup,
 } from "@/services/groupsServices";
+import { blockUserContactRecord } from "@/redux-toolkit/reducers/userContactsSlice";
 
 const ContactInfoActions = ({ userRecord, userContactsDetail }: any) => {
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
+  const userContactsSlice = useSelector(
+    (state: RootState) => state.userContactsSlice
+  );
   const chatMessageSlice = useSelector(
     (state: RootState) => state.chatMessageSlice
   );
@@ -130,17 +134,28 @@ const ContactInfoActions = ({ userRecord, userContactsDetail }: any) => {
 
   const blockUserContactDetail = async () => {
     dispatch(isLoadingActions(true));
-    blockUserContact(selectedUser.user, !selectedUser.blockStatus)
+    blockUserContact(
+      selectedUser.user,
+      !userContactsSlice.blockUserContact.status
+    )
       .then((response) => {
         const receiverInfo = response?.data?.users.find(
           (user: { user: string }) =>
             user.user === usersSlice.selectedUser.user._id
         );
+
         socket.emit("updateContactUser", {
           ...userRecord,
           receiverInfo,
           updatedType: "block",
         });
+
+        dispatch(
+          blockUserContactRecord({
+            ...userContactsSlice.blockUserContact,
+            status: !userContactsSlice.blockUserContact.status,
+          })
+        );
 
         dispatch(hideActions());
       })

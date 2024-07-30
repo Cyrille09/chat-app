@@ -44,7 +44,7 @@ const Story = ({ story, duration, onStoryEnd, user, currentIndex }: any) => {
                 height={50}
               />
             ) : (
-              <Image
+              <img
                 src={"https://via.placeholder.com/150"}
                 alt={`profile`}
                 width={50}
@@ -61,7 +61,7 @@ const Story = ({ story, duration, onStoryEnd, user, currentIndex }: any) => {
         </div>
       </div>
       <div className="userStoryContainer">
-        {user.stories.map((userStory: any, index: number) => {
+        {user.stories?.map((userStory: any, index: number) => {
           return (
             <div className="userStoryList" key={index}>
               {currentIndex === index ? (

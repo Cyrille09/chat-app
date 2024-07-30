@@ -38,6 +38,7 @@ import {
 import { socket } from "@/components/websocket/websocket";
 import { getUserProfile } from "@/services/usersServices";
 import {
+  getBlockUserContacts,
   getRequestUserContact,
   getUserContacts,
 } from "@/services/userContactsServices";
@@ -47,7 +48,10 @@ import { UserInterface, UserInterfaceInfo } from "../globalTypes/GlobalTypes";
 import ChatListActions from "./ChatListActions";
 import "./chatList.scss";
 import { getContactUserStoryFeeds } from "@/services/storyFeedsServices";
-import { userContactStoryFeedsRecord } from "@/redux-toolkit/reducers/userContactsSlice";
+import {
+  blockUserContactRecord,
+  userContactStoryFeedsRecord,
+} from "@/redux-toolkit/reducers/userContactsSlice";
 
 const ChatList = ({
   user,
@@ -510,6 +514,16 @@ const ChatList = ({
       }
     } else {
       chatMessages = await getSenderAndReceiverMessages(chat.user);
+      const blockUserContact = await getBlockUserContacts(chat.user._id);
+      if (blockUserContact.data) {
+        dispatch(
+          blockUserContactRecord({ ...blockUserContact.data, status: true })
+        );
+      } else {
+        dispatch(
+          blockUserContactRecord({ user: "", blockUser: "", status: false })
+        );
+      }
     }
 
     if (chatMessages?.data?.messages.length)
@@ -1005,7 +1019,7 @@ const ChatList = ({
                 </div>
 
                 <div className="chatListContent">
-                  {showUserContactsWithLatestChatList.length ? (
+                  {showUserContactsWithLatestChatList?.length ? (
                     showUserContactsWithLatestChatList
                   ) : (
                     <div className="chatListNoContent">

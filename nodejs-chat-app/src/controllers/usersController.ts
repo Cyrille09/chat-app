@@ -1,9 +1,11 @@
 import { RequestHandler } from "express";
+import { faker } from "@faker-js/faker";
 import fs from "fs";
 import User from "../models/User";
 import { recordNotFound, unauthorizedError } from "../errorMessages/errror";
 import { isEmail } from "validator";
 import { compareHashPasswords, hashPassword } from "../bcrypt/bcrypt";
+import UsersList from "../utils/users";
 
 interface Todo {
   id: number;
@@ -80,6 +82,67 @@ export const createUser: RequestHandler = async (req, res, next) => {
     // }
 
     res.status(201).json({ user, token });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Create users
+ */
+export const createUsers: RequestHandler = async (req, res, next) => {
+  /**
+   * The commented code is used to generate fake users
+   */
+
+  /*
+  const dataTemplate = {
+    name: "Cyrille Hounvio",
+    email: "cyrillehounvio@gmail.com",
+    password: "12345678",
+    photoUrl: "",
+    status: "active",
+    message: "Available",
+    lastSeen: {
+      status: false,
+      date: null,
+    },
+    preferLanguage: {
+      language: "",
+      isoCode: "",
+    },
+  };
+
+  const generateData = (count: any) => {
+    const dataArray = [];
+    for (let i = 0; i < count; i++) {
+      const newData = {
+        ...dataTemplate,
+        name: faker.name.fullName(),
+        email: faker.internet.email(),
+      };
+      dataArray.push(newData);
+    }
+    return dataArray;
+  };
+  generateData(100);
+
+  */
+
+  try {
+    let users: any = [];
+    for (const userList of UsersList) {
+      const userRecord: { email: string } = userList;
+      console.log(userRecord);
+      const confirmEmail = await User.findOne({ email: userRecord.email });
+      if (!confirmEmail) {
+        const newUser = new User(userList);
+        const user = await newUser.save();
+        users.push(user);
+      }
+    }
+
+    res.status(201).json({ length: users.length, users });
   } catch (error) {
     next(error);
   }
