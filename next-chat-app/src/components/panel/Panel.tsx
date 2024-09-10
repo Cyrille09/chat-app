@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import classnames from "classnames";
 
 import styles from "./panel.module.scss";
@@ -9,9 +9,9 @@ interface PanelProps {
   maxWidth?: string;
   title: any;
   show: boolean;
-  footer?: any;
-  handleClose: any;
-  children: any;
+  footer?: React.ReactNode;
+  handleClose: (value: {}) => void;
+  children: React.ReactNode;
 }
 
 export const Panel = ({

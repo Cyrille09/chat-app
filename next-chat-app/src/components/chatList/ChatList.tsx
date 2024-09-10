@@ -44,7 +44,11 @@ import {
 } from "@/services/userContactsServices";
 import MessagePopup from "./MessagePopup";
 import { getGroupMmebers } from "@/services/groupsServices";
-import { UserInterface, UserInterfaceInfo } from "../globalTypes/GlobalTypes";
+import {
+  UserInterface,
+  UserInterfaceInfo,
+  UserRecordInterface,
+} from "../globalTypes/GlobalTypes";
 import ChatListActions from "./ChatListActions";
 import "./chatList.scss";
 import { getContactUserStoryFeeds } from "@/services/storyFeedsServices";
@@ -59,7 +63,6 @@ const ChatList = ({
   requestUserContact,
 }: {
   user: UserInterface;
-
   userContacts: [];
   requestUserContact: [];
 }) => {
@@ -87,13 +90,13 @@ const ChatList = ({
     //
 
     // user
-    socket.on("user", (response: any) => {
+    socket.on("user", (response: UserRecordInterface) => {
       if (isSubscribed && response._id === userRecord._id) getCurrentUserData();
     });
-    socket.on("updateUser", (response: any) => {
+    socket.on("updateUser", (response: UserRecordInterface) => {
       if (isSubscribed && response._id === userRecord._id) getCurrentUserData();
       if (
-        userContactsRecord.find(
+        userContactsRecord?.find(
           (user: { user: { _id: string } }) => user.user._id === response._id
         )
       ) {
@@ -113,20 +116,20 @@ const ChatList = ({
     };
 
     // contact user
-    socket.on("contactUser", (response: any) => {
+    socket.on("contactUser", (response: UserRecordInterface) => {
       if (isSubscribed && response._id === userRecord._id) {
         getContactUserData();
         getRequestUserContactData();
       }
     });
-    socket.on("updateContactUser", (response: any) => {
+    socket.on("updateContactUser", (response: UserRecordInterface) => {
       // to be reviewd
       if (isSubscribed && response._id === userRecord._id) {
         getContactUserData();
         getRequestUserContactData();
       }
     });
-    socket.on("deleteContactUser", (response: any) => {
+    socket.on("deleteContactUser", (response: UserRecordInterface) => {
       if (isSubscribed && response._id === userRecord._id) {
         getContactUserData();
         getRequestUserContactData();
@@ -200,7 +203,7 @@ const ChatList = ({
       }
     });
 
-    socket.on("removeUserFromGroup", (response: any) => {
+    socket.on("removeUserFromGroup", (response: UserInterface) => {
       if (
         isSubscribed &&
         response.group._id === usersSlice.selectedUser.group._id &&
@@ -268,7 +271,14 @@ const ChatList = ({
     });
 
     socket.on("storyFeed", (response: any) => {
-      if (isSubscribed && response.user._id === currentUser._id) {
+      if (
+        isSubscribed &&
+        (response.user._id === currentUser._id ||
+          userContactsSlice.userContacts.find(
+            (contactUser: { user: { _id: string } }) =>
+              contactUser.user._id === response.user._id
+          ))
+      ) {
         getContactUserStoryFeedsData();
       }
     });
@@ -317,7 +327,7 @@ const ChatList = ({
     return () => {
       isSubscribed = false;
 
-      socket.off("removeUserFromGroup", (response: any) => {
+      socket.off("removeUserFromGroup", (response: UserInterface) => {
         if (
           isSubscribed &&
           response.group._id === usersSlice.selectedUser.group._id &&
@@ -341,15 +351,15 @@ const ChatList = ({
         }
       });
       // user
-      socket.off("user", (response: any) => {
+      socket.off("user", (response: UserRecordInterface) => {
         if (isSubscribed && response._id === userRecord._id)
           getCurrentUserData();
       });
-      socket.off("updateUser", (response: any) => {
+      socket.off("updateUser", (response: UserRecordInterface) => {
         if (isSubscribed && response._id === userRecord._id)
           getCurrentUserData();
         if (
-          userContactsRecord.find(
+          userContactsRecord?.find(
             (user: { user: { _id: string } }) => user.user._id === response._id
           )
         ) {
@@ -359,20 +369,20 @@ const ChatList = ({
       });
 
       // contact user
-      socket.off("contactUser", (response: any) => {
+      socket.off("contactUser", (response: UserRecordInterface) => {
         if (isSubscribed && response._id === userRecord._id) {
           getContactUserData();
           getRequestUserContactData();
         }
       });
-      socket.off("updateContactUser", (response: any) => {
+      socket.off("updateContactUser", (response: UserRecordInterface) => {
         // to be reviewd
         if (isSubscribed && response._id === userRecord._id) {
           getContactUserData();
           getRequestUserContactData();
         }
       });
-      socket.off("deleteContactUser", (response: any) => {
+      socket.off("deleteContactUser", (response: UserRecordInterface) => {
         if (isSubscribed && response._id === userRecord._id) {
           getContactUserData();
           getRequestUserContactData();
@@ -450,7 +460,7 @@ const ChatList = ({
         }
       });
 
-      socket.off("updateGroupMember", (response: any) => {
+      socket.off("updateGroupMember", (response: UserRecordInterface) => {
         if (
           isSubscribed &&
           response._id === usersSlice.selectedUser.group._id
@@ -459,13 +469,27 @@ const ChatList = ({
         }
       });
 
-      socket.off("storyFeed", (response: any) => {
-        if (isSubscribed && response.user._id === currentUser._id) {
+      socket.off("storyFeed", (response: UserInterface) => {
+        if (
+          isSubscribed &&
+          (response.user._id === currentUser._id ||
+            userContactsSlice.userContacts.find(
+              (contactUser: { user: { _id: string } }) =>
+                contactUser.user._id === response.user._id
+            ))
+        ) {
           getContactUserStoryFeedsData();
         }
       });
     };
-  }, [userContactsRecord, userRecord._id]);
+  }, [
+    currentUser._id,
+    dispatch,
+    userContactsRecord,
+    userContactsSlice.userContacts,
+    userRecord._id,
+    usersSlice.selectedUser,
+  ]);
 
   const [chatListTag, setChatListTag] = useState<string>("all");
 
@@ -475,8 +499,8 @@ const ChatList = ({
     onClick,
   }: {
     name: string;
-    tagActive: any;
-    onClick: any;
+    tagActive: boolean;
+    onClick: () => void;
   }) => {
     return (
       <GlobalButton
@@ -492,16 +516,16 @@ const ChatList = ({
   };
 
   const userContactsList =
-    userContactsRecord?.map((user: any) => ({
-      ...user.user,
+    userContactsRecord?.map((user: UserInterface) => ({
+      name: (user.isGroup && user.group.name) || user.user.name,
       blockStatus: user.blockStatus,
       _id: user._id,
     })) || [];
 
-  const userContactsWithLatestChatList = userContactsRecord;
+  const userContactsWithLatestChatList: any[] = userContactsRecord || [];
 
-  const handleSelect = async (chat: any) => {
-    let chatMessages: any = null;
+  const handleSelect = async (chat: UserInterface) => {
+    let chatMessages = null;
 
     if (chat.isGroup) {
       chatMessages = await getGroupMessages(chat.group._id);
@@ -573,9 +597,10 @@ const ChatList = ({
                     messageUnreadCount: number;
                     isGroup: boolean;
                     user: { name: string };
+                    group: { name: string };
                   }) => {
                     const search = values.name
-                      ? user.user.name
+                      ? ((user.isGroup && user.group.name) || user.user.name)
                           .toLowerCase()
                           .includes(values.name.toLowerCase())
                       : user;
@@ -594,7 +619,7 @@ const ChatList = ({
                     return search && filterByUnreadAndGroups;
                   }
                 )
-                ?.sort((a: any, b: any) => {
+                ?.sort((a: { updatedAt: Date }, b: { updatedAt: Date }) => {
                   const dateA = new Date(a?.updatedAt || 0).getTime();
                   const dateB = new Date(b?.updatedAt || 0).getTime();
                   return dateB - dateA;
@@ -613,7 +638,7 @@ const ChatList = ({
                       (user: any) => user.user === chat.user._id
                     );
 
-                  const latestMessageTimeDateCreated = (createdAt: any) => {
+                  const latestMessageTimeDateCreated = (createdAt: string) => {
                     const date = parseISO(createdAt);
                     if (isToday(date)) {
                       return `Today`;
@@ -820,7 +845,9 @@ const ChatList = ({
                             {muteNotification}{" "}
                             {chat.messageUnreadCount > 0 && (
                               <span className="numberOfUnread">
-                                {chat.messageUnreadCount}
+                                {chat.messageUnreadCount > 99
+                                  ? "99+"
+                                  : chat.messageUnreadCount}
                               </span>
                             )}
                           </p>

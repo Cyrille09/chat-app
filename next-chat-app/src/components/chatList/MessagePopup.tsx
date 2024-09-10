@@ -7,8 +7,15 @@ import {
 } from "@/redux-toolkit/reducers/actionsSlice";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
+import { UserRecordInterface } from "../globalTypes/GlobalTypes";
 
-const MessagePopup = ({ onClose, userRecord }: any) => {
+const MessagePopup = ({
+  onClose,
+  userRecord,
+}: {
+  onClose: () => void;
+  userRecord: UserRecordInterface;
+}) => {
   const popupRef: any = useRef();
   const dispatch = useDispatch();
 

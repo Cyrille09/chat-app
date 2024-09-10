@@ -61,6 +61,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import { Input } from "../fields/input";
 import userImagePlaceholder from "../../assets/images/placeholder.png";
+
 import {
   changeUserProfilePassword,
   deleteUserPhoto,
@@ -130,7 +131,7 @@ export const DisplayUserStars = ({
       handleClose={() => {
         dispatch(hideActions());
       }}
-      title="Starred messages"
+      title="Starred messages.."
       width="50%"
       maxWidth="25%"
     >
@@ -1350,7 +1351,7 @@ export const DisplayStoryStatus = ({
     };
 
     getContactUserStoryFeedsData();
-  }, []);
+  }, [dispatch]);
 
   return (
     <Panel
@@ -2662,6 +2663,7 @@ export const EditUser = ({ footer, show, user, handleClose }: any) => {
                             src={`${process.env.baseUrl}/images/profile/${userDetail.photoUrl}`}
                             height="250"
                             width="250"
+                            style={{ height: "auto" }}
                             alt=""
                             className={styles.userProfileAvatar}
                           />

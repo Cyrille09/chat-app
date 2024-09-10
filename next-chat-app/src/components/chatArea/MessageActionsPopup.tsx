@@ -12,8 +12,24 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../websocket/websocket";
 import { RootState } from "@/redux-toolkit/store";
+import { UserInterface, UserRecordInterface } from "../globalTypes/GlobalTypes";
 
-const MessageActionsPopup = ({ onClose, currentUser, type, message }: any) => {
+const MessageActionsPopup = ({
+  onClose,
+  currentUser,
+  type,
+  message,
+}: {
+  onClose: () => void;
+  currentUser: UserRecordInterface;
+  type: string;
+  message: {
+    _id: string;
+    message: string;
+    stars: [];
+    sender: UserRecordInterface;
+  };
+}) => {
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
 
   const popupRef: any = useRef();
@@ -46,10 +62,10 @@ const MessageActionsPopup = ({ onClose, currentUser, type, message }: any) => {
   };
 
   const getStarMessage = message.stars?.some(
-    (user: any) => user.user === currentUser._id
+    (user: { user: string }) => user.user === currentUser._id
   );
 
-  const addoRremoveStarToMessageData = () => {
+  const addOrRemoveStarToMessageData = () => {
     if (getStarMessage) {
       removeStarToMessage(message._id)
         .then((response) => {
@@ -98,7 +114,7 @@ const MessageActionsPopup = ({ onClose, currentUser, type, message }: any) => {
         <li
           onClick={() => {
             handleOptionClick();
-            addoRremoveStarToMessageData();
+            addOrRemoveStarToMessageData();
           }}
         >
           {getStarMessage ? "Unstar" : "Star"}
@@ -133,7 +149,7 @@ const MessageActionsPopup = ({ onClose, currentUser, type, message }: any) => {
             }}
           >
             <Link
-              href={message}
+              href={`${message}`}
               target="_blank"
               style={{ textDecoration: "none" }}
             >

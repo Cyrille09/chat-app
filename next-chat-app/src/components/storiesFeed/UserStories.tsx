@@ -5,8 +5,17 @@ import { useDispatch } from "react-redux";
 import Story from "./Story";
 import { successStoryFeedUserStatusActions } from "@/redux-toolkit/reducers/actionsSlice";
 import "./stories.scss";
+import { UserInterface } from "../globalTypes/GlobalTypes";
 
-const UserStories = ({ stories, onAllStoriesEnd, user }: any) => {
+const UserStories = ({
+  stories,
+  onAllStoriesEnd,
+  user,
+}: {
+  stories: [];
+  onAllStoriesEnd: () => void;
+  user: UserInterface;
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const duration = 5000; // 5 seconds per story
   const dispatch = useDispatch();
@@ -20,7 +29,7 @@ const UserStories = ({ stories, onAllStoriesEnd, user }: any) => {
         successStoryFeedUserStatusActions({ status: false, record: {} })
       );
     }
-  }, [currentIndex, stories.length, onAllStoriesEnd]);
+  }, [currentIndex, stories.length, onAllStoriesEnd, dispatch]);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {

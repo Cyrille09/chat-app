@@ -133,7 +133,6 @@ export const createUsers: RequestHandler = async (req, res, next) => {
     let users: any = [];
     for (const userList of UsersList) {
       const userRecord: { email: string } = userList;
-      console.log(userRecord);
       const confirmEmail = await User.findOne({ email: userRecord.email });
       if (!confirmEmail) {
         const newUser = new User(userList);
@@ -273,6 +272,7 @@ export const login: RequestHandler = async (req, res, next) => {
     if (user.status !== "active") throw unauthorizedError();
 
     const token = await user.generateAuthToken();
+
     res
       .cookie("access_token", token, {
         httpOnly: true,

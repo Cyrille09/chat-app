@@ -1,3 +1,7 @@
+import {
+  UserInterface,
+  UserInterfaceInfo,
+} from "@/components/globalTypes/GlobalTypes";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -27,17 +31,17 @@ export interface ActionsState {
   errorPopup: { status: boolean; message: string; display: string };
   successDeleteUserPhoto: { status: boolean; record: {} };
   successDeleteGroupUserPhoto: { status: boolean; record: {} };
-  successRemoveUserFromGroup: { status: boolean; record: any };
-  successMakeGroupAdmin: { status: boolean; record: any };
-  successViewGroupUser: { status: boolean; record: any };
+  successRemoveUserFromGroup: { status: boolean; record: UserInterface };
+  successMakeGroupAdmin: { status: boolean; record: UserInterface };
+  successViewGroupUser: { status: boolean; record: UserInterface };
   successSendImageMessage: {
     status: boolean;
-    record: { selectedImage: any; message: string; saveButton: boolean };
+    record: { selectedImage: string; message: string; saveButton: boolean };
   };
   successSendDocumentMessage: {
     status: boolean;
     record: {
-      selectedImage: any;
+      selectedImage: string;
       message: { name: string };
       saveButton: boolean;
     };
@@ -48,7 +52,7 @@ export interface ActionsState {
   };
   successPreferLanguage: {
     status: boolean;
-    record: any;
+    record: {};
   };
   successAddStoryFeed: {
     status: boolean;
@@ -57,7 +61,7 @@ export interface ActionsState {
 
   successStoryFeedUserStatus: {
     status: boolean;
-    record: { index: number; status: any };
+    record: { index: number; status: {} };
   };
 
   isLoading: boolean;
@@ -89,9 +93,9 @@ const initialState: ActionsState = {
   errorPopup: { status: false, message: "", display: "" },
   successDeleteUserPhoto: { status: false, record: {} },
   successDeleteGroupUserPhoto: { status: false, record: {} },
-  successRemoveUserFromGroup: { status: false, record: {} },
-  successMakeGroupAdmin: { status: false, record: {} },
-  successViewGroupUser: { status: false, record: {} },
+  successRemoveUserFromGroup: { status: false, record: UserInterfaceInfo },
+  successMakeGroupAdmin: { status: false, record: UserInterfaceInfo },
+  successViewGroupUser: { status: false, record: UserInterfaceInfo },
   successSendImageMessage: {
     status: false,
     record: { selectedImage: "", message: "", saveButton: false },
@@ -263,9 +267,15 @@ export const ActionsSlice = createSlice({
       state.errorPopup = { status: false, message: "", display: "" };
       state.successDeleteUserPhoto = { status: false, record: {} };
       state.successDeleteGroupUserPhoto = { status: false, record: {} };
-      state.successRemoveUserFromGroup = { status: false, record: {} };
-      state.successMakeGroupAdmin = { status: false, record: {} };
-      state.successViewGroupUser = { status: false, record: {} };
+      state.successRemoveUserFromGroup = {
+        status: false,
+        record: UserInterfaceInfo,
+      };
+      state.successMakeGroupAdmin = {
+        status: false,
+        record: UserInterfaceInfo,
+      };
+      state.successViewGroupUser = { status: false, record: UserInterfaceInfo };
       state.successSendImageMessage = {
         status: false,
         record: { selectedImage: "", message: "", saveButton: false },

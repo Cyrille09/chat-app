@@ -7,6 +7,7 @@ import {
   createGroup,
   deleteGroupPhoto,
   exitFromGroupContact,
+  getGroup,
   getGroupMmebers,
   muteGroupContact,
   removeUserFromGroup,
@@ -29,6 +30,7 @@ const router = Router();
 
 // get routes
 router.get("/members/:id", verifyAccessToken, getGroupMmebers);
+router.get("/:id", verifyAccessToken, getGroup);
 
 //post routes
 router.post(

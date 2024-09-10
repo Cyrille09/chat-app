@@ -150,17 +150,5 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-/**
- * middleware
- * Delete user - cascade from other table
- */
-
-// userSchema.pre("remove", async function (next) {
-//   const user = this;
-//   // await DocumentBank.deleteMany({ user: user._id });
-//   // await UserAreaOfLaw.deleteMany({ user: user._id });
-//   next();
-// });
-
 const User = model("User", userSchema);
 export default User;

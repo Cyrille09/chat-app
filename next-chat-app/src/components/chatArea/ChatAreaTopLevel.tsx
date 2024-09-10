@@ -3,13 +3,17 @@ import { format } from "date-fns";
 // import { FaPhoneAlt, FaSearch, FaVideo } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import Image from "next/image";
+import { UserInterface } from "../globalTypes/GlobalTypes";
 
 const ChatAreaTopLevel = ({
   selectedUser,
   chatMessageSlice,
   usersSlice,
-}: any) => {
-  const dispatch = useDispatch();
+}: {
+  selectedUser: UserInterface;
+  chatMessageSlice: { chatGroupMembers: [] };
+  usersSlice: { selectedUser: UserInterface };
+}) => {
   const displayStatus = () => {
     if (selectedUser.isGroup) {
       const names = chatMessageSlice.chatGroupMembers

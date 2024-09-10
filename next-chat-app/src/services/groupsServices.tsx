@@ -17,13 +17,13 @@ export async function getGroupMmebers(id: string) {
   return await axiosInterceptors.get(`/groups/members/${id}`, {});
 }
 
-export async function sendImage(data: any) {
+export async function sendImage(data: {}) {
   return await axiosInterceptors.post(`/messages/send/image`, data, {
     headers: { multipartFormData: "multipart/form-data" },
   });
 }
 
-export async function sendDocument(data: any) {
+export async function sendDocument(data: {}) {
   return await axiosInterceptors.post(`/messages/send/document`, data, {
     headers: { multipartFormData: "multipart/form-data" },
   });
@@ -32,7 +32,7 @@ export async function sendDocument(data: any) {
 /**
  * Get sender and receiver messages
  */
-export async function getSenderAndReceiverMessages(secondUser: any) {
+export async function getSenderAndReceiverMessages(secondUser: {}) {
   return await axiosInterceptors.post(`/messages/display`, {
     secondUser,
   });
@@ -41,7 +41,7 @@ export async function getSenderAndReceiverMessages(secondUser: any) {
 /**
  * Update group service
  */
-export async function updateGroup(groupDetail: any, id: string) {
+export async function updateGroup(groupDetail: {}, id: string) {
   return await axiosInterceptors.patch(`/groups/${id}`, {
     ...groupDetail,
   });
@@ -51,7 +51,7 @@ export async function updateGroup(groupDetail: any, id: string) {
  * Update group service
  */
 export async function updateGroupMembers(
-  members: any,
+  members: [],
   id: string,
   message: string
 ) {
@@ -64,7 +64,7 @@ export async function updateGroupMembers(
 /**
  * Update group image service
  */
-export async function updateGroupProfileImage(data: any, id: string) {
+export async function updateGroupProfileImage(data: {}, id: string) {
   return await axiosInterceptors.put(`/groups/photo/${id}`, data, {
     headers: { multipartFormData: "multipart/form-data" },
   });

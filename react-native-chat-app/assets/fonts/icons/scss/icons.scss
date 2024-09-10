@@ -1,0 +1,220 @@
+/*--------------------------------
+
+app-icons icon font
+Generated using nucleoapp.com
+
+-------------------------------- */
+
+$icon-font-path: "../fonts" !default;
+
+@font-face {
+  font-family: 'app-icons';
+  src: url('#{$icon-font-path}/app-icons.eot');
+  src: url('#{$icon-font-path}/app-icons.eot') format('embedded-opentype'),
+       url('#{$icon-font-path}/app-icons.woff2') format('woff2'),
+       url('#{$icon-font-path}/app-icons.woff') format('woff'),
+       url('#{$icon-font-path}/app-icons.ttf') format('truetype'),
+       url('#{$icon-font-path}/app-icons.svg') format('svg');
+}
+
+/* base class */
+.icon {
+  display: inline-block;
+  font: normal normal normal 1em/1 'app-icons';
+  color: inherit;
+  flex-shrink: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* size examples - relative units */
+.icon-sm {
+  font-size: 0.8em;
+}
+
+.icon-lg {
+  font-size: 1.2em;
+}
+
+/* size examples - absolute units */
+.icon-16 {
+  font-size: 16px;
+}
+
+.icon-32 {
+  font-size: 32px;
+}
+
+/* rotate the icon infinitely */
+.icon-is-spinning {
+  animation: icon-spin 1s infinite linear;
+}
+
+@keyframes icon-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* transform */
+.icon-rotate-90  {
+	transform: rotate(90deg);
+}
+
+.icon-rotate-180 {
+	transform: rotate(180deg);
+}
+
+.icon-rotate-270 {
+	transform: rotate(270deg);
+}
+
+.icon-flip-y {
+	transform: scaleY(-1);
+}
+
+.icon-flip-x {
+	transform: scaleX(-1);
+}
+
+/* icons */
+$icons: (
+  'logout': 'ea02',
+  'location': 'ea03',
+  'intercom': 'ea04',
+  'volume-mute': 'ea05',
+  'volume-full': 'ea06',
+  'switch-playlist': 'ea07',
+  'skip': 'ea08',
+  'settings': 'ea09',
+  'schedules': 'ea0a',
+  'requests': 'ea0b',
+  'playlists': 'ea0c',
+  'menu': 'ea0d',
+  'flag': 'ea0e',
+  'add-circle': 'ea0f',
+  'mail-outline': 'ea10',
+  'help-circle-outline': 'ea11',
+  'remove-circle': 'ea12',
+  'remove-circle-outline': 'ea13',
+  'reload-circle': 'ea14',
+  'refresh': 'ea15',
+  'mail': 'ea16',
+  'alert-circle': 'ea17',
+  'information-circle': 'ea18',
+  'information-circle-outline': 'ea19',
+  'help': 'ea1a',
+  'help-outline': 'ea1b',
+  'help-circle': 'ea1c',
+  'chevron-back-circle': 'ea1d',
+  'eye': 'ea1e',
+  'eye-off': 'ea1f',
+  'ellipsis-horizontal': 'ea20',
+  'ellipsis-horizontal-outline': 'ea21',
+  'close': 'ea22',
+  'close-outline': 'ea23',
+  'close-circle': 'ea24',
+  'close-circle-outline': 'ea25',
+  'chevron-up': 'ea26',
+  'chevron-up-outline': 'ea27',
+  'chevron-up-circle': 'ea28',
+  'chevron-up-circle-outline': 'ea29',
+  'chevron-forward': 'ea2a',
+  'chevron-forward-outline': 'ea2b',
+  'chevron-forward-circle': 'ea2c',
+  'chevron-forward-circle-outline': 'ea2d',
+  'chevron-down': 'ea2e',
+  'chevron-down-outline': 'ea2f',
+  'chevron-down-circle': 'ea30',
+  'chevron-down-circle-outline': 'ea31',
+  'chevron-back': 'ea32',
+  'chevron-back-outline': 'ea33',
+  'add-outline': 'ea34',
+  'chevron-back-circle-outline': 'ea35',
+  'checkmark-circle': 'ea36',
+  'checkmark-circle-outline': 'ea37',
+  'chatbubbles': 'ea38',
+  'chatbubbles-outline': 'ea39',
+  'chatbubble-ellipses': 'ea3a',
+  'chatbubble-ellipses-outline': 'ea3b',
+  'card': 'ea3c',
+  'card-outline': 'ea3d',
+  'camera': 'ea3e',
+  'camera-outline': 'ea3f',
+  'call': 'ea40',
+  'call-outline': 'ea41',
+  'barcode-outline': 'ea42',
+  'bar-chart': 'ea43',
+  'bar-chart-outline': 'ea44',
+  'ban': 'ea45',
+  'ban-outline': 'ea46',
+  'attach': 'ea47',
+  'attach-outline': 'ea48',
+  'at': 'ea49',
+  'at-outline': 'ea4a',
+  'at-circle': 'ea4b',
+  'at-circle-outline': 'ea4c',
+  'arrow-up': 'ea4d',
+  'arrow-up-outline': 'ea4e',
+  'arrow-up-circle': 'ea4f',
+  'arrow-up-circle-outline': 'ea50',
+  'arrow-forward': 'ea51',
+  'arrow-forward-outline': 'ea52',
+  'arrow-forward-circle': 'ea53',
+  'arrow-forward-circle-outline': 'ea54',
+  'arrow-down': 'ea55',
+  'arrow-down-outline': 'ea56',
+  'arrow-down-circle': 'ea57',
+  'arrow-down-circle-outline': 'ea58',
+  'arrow-back': 'ea59',
+  'arrow-back-outline': 'ea5a',
+  'arrow-back-circle': 'ea5b',
+  'arrow-back-circle-outline': 'ea5c',
+  'apps': 'ea5d',
+  'apps-outline': 'ea5e',
+  'analytics': 'ea5f',
+  'analytics-outline': 'ea60',
+  'alert': 'ea61',
+  'alert-outline': 'ea62',
+  'alarm': 'ea63',
+  'alert-circle-outline': 'ea64',
+  'add': 'ea65',
+  'alarm-outline': 'ea66',
+  'add-circle-outline': 'ea67',
+  'logout-1': 'ea68',
+  'location-1': 'ea69',
+  'intercom-1': 'ea6a',
+  'volume-mute-1': 'ea6b',
+  'volume-full-1': 'ea6c',
+  'switch-playlist-1': 'ea6d',
+  'skip-1': 'ea6e',
+  'settings-1': 'ea6f',
+  'schedules-1': 'ea70',
+  'requests-1': 'ea71',
+  'playlists-1': 'ea72',
+  'menu-1': 'ea73',
+  'flag-1': 'ea74',
+  'ear': 'ea75',
+  'pause-outline': 'ea76',
+  'thumbs-up': 'ea77',
+  'thumbs-down': 'ea78',
+  'remove-outline': 'ea79',
+  'play': 'ea7a',
+  'playlist-feedback': 'ea7c',
+  'playlist-add-track': 'ea7d',
+  'pending': 'ea7e',
+  'playlist-request': 'ea7f',
+);
+
+@function unicode($str) {
+  @return unquote("\"\\#{$str}\"");
+}
+
+@each $name, $code in $icons {
+  .icon-#{""+$name}::before {
+    content: unicode($code);
+  }
+}

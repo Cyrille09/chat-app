@@ -329,6 +329,7 @@ const ChatArea = ({ user }: any) => {
     usersSlice.selectedUser,
     chatListRef,
     selectedUser,
+    userRecord,
   ]);
 
   // start =========================

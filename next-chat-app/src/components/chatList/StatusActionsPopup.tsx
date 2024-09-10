@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { FaEdit, FaPhotoVideo } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 
-const StatusActionsPopup = ({ onClose, userRecord }: any) => {
+const StatusActionsPopup = ({ onClose }: { onClose: () => void }) => {
   const popupRef: any = useRef();
   const dispatch = useDispatch();
 

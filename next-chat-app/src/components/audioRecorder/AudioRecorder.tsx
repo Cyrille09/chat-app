@@ -16,7 +16,7 @@ const AudioRecorder = () => {
     } else if (mediaRecorder) {
       mediaRecorder.stop();
     }
-  }, [isRecording]);
+  }, [isRecording, mediaRecorder]);
 
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

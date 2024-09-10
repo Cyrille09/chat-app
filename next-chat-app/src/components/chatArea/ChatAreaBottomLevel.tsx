@@ -12,7 +12,7 @@ import {
 } from "@/services/messagesServices";
 import { addDays, addHours, addWeeks } from "date-fns";
 import { Form, Formik } from "formik";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../websocket/websocket";
 import { IoMdSend } from "react-icons/io";
@@ -40,7 +40,7 @@ const ChatAreaBottomLevel = ({ user }: { user: UserInterface }) => {
   const selectedUser = usersSlice.selectedUser;
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
-  const mediaRecorderRef: any = useRef(null);
+  const mediaRecorderRef: any = useRef<HTMLInputElement>(null);
   const [showAudioInfo, setShowAudioInfo] = useState(false);
 
   const startRecording = async () => {

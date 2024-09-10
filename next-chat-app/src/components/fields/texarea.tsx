@@ -14,7 +14,7 @@ interface TextareaProps {
   style?: any;
   playlistModalStyle?: any;
   required?: boolean;
-  onChangeCapture?: any;
+  onChangeCapture?: (value: {}) => void;
 }
 export function Textarea({
   name = "",

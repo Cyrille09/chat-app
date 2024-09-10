@@ -64,6 +64,21 @@ export const getGroupMmebers: RequestHandler = async (req: any, res, next) => {
   }
 };
 
+/**
+ * Get group
+ */
+export const getGroup: RequestHandler = async (req, res, next) => {
+  try {
+    const group = await Group.findById(req.params.id);
+
+    if (!group) return next(recordNotFound("Group"));
+
+    res.status(200).json(group);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateGroup: RequestHandler = async (req: any, res, next) => {
   try {
     const updateGroup = await Group.findByIdAndUpdate(
@@ -335,7 +350,9 @@ export const removeUserFromGroup: RequestHandler = async (
     });
 
     if (groupMembers.length) {
-      const getAdminGroup = groupMembers.find((member: any) => member.admin);
+      const getAdminGroup = groupMembers.find(
+        (member: { admin: boolean }) => member.admin
+      );
 
       if (!getAdminGroup) {
         await GroupMember.findOneAndUpdate(

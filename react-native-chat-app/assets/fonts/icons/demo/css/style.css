@@ -1,0 +1,681 @@
+/*--------------------------------
+
+app-icons Web Font
+Generated using nucleoapp.com
+
+-------------------------------- */
+@font-face {
+  font-family: 'app-icons';
+  src: url('../../fonts/app-icons.eot');
+  src: url('../../fonts/app-icons.eot') format('embedded-opentype'), url('../../fonts/app-icons.woff2') format('woff2'), url('../../fonts/app-icons.woff') format('woff'), url('../../fonts/app-icons.ttf') format('truetype'), url('../../fonts/app-icons.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* --------------------------------
+
+Reset
+
+-------------------------------- */
+
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
+* {
+  font: inherit;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, hr {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: white;
+  font-family: system-ui, sans-serif;
+  color: hsl(240, 4%, 20%);
+  padding: 1em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, main, form legend {
+  display: block;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+button, input, textarea, select {
+  margin: 0;
+}
+
+a {
+  color: hsl(230, 93%, 66%);
+}
+
+/* --------------------------------
+
+Main components
+
+-------------------------------- */
+header {
+  text-align: center;
+  margin: 3em auto;
+}
+
+header h1 {
+  font-size: 2.6rem;
+  font-weight: 600;
+}
+
+header p {
+  font-size: 1rem;
+  margin-top: 1em;
+  color: hsla(0, 0%, 0%, 0.5);
+}
+
+ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+ul li {
+  border-radius: .4em;
+  transition: background-color .2s;
+  user-select: none;
+  overflow: hidden;
+  text-align: center;
+  padding: 1em;
+}
+
+ul li:hover {
+  background: hsla(0, 0%, 0%, 0.05);
+}
+
+ul p, ul em, ul input {
+  display: block;
+  font-size: 0.75rem;
+  color: hsla(0, 0%, 0%, 0.5);
+  user-select: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  max-width: 6rem;
+}
+
+ul p {
+  padding: 8px 0 4px;
+}
+
+ul p::selection, ul em::selection {
+  background: hsl(230, 93%, 66%);
+  color: #fff;
+}
+
+ul p::-moz-selection, ul em::-moz-selection {
+  background: hsl(230, 93%, 66%);
+  color: #fff;
+}
+
+ul em {
+  margin-bottom: 4px;
+}
+
+ul em::before {
+  content: '[';
+}
+ul em::after {
+  content: ']';
+}
+
+ul input {
+  text-align: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  font-family: auto;
+}
+
+/* --------------------------------
+
+icons
+
+-------------------------------- */
+.icon {
+  display: inline-block;
+  font: normal normal normal 32px/1 'app-icons';
+  speak: none;
+  text-transform: none;
+  /* Better Font Rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*------------------------
+  font icons
+-------------------------*/
+
+.icon-logout::before {
+  content: "\ea02";
+}
+
+.icon-location::before {
+  content: "\ea03";
+}
+
+.icon-intercom::before {
+  content: "\ea04";
+}
+
+.icon-volume-mute::before {
+  content: "\ea05";
+}
+
+.icon-volume-full::before {
+  content: "\ea06";
+}
+
+.icon-switch-playlist::before {
+  content: "\ea07";
+}
+
+.icon-skip::before {
+  content: "\ea08";
+}
+
+.icon-settings::before {
+  content: "\ea09";
+}
+
+.icon-schedules::before {
+  content: "\ea0a";
+}
+
+.icon-requests::before {
+  content: "\ea0b";
+}
+
+.icon-playlists::before {
+  content: "\ea0c";
+}
+
+.icon-menu::before {
+  content: "\ea0d";
+}
+
+.icon-flag::before {
+  content: "\ea0e";
+}
+
+.icon-add-circle::before {
+  content: "\ea0f";
+}
+
+.icon-mail-outline::before {
+  content: "\ea10";
+}
+
+.icon-help-circle-outline::before {
+  content: "\ea11";
+}
+
+.icon-remove-circle::before {
+  content: "\ea12";
+}
+
+.icon-remove-circle-outline::before {
+  content: "\ea13";
+}
+
+.icon-reload-circle::before {
+  content: "\ea14";
+}
+
+.icon-refresh::before {
+  content: "\ea15";
+}
+
+.icon-mail::before {
+  content: "\ea16";
+}
+
+.icon-alert-circle::before {
+  content: "\ea17";
+}
+
+.icon-information-circle::before {
+  content: "\ea18";
+}
+
+.icon-information-circle-outline::before {
+  content: "\ea19";
+}
+
+.icon-help::before {
+  content: "\ea1a";
+}
+
+.icon-help-outline::before {
+  content: "\ea1b";
+}
+
+.icon-help-circle::before {
+  content: "\ea1c";
+}
+
+.icon-chevron-back-circle::before {
+  content: "\ea1d";
+}
+
+.icon-eye::before {
+  content: "\ea1e";
+}
+
+.icon-eye-off::before {
+  content: "\ea1f";
+}
+
+.icon-ellipsis-horizontal::before {
+  content: "\ea20";
+}
+
+.icon-ellipsis-horizontal-outline::before {
+  content: "\ea21";
+}
+
+.icon-close::before {
+  content: "\ea22";
+}
+
+.icon-close-outline::before {
+  content: "\ea23";
+}
+
+.icon-close-circle::before {
+  content: "\ea24";
+}
+
+.icon-close-circle-outline::before {
+  content: "\ea25";
+}
+
+.icon-chevron-up::before {
+  content: "\ea26";
+}
+
+.icon-chevron-up-outline::before {
+  content: "\ea27";
+}
+
+.icon-chevron-up-circle::before {
+  content: "\ea28";
+}
+
+.icon-chevron-up-circle-outline::before {
+  content: "\ea29";
+}
+
+.icon-chevron-forward::before {
+  content: "\ea2a";
+}
+
+.icon-chevron-forward-outline::before {
+  content: "\ea2b";
+}
+
+.icon-chevron-forward-circle::before {
+  content: "\ea2c";
+}
+
+.icon-chevron-forward-circle-outline::before {
+  content: "\ea2d";
+}
+
+.icon-chevron-down::before {
+  content: "\ea2e";
+}
+
+.icon-chevron-down-outline::before {
+  content: "\ea2f";
+}
+
+.icon-chevron-down-circle::before {
+  content: "\ea30";
+}
+
+.icon-chevron-down-circle-outline::before {
+  content: "\ea31";
+}
+
+.icon-chevron-back::before {
+  content: "\ea32";
+}
+
+.icon-chevron-back-outline::before {
+  content: "\ea33";
+}
+
+.icon-add-outline::before {
+  content: "\ea34";
+}
+
+.icon-chevron-back-circle-outline::before {
+  content: "\ea35";
+}
+
+.icon-checkmark-circle::before {
+  content: "\ea36";
+}
+
+.icon-checkmark-circle-outline::before {
+  content: "\ea37";
+}
+
+.icon-chatbubbles::before {
+  content: "\ea38";
+}
+
+.icon-chatbubbles-outline::before {
+  content: "\ea39";
+}
+
+.icon-chatbubble-ellipses::before {
+  content: "\ea3a";
+}
+
+.icon-chatbubble-ellipses-outline::before {
+  content: "\ea3b";
+}
+
+.icon-card::before {
+  content: "\ea3c";
+}
+
+.icon-card-outline::before {
+  content: "\ea3d";
+}
+
+.icon-camera::before {
+  content: "\ea3e";
+}
+
+.icon-camera-outline::before {
+  content: "\ea3f";
+}
+
+.icon-call::before {
+  content: "\ea40";
+}
+
+.icon-call-outline::before {
+  content: "\ea41";
+}
+
+.icon-barcode-outline::before {
+  content: "\ea42";
+}
+
+.icon-bar-chart::before {
+  content: "\ea43";
+}
+
+.icon-bar-chart-outline::before {
+  content: "\ea44";
+}
+
+.icon-ban::before {
+  content: "\ea45";
+}
+
+.icon-ban-outline::before {
+  content: "\ea46";
+}
+
+.icon-attach::before {
+  content: "\ea47";
+}
+
+.icon-attach-outline::before {
+  content: "\ea48";
+}
+
+.icon-at::before {
+  content: "\ea49";
+}
+
+.icon-at-outline::before {
+  content: "\ea4a";
+}
+
+.icon-at-circle::before {
+  content: "\ea4b";
+}
+
+.icon-at-circle-outline::before {
+  content: "\ea4c";
+}
+
+.icon-arrow-up::before {
+  content: "\ea4d";
+}
+
+.icon-arrow-up-outline::before {
+  content: "\ea4e";
+}
+
+.icon-arrow-up-circle::before {
+  content: "\ea4f";
+}
+
+.icon-arrow-up-circle-outline::before {
+  content: "\ea50";
+}
+
+.icon-arrow-forward::before {
+  content: "\ea51";
+}
+
+.icon-arrow-forward-outline::before {
+  content: "\ea52";
+}
+
+.icon-arrow-forward-circle::before {
+  content: "\ea53";
+}
+
+.icon-arrow-forward-circle-outline::before {
+  content: "\ea54";
+}
+
+.icon-arrow-down::before {
+  content: "\ea55";
+}
+
+.icon-arrow-down-outline::before {
+  content: "\ea56";
+}
+
+.icon-arrow-down-circle::before {
+  content: "\ea57";
+}
+
+.icon-arrow-down-circle-outline::before {
+  content: "\ea58";
+}
+
+.icon-arrow-back::before {
+  content: "\ea59";
+}
+
+.icon-arrow-back-outline::before {
+  content: "\ea5a";
+}
+
+.icon-arrow-back-circle::before {
+  content: "\ea5b";
+}
+
+.icon-arrow-back-circle-outline::before {
+  content: "\ea5c";
+}
+
+.icon-apps::before {
+  content: "\ea5d";
+}
+
+.icon-apps-outline::before {
+  content: "\ea5e";
+}
+
+.icon-analytics::before {
+  content: "\ea5f";
+}
+
+.icon-analytics-outline::before {
+  content: "\ea60";
+}
+
+.icon-alert::before {
+  content: "\ea61";
+}
+
+.icon-alert-outline::before {
+  content: "\ea62";
+}
+
+.icon-alarm::before {
+  content: "\ea63";
+}
+
+.icon-alert-circle-outline::before {
+  content: "\ea64";
+}
+
+.icon-add::before {
+  content: "\ea65";
+}
+
+.icon-alarm-outline::before {
+  content: "\ea66";
+}
+
+.icon-add-circle-outline::before {
+  content: "\ea67";
+}
+
+.icon-logout-1::before {
+  content: "\ea68";
+}
+
+.icon-location-1::before {
+  content: "\ea69";
+}
+
+.icon-intercom-1::before {
+  content: "\ea6a";
+}
+
+.icon-volume-mute-1::before {
+  content: "\ea6b";
+}
+
+.icon-volume-full-1::before {
+  content: "\ea6c";
+}
+
+.icon-switch-playlist-1::before {
+  content: "\ea6d";
+}
+
+.icon-skip-1::before {
+  content: "\ea6e";
+}
+
+.icon-settings-1::before {
+  content: "\ea6f";
+}
+
+.icon-schedules-1::before {
+  content: "\ea70";
+}
+
+.icon-requests-1::before {
+  content: "\ea71";
+}
+
+.icon-playlists-1::before {
+  content: "\ea72";
+}
+
+.icon-menu-1::before {
+  content: "\ea73";
+}
+
+.icon-flag-1::before {
+  content: "\ea74";
+}
+
+.icon-ear::before {
+  content: "\ea75";
+}
+
+.icon-pause-outline::before {
+  content: "\ea76";
+}
+
+.icon-thumbs-up::before {
+  content: "\ea77";
+}
+
+.icon-thumbs-down::before {
+  content: "\ea78";
+}
+
+.icon-remove-outline::before {
+  content: "\ea79";
+}
+
+.icon-play::before {
+  content: "\ea7a";
+}
+
+.icon-playlist-feedback::before {
+  content: "\ea7c";
+}
+
+.icon-playlist-add-track::before {
+  content: "\ea7d";
+}
+
+.icon-pending::before {
+  content: "\ea7e";
+}
+
+.icon-playlist-request::before {
+  content: "\ea7f";
+}
+
