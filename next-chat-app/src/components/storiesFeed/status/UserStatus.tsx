@@ -7,7 +7,7 @@ import CurrentUserStories from "./CurrentUserStories";
 
 interface StatusItemProps {
   usersStatuses: [];
-  userRecord: any;
+  userRecord: { _id: string; photoUrl: string };
 }
 
 const UserStatus: React.FC<StatusItemProps> = ({
@@ -25,7 +25,8 @@ const UserStatus: React.FC<StatusItemProps> = ({
     setShowPopup(false);
   };
   const currentUserStatuses: any = usersStatuses.find(
-    (currentUserStories: any) => currentUserStories.user._id === userRecord._id
+    (currentUserStories: { user: { _id: string } }) =>
+      currentUserStories.user._id === userRecord._id
   );
 
   return (
@@ -41,7 +42,7 @@ const UserStatus: React.FC<StatusItemProps> = ({
               height={50}
             />
           ) : (
-            <img
+            <Image
               src={"https://via.placeholder.com/150"}
               alt={`profile`}
               width={50}
@@ -81,12 +82,7 @@ const UserStatus: React.FC<StatusItemProps> = ({
           >
             +
           </button>
-          {showPopup && (
-            <StatusActionsPopup
-              onClose={handleClosePopup}
-              userRecord={userRecord}
-            />
-          )}
+          {showPopup && <StatusActionsPopup onClose={handleClosePopup} />}
         </div>
       </div>
       <div className="delete-status-story-content">

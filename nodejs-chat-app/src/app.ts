@@ -52,15 +52,22 @@ DeletestoryFeedsCronJob.start();
 
 SocketIO(io);
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  const errorMessage = err.message || "Something went wrong!";
-  return res.status(err.status || 500).json({
-    name: err.name,
-    status: err.status,
-    message: errorMessage,
-    stack: err.stack,
-  });
-});
+app.use(
+  (
+    err: { message: string; status: number; name: string; stack: string },
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const errorMessage = err.message || "Something went wrong!";
+    return res.status(err.status || 500).json({
+      name: err.name,
+      status: err.status,
+      message: errorMessage,
+      stack: err.stack,
+    });
+  }
+);
 
 server.listen(PORT, () => {
   logger(`Server listening on ${process.env.host}:${PORT}`);

@@ -42,12 +42,22 @@ import { getUser } from "@/services/usersServices";
 import { selectedUserRecord } from "@/redux-toolkit/reducers/usersSlice";
 import { getSenderAndReceiverMessages } from "@/services/messagesServices";
 import { chatMessagesRecord } from "@/redux-toolkit/reducers/chatMessageSlice";
-import { UserInterfaceInfo } from "../globalTypes/GlobalTypes";
+import {
+  UserInterface,
+  UserInterfaceInfo,
+  UserRecordInterface,
+} from "../globalTypes/GlobalTypes";
 import GroupMemberPopup from "../chatList/GroupMemberPopup";
 import { IoMdRemoveCircle } from "react-icons/io";
 import ContactInfoActions from "./ContactInfoActions";
 
-const ContactInfo = ({ user, userContacts }: any) => {
+const ContactInfo = ({
+  user,
+  userContacts,
+}: {
+  user: UserInterface;
+  userContacts: [];
+}) => {
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
   const chatMessageSlice = useSelector(
     (state: RootState) => state.chatMessageSlice
@@ -69,7 +79,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
     let isSubscribed = true;
 
     // user
-    socket.on("updateUser", (response: any) => {
+    socket.on("updateUser", (response: UserInterface) => {
       if (isSubscribed && response._id === selectedUser.user._id) {
         getUserData();
       }
@@ -112,7 +122,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
       }
     });
 
-    socket.on("deleteContactUser", (response: any) => {
+    socket.on("deleteContactUser", (response: UserInterface) => {
       if (isSubscribed && response._id === userRecord._id) {
         dispatch(
           selectedUserRecord({
@@ -122,7 +132,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
       }
     });
 
-    socket.on("exitGroup", (response: any) => {
+    socket.on("exitGroup", (response: UserInterface) => {
       if (isSubscribed && response._id === userRecord._id) {
         dispatch(
           selectedUserRecord({
@@ -168,7 +178,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
       isSubscribed = false;
 
       // user
-      socket.off("updateUser", (response: any) => {
+      socket.off("updateUser", (response: UserInterface) => {
         if (isSubscribed && response._id === selectedUser.user._id)
           getUserData();
       });
@@ -210,7 +220,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
         }
       });
 
-      socket.off("deleteContactUser", (response: any) => {
+      socket.off("deleteContactUser", (response: UserRecordInterface) => {
         if (isSubscribed && response._id === userRecord._id) {
           dispatch(
             selectedUserRecord({
@@ -219,7 +229,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
           );
         }
       });
-      socket.off("exitGroup", (response: any) => {
+      socket.off("exitGroup", (response: UserRecordInterface) => {
         if (isSubscribed && response._id === userRecord._id) {
           dispatch(
             selectedUserRecord({
@@ -260,7 +270,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
   };
 
   const getMedia = chatMessageSlice.chatMessages?.messages
-    .map((data: any) => data)
+    .map((data) => data)
     .reverse()
     .filter((message: { type: string }) =>
       ["image", "video"].includes(message.type)
@@ -321,11 +331,11 @@ const ContactInfo = ({ user, userContacts }: any) => {
     </>
   );
 
-  const getCurrentGroupMember = chatMessageSlice.chatGroupMembers.find(
+  const getCurrentGroupMember: any = chatMessageSlice.chatGroupMembers.find(
     (member: { user: { _id: string } }) => member.user._id === userRecord._id
   );
   const getUpToFiveAdmin = chatMessageSlice.chatGroupMembers.filter(
-    (member: any) => member.admin
+    (member: { admin: boolean }) => member.admin
   );
 
   const blockUserContactData = () => {
@@ -453,7 +463,7 @@ const ContactInfo = ({ user, userContacts }: any) => {
 
                   <div>
                     {chatMessageSlice.chatGroupMembers.map(
-                      (member: any, index: number) => {
+                      (member: UserInterface, index: number) => {
                         return (
                           <div key={index}>
                             <div className="chatAreaTop">

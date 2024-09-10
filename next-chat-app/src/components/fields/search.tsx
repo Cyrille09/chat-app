@@ -8,6 +8,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 
 import styles from "./fields.module.scss";
 import { Tooltip } from "../tooltip";
+import React from "react";
 // const { Search } = Input;
 
 interface ToggleProps {
@@ -22,7 +23,7 @@ interface ToggleProps {
   leftIcon?: any;
   multiple?: boolean;
   labelKey: string;
-  onChange?: any;
+  onChange?: (value: {}) => void;
   clearButton?: boolean;
   selected?: any;
   paginate?: boolean;
@@ -35,13 +36,12 @@ interface ToggleProps {
   autoFocus?: boolean;
   renderMenuItemChildren?: any;
   filterBy?: any;
-  props?: any;
-  onInputChange?: any;
-  onFocus?: any;
+  onInputChange?: (value: {}) => void;
+  onFocus?: (value: {}) => void;
   maxWidth?: string;
   tooltipIcon?: boolean;
   tooltipMessage?: string;
-  additionalContent?: any;
+  additionalContent?: string | number;
 }
 export function SearchWithOptions({
   className = null,

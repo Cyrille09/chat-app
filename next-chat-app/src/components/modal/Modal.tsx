@@ -1,5 +1,6 @@
 import Modal from "react-bootstrap/Modal";
 import classnames from "classnames";
+import React from "react";
 
 // style components
 interface ModalProps {
@@ -7,14 +8,20 @@ interface ModalProps {
   backdrop?: "static" | true | false;
   centered?: true | false;
   scrollable?: true | false;
-  fullscreen?: true | "sm-down" | "md-down" | "lg-down" | "xl-down" | "xxl-down";
-  footer?: any;
+  fullscreen?:
+    | true
+    | "sm-down"
+    | "md-down"
+    | "lg-down"
+    | "xl-down"
+    | "xxl-down";
+  footer?: React.ReactNode;
   title?: string;
   show: boolean;
-  handleClose: any;
+  handleClose: (value: {}) => void;
   className?: any;
   titleClassName?: any;
-  children: any;
+  children: React.ReactNode;
 }
 
 export const GlobalModal = ({

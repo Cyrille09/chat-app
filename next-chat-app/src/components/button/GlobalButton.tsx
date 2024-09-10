@@ -1,5 +1,6 @@
 import React from "react";
 import classnames from "classnames";
+import { IconType } from "react-icons";
 
 // styles components
 import Link from "next/link";
@@ -27,16 +28,16 @@ interface ButtonProps {
     | "thirty"
     | "fourty"
     | "fifty";
-  href?: any;
+  href?: string;
   target?: "_blank" | "_self" | "_parent" | "_top" | "framename";
   type?: "button" | "submit" | "reset";
   leftIcon?: any;
   rightIcon?: any;
   disabled?: boolean;
-  children?: any;
+  children?: React.ReactNode;
   className?: any;
   style?: any;
-  onChange?: any;
+  onChange?: (value: {}) => void;
   width?: "full-width" | "ajust";
   tag?: "main-tag" | "active-tag";
   onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;

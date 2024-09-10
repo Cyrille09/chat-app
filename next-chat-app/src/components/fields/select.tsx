@@ -13,14 +13,14 @@ interface SelectProps {
   options?: any;
   disabled?: boolean;
   disabledPlaceholder?: boolean;
-  option?: any;
+  option?: string;
   style?: any;
-  onChange?: any;
-  onChangeCapture?: any;
+  onChange?: (event: any) => void;
+  onChangeCapture?: (value: {}) => void;
   className?: any;
-  value?: any;
+  value?: string | number | null;
   required?: boolean;
-  defaultValue?: any;
+  defaultValue?: string | number;
 }
 export function Select({
   name = "",
@@ -68,7 +68,7 @@ export function Select({
           {placeholder}
         </option>
         {option}
-        {options.map((option: any) => (
+        {options.map((option: { value: string; label: string }) => (
           <option value={option.value} key={option.value}>
             {option.label}
           </option>

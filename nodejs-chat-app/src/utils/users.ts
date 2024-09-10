@@ -1,4 +1,4 @@
-const UsersList: any = [
+const UsersList = [
   {
     name: "Cyrille Senami Hounvio",
     email: "cyrille@gmail.com",

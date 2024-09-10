@@ -5,6 +5,7 @@ import {
 } from "@/redux-toolkit/reducers/actionsSlice";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
+import { UserInterface, UserRecordInterface } from "../globalTypes/GlobalTypes";
 
 const GroupMemberPopup = ({
   onClose,
@@ -12,7 +13,13 @@ const GroupMemberPopup = ({
   user,
   getUpToFiveAdmin,
   currentUser,
-}: any) => {
+}: {
+  onClose: () => void;
+  member: UserInterface;
+  user: { admin: boolean };
+  getUpToFiveAdmin: any[];
+  currentUser: UserRecordInterface;
+}) => {
   const popupRef: any = useRef();
   const dispatch = useDispatch();
 

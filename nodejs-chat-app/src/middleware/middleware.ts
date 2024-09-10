@@ -1,6 +1,6 @@
 import "dotenv/config";
-import jwt from "jsonwebtoken";
-import { RequestHandler } from "express";
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
+import { NextFunction, RequestHandler } from "express";
 import User from "../models/User";
 import { unauthorizedError } from "../errorMessages/errror";
 
@@ -10,7 +10,7 @@ import { unauthorizedError } from "../errorMessages/errror";
 export const verifyAccessToken: RequestHandler = async (
   req: any,
   res,
-  next
+  next: NextFunction
 ) => {
   try {
     const accessToken = req.header("Authorization").replace("Bearer ", "");

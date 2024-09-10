@@ -12,13 +12,13 @@ interface ToggleProps {
   checked?: boolean;
   size?: string;
   rightLabel?: boolean;
-  onChangeCapture?: any;
-  onChange: any;
+  onChangeCapture?: (value: {}) => void;
+  onChange: (value: {}) => void;
   className?: any;
   disabled?: boolean;
   labelClassName?: any;
   style?: any;
-  tooltipMessage?: any;
+  tooltipMessage?: string;
   required?: boolean;
 }
 export function Toggle({

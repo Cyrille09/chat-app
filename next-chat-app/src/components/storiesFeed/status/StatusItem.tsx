@@ -10,7 +10,7 @@ interface StatusItemProps {
   name: string;
   timestamp: string;
   profilePic: string;
-  status: any;
+  status: string | boolean;
   index: number;
 }
 
@@ -55,7 +55,7 @@ const StatusItem: React.FC<StatusItemProps> = ({
           height={50}
         />
       ) : (
-        <img
+        <Image
           src={"https://via.placeholder.com/150"}
           alt={`profile`}
           width={50}

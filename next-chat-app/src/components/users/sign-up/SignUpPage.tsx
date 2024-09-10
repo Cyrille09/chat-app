@@ -180,7 +180,9 @@ export default function SignUpPage() {
                                       : "Show Password"
                                   }
                                   rightLabel
-                                  onChange={(value: any) => {
+                                  onChange={(value: {
+                                    target: { value: string };
+                                  }) => {
                                     const targetValue =
                                       value.target &&
                                       value.target.value === "true"

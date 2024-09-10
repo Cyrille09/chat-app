@@ -3,8 +3,15 @@ import { FaChevronDown, FaFilePdf, FaFileWord, FaStar } from "react-icons/fa";
 import Image from "next/image";
 import MessageActionsPopup from "./MessageActionsPopup";
 import { parseISO, format, isToday, isYesterday, isThisWeek } from "date-fns";
+import { UserRecordInterface } from "../globalTypes/GlobalTypes";
 
-const ChatAreaCenterLevel = ({ chatMessageSlice, userRecord }: any) => {
+const ChatAreaCenterLevel = ({
+  chatMessageSlice,
+  userRecord,
+}: {
+  chatMessageSlice: { chatMessages: { groupedMessages: [] } };
+  userRecord: UserRecordInterface;
+}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [messageId, setMessageId] = useState("");
 
@@ -21,7 +28,7 @@ const ChatAreaCenterLevel = ({ chatMessageSlice, userRecord }: any) => {
   return (
     <>
       {chatMessageSlice.chatMessages?.groupedMessages?.map(
-        (groupMessage: any, index: number) => {
+        (groupMessage: { date: string; messages: [] }, index: number) => {
           const dateCreated = () => {
             const date = parseISO(groupMessage.date);
             if (isToday(date)) {
@@ -43,11 +50,11 @@ const ChatAreaCenterLevel = ({ chatMessageSlice, userRecord }: any) => {
 
               {groupMessage?.messages?.map((message: any, index: number) => {
                 const getStarMessage = message.stars?.some(
-                  (user: any) => user.user === userRecord._id
+                  (user: { user: string }) => user.user === userRecord._id
                 );
 
                 const translatedMessage = message.translatedMessage.find(
-                  (translatedMessage: any) =>
+                  (translatedMessage: { user: string }) =>
                     translatedMessage?.user === userRecord._id
                 );
 

@@ -27,7 +27,7 @@ import styles from "../modelLists/madal-lists.module.scss";
 import "./chatList.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux-toolkit/store";
-import { UserInterface } from "../globalTypes/GlobalTypes";
+import { UserInterface, UserRecordInterface } from "../globalTypes/GlobalTypes";
 import { useRouter } from "next/navigation";
 import { updateUserProfile } from "@/services/usersServices";
 import { socket } from "../websocket/websocket";
@@ -41,9 +41,9 @@ const ChatListActions = ({
   userContactsRecord,
 }: {
   user: UserInterface;
-  requestUserContactRecord: any;
-  userRecord: any;
-  userContactsRecord: any;
+  requestUserContactRecord: [];
+  userRecord: UserRecordInterface;
+  userContactsRecord: [];
 }) => {
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
 

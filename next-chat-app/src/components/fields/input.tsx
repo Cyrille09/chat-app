@@ -5,7 +5,7 @@ import classnames from "classnames";
 import styles from "./fields.module.scss";
 
 interface InputProps {
-  type?: any;
+  type?: string;
   name: string;
   id: string;
   placeholder?: string;
@@ -16,16 +16,15 @@ interface InputProps {
   min?: number;
   required?: boolean;
   max?: number;
-  onBlur?: any;
-  autoCapitalize?: any;
-  onChange?: any;
-  autoCorrect?: any;
-  value?: any;
-  error?: any;
+  onBlur?: (value: {}) => void;
+  autoCapitalize?: string;
+  onChange?: (value: any) => void;
+  autoCorrect?: string;
   style?: any;
-  onChangeCapture?: any;
+  error: any;
+  onChangeCapture?: (value: {}) => void;
   onKeyDown?: any;
-  children?: any;
+  children?: React.ReactNode;
 }
 
 export function Input({

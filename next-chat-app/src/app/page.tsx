@@ -11,6 +11,7 @@ import {
   getRequestUserContact,
   getUserContacts,
 } from "@/services/userContactsServices";
+import { UserInterface } from "@/components/globalTypes/GlobalTypes";
 
 export default async function Home() {
   const cookieStore = cookies();
@@ -18,7 +19,7 @@ export default async function Home() {
     token: cookieStore.get(LOCAL_STORAGE_USER_TOKEN)?.value,
   };
 
-  const data = await getData(ctxArguments);
+  const data = await getData(ctxArguments as any);
   const { user, userContacts, requestUserContact } = data;
 
   return (
@@ -40,7 +41,10 @@ export default async function Home() {
   );
 }
 
-const getData = withAuthentication(async function (ctx: any, user: any) {
+const getData = withAuthentication(async function (
+  ctx: { token: string },
+  user: { data: UserInterface }
+) {
   const userContacts = await getUserContacts(ctx.token);
   const requestUserContact = await getRequestUserContact(ctx.token);
 

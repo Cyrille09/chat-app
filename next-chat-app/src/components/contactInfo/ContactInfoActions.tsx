@@ -43,8 +43,15 @@ import {
   updateGroup,
 } from "@/services/groupsServices";
 import { blockUserContactRecord } from "@/redux-toolkit/reducers/userContactsSlice";
+import { UserRecordInterface } from "../globalTypes/GlobalTypes";
 
-const ContactInfoActions = ({ userRecord, userContactsDetail }: any) => {
+const ContactInfoActions = ({
+  userRecord,
+  userContactsDetail,
+}: {
+  userRecord: UserRecordInterface;
+  userContactsDetail: [];
+}) => {
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
   const userContactsSlice = useSelector(

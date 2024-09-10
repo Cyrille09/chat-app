@@ -8,7 +8,7 @@ import { successStoryFeedUserStatusActions } from "@/redux-toolkit/reducers/acti
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux-toolkit/store";
 
-const StoriesFeed = ({ users }: any) => {
+const StoriesFeed = ({ users }: { users: any[] }) => {
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
 
   const [currentUserIndex, setCurrentUserIndex] = useState(

@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import { signUpPage } from "@/constants/routePath";
 import SignUpPage from "@/components/users/sign-up/SignUpPage";
 import { UnauthenticatedLayout } from "@/components/layout/UnauthenticatedLayout";
+import { UserInterface } from "@/components/globalTypes/GlobalTypes";
 
 export const metadata: Metadata = {
   title: "Sign up",
@@ -25,7 +26,7 @@ export default async function SignUp() {
     token: cookieStore.get(LOCAL_STORAGE_USER_TOKEN)?.value,
   };
 
-  const data = await getData(ctxArguments);
+  const data = await getData(ctxArguments as any);
 
   const { user } = data;
 
@@ -37,7 +38,10 @@ export default async function SignUp() {
     </>
   );
 }
-const getData = withUser(async function (ctx: any, user: any) {
+const getData = withUser(async function (
+  ctx: { token: string },
+  user: { data: UserInterface }
+) {
   try {
     return {
       user: user && user.data,

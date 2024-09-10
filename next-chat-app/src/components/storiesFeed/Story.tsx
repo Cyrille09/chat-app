@@ -3,7 +3,25 @@ import { parseISO, format, isToday, isYesterday } from "date-fns";
 import Image from "next/image";
 import "./stories.scss";
 
-const Story = ({ story, duration, onStoryEnd, user, currentIndex }: any) => {
+const Story = ({
+  story,
+  duration,
+  onStoryEnd,
+  user,
+  currentIndex,
+}: {
+  story: { createdAt: string; type: string; message: string; url: string };
+  duration: number;
+  onStoryEnd: () => void;
+  user: {
+    user: {
+      photoUrl: string;
+      name: string;
+    };
+    stories: [];
+  };
+  currentIndex: number;
+}) => {
   const videoRef: any = useRef(null);
 
   useEffect(() => {
@@ -44,7 +62,7 @@ const Story = ({ story, duration, onStoryEnd, user, currentIndex }: any) => {
                 height={50}
               />
             ) : (
-              <img
+              <Image
                 src={"https://via.placeholder.com/150"}
                 alt={`profile`}
                 width={50}
@@ -61,7 +79,7 @@ const Story = ({ story, duration, onStoryEnd, user, currentIndex }: any) => {
         </div>
       </div>
       <div className="userStoryContainer">
-        {user.stories?.map((userStory: any, index: number) => {
+        {user.stories?.map((userStory: {}, index: number) => {
           return (
             <div className="userStoryList" key={index}>
               {currentIndex === index ? (
@@ -81,6 +99,7 @@ const Story = ({ story, duration, onStoryEnd, user, currentIndex }: any) => {
         })}
       </div>
       {story.type === "image" && (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           className="story-image-video"
           src={`${process.env.baseUrl}/images/stories/${story.message}`}

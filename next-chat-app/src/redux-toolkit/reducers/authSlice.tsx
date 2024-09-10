@@ -8,7 +8,7 @@ import { LOCAL_STORAGE_USER_TOKEN } from "../../constants/defaultValues";
 export interface UserState {
   token: string;
 }
-const initialState: any = {
+const initialState = {
   token: Cookies.get(LOCAL_STORAGE_USER_TOKEN) || "",
 };
 
@@ -16,7 +16,7 @@ const authSlice = createSlice({
   name: "authUser",
   initialState,
   reducers: {
-    loginSuccess: (state, action: PayloadAction<any>) => {
+    loginSuccess: (state, action: PayloadAction<{ token: string }>) => {
       state.token = action.payload.token;
     },
   },

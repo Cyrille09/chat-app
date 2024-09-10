@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
 import styles from "./errorAndSuccessMessage.module.scss";
 
-export const GlobalErrorMessage = ({ message }: any) => {
+export const GlobalErrorMessage = ({ message }: { message: string }) => {
   const nodeRef = useRef(null);
   const dispatch = useDispatch();
   const actions = useSelector((state: RootState) => state.actionsSlice);
@@ -45,7 +45,7 @@ export const GlobalErrorMessage = ({ message }: any) => {
   );
 };
 
-export const GlobalSuccessMessage = ({ message }: any) => {
+export const GlobalSuccessMessage = ({ message }: { message: string }) => {
   const nodeRef = useRef(null);
   const dispatch = useDispatch();
   const actions = useSelector((state: RootState) => state.actionsSlice);

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import "./status.scss";
 import { GlobalButton } from "@/components/button/GlobalButton";
+import Image from "next/image";
 import { deleteContactUserStoryFeed } from "@/services/storyFeedsServices";
 import { GlobalErrorMessage } from "@/components/errorAndSuccessMessage";
 import { LoadingData } from "@/components/loading/LoadingData";
@@ -45,18 +46,18 @@ const CurrentUserStories: React.FC<CurrentUserStoriesProps> = ({ stories }) => {
 
   return (
     <div className="status-story">
-      {stories?.map((story: any) => {
+      {stories?.map((story: { type: string; message: string; _id: string }) => {
         const displayStoryContent = () => {
           if (story.type === "text") {
             return <p>{story.message}</p>;
           } else if (story.type === "image") {
             return (
-              <img
+              <Image
                 src={`${process.env.baseUrl}/images/stories/${story.message}`}
                 alt={`profile`}
                 className="status-story-image"
-                width="200"
-                height="auto"
+                width={200}
+                height={200}
               />
             );
           }
