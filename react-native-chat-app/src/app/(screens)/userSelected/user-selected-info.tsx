@@ -28,14 +28,21 @@ import styles from "./userSelected";
 import { Divider } from "@rneui/base";
 import { socket } from "@/src/components/websocket/websocket";
 import { selectedUserRecord } from "@/src/redux-toolkit/reducers/usersSlice";
-import { UserInterfaceInfo } from "@/src/components/globalTypes/GlobalTypes";
+import {
+  UserInterface,
+  UserInterfaceInfo,
+} from "@/src/components/globalTypes/GlobalTypes";
 import { getUser } from "@/src/services/usersServices";
 import { getSenderAndReceiverMessages } from "@/src/services/messagesServices";
-import { chatMessagesRecord } from "@/src/redux-toolkit/reducers/chatMessageSlice";
+import {
+  chatGroupMembersRecord,
+  chatMessagesRecord,
+} from "@/src/redux-toolkit/reducers/chatMessageSlice";
 import { router } from "expo-router";
 import { ReactNativeDialog } from "@/src/components/dialog/Dialog";
 import {
   exitFromGroupContact,
+  getGroupMmebers,
   muteGroupContact,
   updateGroup,
 } from "@/src/services/groupsServices";
@@ -137,6 +144,50 @@ const UserSelectedInfo = () => {
       }
     });
 
+    socket.on("addGroupMember", (response: any) => {
+      if (
+        isSubscribed &&
+        (response.groupUsers
+          .map((user: { value: string }) => user.value)
+          .includes(userRecord._id) ||
+          response.groupId === selectedUser.group._id)
+      ) {
+        getGroupMmebersData();
+      }
+    });
+
+    socket.on("removeUserFromGroup", (response: UserInterface) => {
+      if (
+        isSubscribed &&
+        response.group._id === usersSlice.selectedUser?.group?._id &&
+        response.user._id !== userRecord._id
+      ) {
+        getGroupMmebersData();
+      }
+
+      if (
+        isSubscribed &&
+        response.group._id === usersSlice.selectedUser?.group?._id &&
+        response.user._id === userRecord._id
+      ) {
+        dispatch(
+          selectedUserRecord({
+            ...UserInterfaceInfo,
+          })
+        );
+        router.navigate("/(tabs)");
+      }
+    });
+
+    socket.on("updateGroupMember", (response: any) => {
+      if (
+        isSubscribed &&
+        response._id === usersSlice.selectedUser?.group?._id
+      ) {
+        getGroupMmebersData();
+      }
+    });
+
     const getUserData = async () => {
       getUser(selectedUser.user._id, "")
         .then((response) => {
@@ -167,6 +218,17 @@ const UserSelectedInfo = () => {
             dispatch(chatMessagesRecord({ messages: [], groupedMessages: [] }));
         })
         .catch((error) => {});
+    };
+
+    const getGroupMmebersData = async () => {
+      const chatGroupMembers = await getGroupMmebers(
+        usersSlice.selectedUser.group._id
+      );
+      if (chatGroupMembers?.data?.length) {
+        dispatch(chatGroupMembersRecord(chatGroupMembers.data));
+      } else {
+        dispatch(chatGroupMembersRecord([]));
+      }
     };
 
     return () => {
@@ -231,6 +293,41 @@ const UserSelectedInfo = () => {
               ...UserInterfaceInfo,
             })
           );
+        }
+      });
+
+      socket.off("addGroupMember", (response: any) => {
+        if (
+          isSubscribed &&
+          (response.groupUsers
+            .map((user: { value: string }) => user.value)
+            .includes(userRecord._id) ||
+            response.groupId === selectedUser.group._id)
+        ) {
+          getGroupMmebersData();
+        }
+      });
+
+      socket.off("removeUserFromGroup", (response: UserInterface) => {
+        if (
+          isSubscribed &&
+          response.group._id === usersSlice.selectedUser?.group?._id &&
+          response.user._id !== userRecord._id
+        ) {
+          getGroupMmebersData();
+        }
+
+        if (
+          isSubscribed &&
+          response.group._id === usersSlice.selectedUser?.group?._id &&
+          response.user._id === userRecord._id
+        ) {
+          dispatch(
+            selectedUserRecord({
+              ...UserInterfaceInfo,
+            })
+          );
+          router.navigate("/(tabs)");
         }
       });
     };
@@ -422,8 +519,6 @@ const UserSelectedInfo = () => {
   };
 
   const disappearMessageDetail = async () => {
-    dispatch(isLoadingActions(true));
-
     if (usersSlice.selectedUser.isGroup) {
       updateGroup(
         {
@@ -440,7 +535,6 @@ const UserSelectedInfo = () => {
           });
         })
         .catch((error) => {
-          dispatch(isLoadingActions(false));
           dispatch(
             errorPopupActions({
               status: true,
@@ -468,7 +562,6 @@ const UserSelectedInfo = () => {
           });
         })
         .catch((error) => {
-          dispatch(isLoadingActions(false));
           dispatch(
             errorPopupActions({
               status: true,
@@ -481,8 +574,6 @@ const UserSelectedInfo = () => {
   };
 
   const deleteContactUserDetail = async () => {
-    dispatch(isLoadingActions(true));
-
     if (selectedUser.isGroup) {
       exitFromGroupContact(
         selectedUser._id,
@@ -496,14 +587,13 @@ const UserSelectedInfo = () => {
           });
 
           socket.emit("messageGroup", {
-            groupId: usersSlice.selectedUser.group._id,
+            groupId: selectedUser.group._id,
           });
 
           dispatch(hideActions());
           router.navigate("/(tabs)/");
         })
         .catch((error) => {
-          dispatch(isLoadingActions(false));
           dispatch(
             errorPopupActions({
               status: true,
@@ -521,7 +611,6 @@ const UserSelectedInfo = () => {
           router.navigate("/(tabs)/");
         })
         .catch((error) => {
-          dispatch(isLoadingActions(false));
           dispatch(
             errorPopupActions({
               status: true,
@@ -534,7 +623,6 @@ const UserSelectedInfo = () => {
   };
 
   const clearUserContactChatDetail = async () => {
-    dispatch(isLoadingActions(true));
     clearUserContactChat(selectedUser.user)
       .then((response) => {
         const receiverInfo = response?.data.receiver;
@@ -547,7 +635,6 @@ const UserSelectedInfo = () => {
         dispatch(hideActions());
       })
       .catch((error) => {
-        dispatch(isLoadingActions(false));
         dispatch(
           errorPopupActions({
             status: true,
@@ -559,7 +646,6 @@ const UserSelectedInfo = () => {
   };
 
   const blockUserContactDetail = async () => {
-    dispatch(isLoadingActions(true));
     blockUserContact(
       selectedUser.user,
       !userContactsSlice.blockUserContact.status
@@ -576,17 +662,16 @@ const UserSelectedInfo = () => {
           updatedType: "block",
         });
 
+        dispatch(hideActions());
+
         dispatch(
           blockUserContactRecord({
             ...userContactsSlice.blockUserContact,
             status: !userContactsSlice.blockUserContact.status,
           })
         );
-
-        dispatch(hideActions());
       })
       .catch((error) => {
-        dispatch(isLoadingActions(false));
         dispatch(
           errorPopupActions({
             status: true,
@@ -839,6 +924,7 @@ const UserSelectedInfo = () => {
                             _id: string;
                           };
                           admin: boolean;
+                          group: { creator: string };
                         },
                         index: number
                       ) => (
@@ -916,7 +1002,45 @@ const UserSelectedInfo = () => {
                                         record: member,
                                         tag: "viewGroupUser",
                                       },
-                                    ]}
+                                    ]
+                                      .filter((list: { tag: string }) => {
+                                        let groupAdmin = false;
+                                        let removeMember = false;
+                                        let viewMember = false;
+
+                                        if (
+                                          getCurrentGroupMember?.admin &&
+                                          getUpToFiveAdmin.length < 5 &&
+                                          !member.admin &&
+                                          list.tag === "makeGroupAdmin"
+                                        ) {
+                                          groupAdmin = true;
+                                        }
+
+                                        if (
+                                          list.tag === "removeUserFromGroup" &&
+                                          getCurrentGroupMember.admin &&
+                                          (!member.admin ||
+                                            (member.group.creator ===
+                                              usersSlice.currentUser.user._id &&
+                                              member.admin) ||
+                                            !member.group.creator ||
+                                            member.user._id ===
+                                              usersSlice.currentUser.user._id)
+                                        ) {
+                                          removeMember = true;
+                                        }
+
+                                        if (list.tag === "viewGroupUser") {
+                                          viewMember = true;
+                                        }
+                                        return (
+                                          groupAdmin ||
+                                          removeMember ||
+                                          viewMember
+                                        );
+                                      })
+                                      .map((data) => data)}
                                   />
                                 )}
                               </View>
@@ -991,9 +1115,8 @@ const UserSelectedInfo = () => {
                       <Text>Starred messages</Text>
                     </View>
                     <View style={styles.mediaCountContainer}>
-                      {starredMessages.length && (
-                        <Text>{starredMessages.length}</Text>
-                      )}
+                      <Text>{starredMessages.length || 0}</Text>
+
                       <Icon
                         type="font-awesome"
                         name="chevron-right"
@@ -1062,7 +1185,10 @@ const UserSelectedInfo = () => {
                   <TouchableOpacity
                     style={styles.eachAction}
                     onPress={() => {
-                      if (usersSlice.selectedUser.group?.disappearIn) {
+                      if (
+                        usersSlice.selectedUser.disappearIn ||
+                        usersSlice.selectedUser.group?.disappearIn
+                      ) {
                         dispatch(
                           successDisappearMessageActions({
                             status: true,

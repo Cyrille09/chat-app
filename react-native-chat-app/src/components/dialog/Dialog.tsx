@@ -56,6 +56,7 @@ export function ReactNativeDialog({
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
   const dispatch = useDispatch();
+  const selectedUser = usersSlice.selectedUser;
 
   const logoutUserData = async () => {
     const lastSeen = {
@@ -79,8 +80,6 @@ export function ReactNativeDialog({
   };
 
   const assignGroupAdminData = async () => {
-    dispatch(isLoadingActions(true));
-
     assignGroupAdmin(
       usersSlice.selectedUser.group._id,
       actionsSlice.successMakeGroupAdmin?.record?.user?._id,
@@ -89,13 +88,12 @@ export function ReactNativeDialog({
       .then((response) => {
         socket.emit("updateGroupMember", usersSlice.selectedUser.group);
         socket.emit("messageGroup", {
-          groupId: usersSlice.selectedUser.group._id,
+          groupId: selectedUser.group._id,
         });
 
         dispatch(hideActions());
       })
       .catch((error) => {
-        dispatch(isLoadingActions(false));
         dispatch(
           errorPopupActions({
             status: true,
@@ -107,8 +105,6 @@ export function ReactNativeDialog({
   };
 
   const removeUserFromGroupData = async () => {
-    dispatch(isLoadingActions(true));
-
     removeUserFromGroup(
       usersSlice.selectedUser.group._id,
       actionsSlice.successRemoveUserFromGroup?.record?.user?._id,
@@ -120,13 +116,12 @@ export function ReactNativeDialog({
           user: actionsSlice.successRemoveUserFromGroup?.record?.user,
         });
         socket.emit("messageGroup", {
-          groupId: usersSlice.selectedUser.group._id,
+          groupId: selectedUser.group._id,
         });
 
         dispatch(hideActions());
       })
       .catch((error) => {
-        dispatch(isLoadingActions(false));
         dispatch(
           errorPopupActions({
             status: true,
@@ -205,7 +200,7 @@ export function ReactNativeDialog({
       {actionsSlice.successRemoveUserFromGroup.status &&
         ReactNativeAlert.alert(
           "Remove User From Group",
-          `Do you want to remove from group?`,
+          `Do you want to remove ${actionsSlice.successRemoveUserFromGroup.record.user.name} from group?`,
           [
             {
               text: "Cancel",

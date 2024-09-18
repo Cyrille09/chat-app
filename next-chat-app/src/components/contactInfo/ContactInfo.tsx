@@ -50,6 +50,8 @@ import {
 import GroupMemberPopup from "../chatList/GroupMemberPopup";
 import { IoMdRemoveCircle } from "react-icons/io";
 import ContactInfoActions from "./ContactInfoActions";
+import { getUserContacts } from "@/services/userContactsServices";
+import { userContactsRecord } from "@/redux-toolkit/reducers/userContactsSlice";
 
 const ContactInfo = ({
   user,

@@ -12,6 +12,7 @@ import { RootState } from "@/src/redux-toolkit/store";
 import {
   createUserContacts,
   getRequestUserContact,
+  getUserContacts,
 } from "@/src/services/userContactsServices";
 import { router } from "expo-router";
 import { Formik } from "formik";
@@ -20,12 +21,54 @@ import { View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./chatListStyles";
 import { ReactNativeSelect } from "@/src/components/select/Select";
+import { userContactsRecord } from "@/src/redux-toolkit/reducers/userContactsSlice";
 
 const AddNewContact = () => {
   const usersSlice = useSelector((state: RootState) => state.usersSlice);
   const actionsSlice = useSelector((state: RootState) => state.actionsSlice);
   const [users, setUsers] = useState<[]>([]);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    let isSubscribed = true;
+
+    // contact user
+    socket.on("contactUser", (response: any) => {
+      if (isSubscribed && response._id === usersSlice.currentUser.user._id) {
+        userContactData();
+      }
+    });
+
+    const getRequestUserContactData = () => {
+      getRequestUserContact("")
+        .then((response) => {
+          if (isSubscribed) {
+            setUsers(response.data);
+          }
+        })
+        .catch((error) => {});
+    };
+
+    const userContactData = async () => {
+      await getUserContacts("")
+        .then((response) => {
+          dispatch(userContactsRecord(response.data.users));
+        })
+        .catch((error) => {});
+    };
+
+    getRequestUserContactData();
+
+    return () => {
+      isSubscribed = false;
+      // contact user
+      socket.off("contactUser", (response: any) => {
+        if (isSubscribed && response._id === usersSlice.currentUser.user._id) {
+          userContactData();
+        }
+      });
+    };
+  }, []);
 
   const createUserContactsDetail = async (
     values: { userId: string; label: string },
@@ -65,25 +108,6 @@ const AddNewContact = () => {
       }))) ||
     [];
 
-  useEffect(() => {
-    let isSubscribed = true;
-
-    const getRequestUserContactData = () => {
-      getRequestUserContact("")
-        .then((response) => {
-          if (isSubscribed) {
-            setUsers(response.data);
-          }
-        })
-        .catch((error) => {});
-    };
-
-    getRequestUserContactData();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, []);
   return (
     <View style={styles.container}>
       <Formik

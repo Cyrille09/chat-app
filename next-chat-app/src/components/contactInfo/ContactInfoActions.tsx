@@ -79,7 +79,7 @@ const ContactInfoActions = ({
           });
 
           socket.emit("messageGroup", {
-            groupId: usersSlice.selectedUser.group._id,
+            groupId: selectedUser.group._id,
           });
 
           dispatch(hideActions());

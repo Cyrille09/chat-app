@@ -122,7 +122,8 @@ const ChatList = ({
         getRequestUserContactData();
       }
     });
-    socket.on("updateContactUser", (response: UserRecordInterface) => {
+
+    socket.on("updateContactUser", (response: any) => {
       // to be reviewd
       if (isSubscribed && response._id === userRecord._id) {
         getContactUserData();
@@ -152,7 +153,7 @@ const ChatList = ({
       if (isSubscribed && response._id === userRecord._id) {
         getContactUserData();
         getRequestUserContactData();
-      } else if (response.groupId === usersSlice.selectedUser.group._id) {
+      } else if (response.groupId === usersSlice.selectedUser?.group?._id) {
         getGroupMmebersData();
       }
     });
@@ -172,9 +173,10 @@ const ChatList = ({
     socket.on("addGroupMember", (response: any) => {
       if (
         isSubscribed &&
-        response
+        (response?.groupUsers
           .map((user: { value: string }) => user.value)
-          .includes(userRecord._id)
+          .includes(userRecord._id) ||
+          response.groupId === usersSlice.selectedUser?.group?._id)
       ) {
         getContactUserData();
         getRequestUserContactData();
@@ -182,7 +184,10 @@ const ChatList = ({
     });
 
     socket.on("updateGroupMember", (response: any) => {
-      if (isSubscribed && response._id === usersSlice.selectedUser.group._id) {
+      if (
+        isSubscribed &&
+        response._id === usersSlice.selectedUser?.group?._id
+      ) {
         getGroupMmebersData();
       }
     });
@@ -191,7 +196,7 @@ const ChatList = ({
       if (
         isSubscribed &&
         response._id === userRecord._id &&
-        response.groupId === usersSlice.selectedUser.group._id
+        response.groupId === usersSlice.selectedUser?.group?._id
       ) {
         getContactUserData();
         dispatch(
@@ -206,7 +211,7 @@ const ChatList = ({
     socket.on("removeUserFromGroup", (response: UserInterface) => {
       if (
         isSubscribed &&
-        response.group._id === usersSlice.selectedUser.group._id &&
+        response.group._id === usersSlice.selectedUser?.group?._id &&
         response.user._id !== userRecord._id
       ) {
         getGroupMmebersData();
@@ -214,7 +219,7 @@ const ChatList = ({
 
       if (
         isSubscribed &&
-        response.group._id === usersSlice.selectedUser.group._id &&
+        response.group._id === usersSlice.selectedUser?.group?._id &&
         response.user._id === userRecord._id
       ) {
         dispatch(
@@ -305,7 +310,7 @@ const ChatList = ({
 
     const getGroupMmebersData = async () => {
       const chatGroupMembers = await getGroupMmebers(
-        usersSlice.selectedUser.group._id
+        usersSlice.selectedUser?.group?._id
       );
 
       if (chatGroupMembers?.data?.length) {
@@ -330,7 +335,7 @@ const ChatList = ({
       socket.off("removeUserFromGroup", (response: UserInterface) => {
         if (
           isSubscribed &&
-          response.group._id === usersSlice.selectedUser.group._id &&
+          response.group._id === usersSlice.selectedUser?.group?._id &&
           response.user._id !== userRecord._id
         ) {
           getGroupMmebersData();
@@ -338,7 +343,7 @@ const ChatList = ({
 
         if (
           isSubscribed &&
-          response.group._id === usersSlice.selectedUser.group._id &&
+          response.group._id === usersSlice.selectedUser?.group?._id &&
           response.user._id === userRecord._id
         ) {
           dispatch(
@@ -433,7 +438,7 @@ const ChatList = ({
         if (isSubscribed && response._id === userRecord._id) {
           getContactUserData();
           getRequestUserContactData();
-        } else if (response.groupId === usersSlice.selectedUser.group._id) {
+        } else if (response.groupId === usersSlice.selectedUser?.group?._id) {
           getGroupMmebersData();
         }
       });
@@ -451,9 +456,10 @@ const ChatList = ({
       socket.off("addGroupMember", (response: any) => {
         if (
           isSubscribed &&
-          response
+          (response?.groupUsers
             .map((user: { value: string }) => user.value)
-            .includes(userRecord._id)
+            .includes(userRecord._id) ||
+            response.groupId === usersSlice.selectedUser?.group?._id)
         ) {
           getContactUserData();
           getRequestUserContactData();
@@ -463,7 +469,7 @@ const ChatList = ({
       socket.off("updateGroupMember", (response: UserRecordInterface) => {
         if (
           isSubscribed &&
-          response._id === usersSlice.selectedUser.group._id
+          response._id === usersSlice.selectedUser?.group?._id
         ) {
           getGroupMmebersData();
         }

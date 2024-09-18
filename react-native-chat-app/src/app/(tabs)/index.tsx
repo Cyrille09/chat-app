@@ -128,7 +128,7 @@ export default function HomeScreen() {
       if (isSubscribed && response._id === userRecord._id) {
         getContactUserData();
         getRequestUserContactData();
-      } else if (response.groupId === usersSlice.selectedUser.group._id) {
+      } else if (response.groupId === usersSlice.selectedUser?.group?._id) {
         getGroupMmebersData();
       }
     });
@@ -148,9 +148,10 @@ export default function HomeScreen() {
     socket.on("addGroupMember", (response: any) => {
       if (
         isSubscribed &&
-        response
+        (response?.groupUsers
           .map((user: { value: string }) => user.value)
-          .includes(userRecord._id)
+          .includes(userRecord._id) ||
+          response.groupId === usersSlice.selectedUser?.group?._id)
       ) {
         getContactUserData();
         getRequestUserContactData();
@@ -158,7 +159,10 @@ export default function HomeScreen() {
     });
 
     socket.on("updateGroupMember", (response: any) => {
-      if (isSubscribed && response._id === usersSlice.selectedUser.group._id) {
+      if (
+        isSubscribed &&
+        response._id === usersSlice.selectedUser?.group?._id
+      ) {
         getGroupMmebersData();
       }
     });
@@ -167,7 +171,7 @@ export default function HomeScreen() {
       if (
         isSubscribed &&
         response._id === userRecord._id &&
-        response.groupId === usersSlice.selectedUser.group._id
+        response.groupId === usersSlice.selectedUser?.group?._id
       ) {
         getContactUserData();
         dispatch(
@@ -182,7 +186,7 @@ export default function HomeScreen() {
     socket.on("removeUserFromGroup", (response: any) => {
       if (
         isSubscribed &&
-        response.group._id === usersSlice.selectedUser.group._id &&
+        response.group._id === usersSlice.selectedUser?.group?._id &&
         response.user._id !== userRecord._id
       ) {
         getGroupMmebersData();
@@ -190,7 +194,7 @@ export default function HomeScreen() {
 
       if (
         isSubscribed &&
-        response.group._id === usersSlice.selectedUser.group._id &&
+        response.group._id === usersSlice.selectedUser?.group?._id &&
         response.user._id === userRecord._id
       ) {
         dispatch(
@@ -281,7 +285,7 @@ export default function HomeScreen() {
 
     const getGroupMmebersData = async () => {
       const chatGroupMembers = await getGroupMmebers(
-        usersSlice.selectedUser.group._id
+        usersSlice.selectedUser?.group?._id
       );
 
       if (chatGroupMembers?.data?.length) {
@@ -308,7 +312,7 @@ export default function HomeScreen() {
       socket.off("removeUserFromGroup", (response: any) => {
         if (
           isSubscribed &&
-          response.group._id === usersSlice.selectedUser.group._id &&
+          response.group._id === usersSlice.selectedUser?.group?._id &&
           response.user._id !== userRecord._id
         ) {
           getGroupMmebersData();
@@ -316,7 +320,7 @@ export default function HomeScreen() {
 
         if (
           isSubscribed &&
-          response.group._id === usersSlice.selectedUser.group._id &&
+          response.group._id === usersSlice.selectedUser?.group?._id &&
           response.user._id === userRecord._id
         ) {
           dispatch(
@@ -411,7 +415,7 @@ export default function HomeScreen() {
         if (isSubscribed && response._id === userRecord._id) {
           getContactUserData();
           getRequestUserContactData();
-        } else if (response.groupId === usersSlice.selectedUser.group._id) {
+        } else if (response.groupId === usersSlice.selectedUser?.group?._id) {
           getGroupMmebersData();
         }
       });
@@ -429,9 +433,10 @@ export default function HomeScreen() {
       socket.off("addGroupMember", (response: any) => {
         if (
           isSubscribed &&
-          response
+          (response?.groupUsers
             .map((user: { value: string }) => user.value)
-            .includes(userRecord._id)
+            .includes(userRecord._id) ||
+            response.groupId === usersSlice.selectedUser?.group?._id)
         ) {
           getContactUserData();
           getRequestUserContactData();
@@ -441,7 +446,7 @@ export default function HomeScreen() {
       socket.off("updateGroupMember", (response: any) => {
         if (
           isSubscribed &&
-          response._id === usersSlice.selectedUser.group._id
+          response._id === usersSlice.selectedUser?.group?._id
         ) {
           getGroupMmebersData();
         }

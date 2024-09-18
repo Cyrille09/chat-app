@@ -7,6 +7,11 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 
+  mediaWrap: {
+    margin: 20,
+    marginTop: 5,
+  },
+
   flexRowWrap: {
     display: "flex",
     flexDirection: "row",

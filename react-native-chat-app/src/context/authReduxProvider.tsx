@@ -51,10 +51,13 @@ export function AuthReduxProvider({ children }: React.PropsWithChildren) {
     };
 
     const userContactData = async () => {
-      const userContact = await getUserContacts("");
-      if (userContact.data?.users?.length) {
-        dispatch(userContactsRecord(userContact.data.users));
-      }
+      await getUserContacts("")
+        .then((response) => {
+          dispatch(userContactsRecord(response.data.users));
+        })
+        .catch((error) => {
+          logoutData();
+        });
     };
 
     const logoutData = async () => {

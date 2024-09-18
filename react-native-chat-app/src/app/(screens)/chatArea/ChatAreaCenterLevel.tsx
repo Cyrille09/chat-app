@@ -194,7 +194,9 @@ const ChatAreaCenterLevel = ({
                     />
 
                     <Text style={chatAreaStyles.messageTime}>
-                      {getStarMessage && <Icon name="star" size={13} />}{" "}
+                      {getStarMessage && (
+                        <Text style={chatAreaStyles.messageStar}>*</Text>
+                      )}{" "}
                       {format(message.createdAt, "HH:mm")}
                     </Text>
                   </View>
@@ -280,7 +282,9 @@ const ChatAreaCenterLevel = ({
                       </Text>
                     </View>
                     <Text style={chatAreaStyles.messageTime}>
-                      {getStarMessage && <Icon name="star" size={13} />}{" "}
+                      {getStarMessage && (
+                        <Text style={chatAreaStyles.messageStar}>*</Text>
+                      )}{" "}
                       {format(message.createdAt, "HH:mm")}
                     </Text>
                   </View>
@@ -338,7 +342,9 @@ const ChatAreaCenterLevel = ({
                       <Link href={message.message}>{message.message}</Link>
                     </Text>
                     <Text style={chatAreaStyles.messageTime}>
-                      {getStarMessage && <Icon name="star" size={13} />}{" "}
+                      {getStarMessage && (
+                        <Text style={chatAreaStyles.messageStar}>*</Text>
+                      )}{" "}
                       {format(message.createdAt, "HH:mm")}
                     </Text>
                   </View>
@@ -425,7 +431,9 @@ const ChatAreaCenterLevel = ({
                     </View>
 
                     <Text style={chatAreaStyles.messageTime}>
-                      {getStarMessage && <Icon name="star" size={13} />}{" "}
+                      {getStarMessage && (
+                        <Text style={chatAreaStyles.messageStar}>*</Text>
+                      )}{" "}
                       {format(message.createdAt, "HH:mm")}
                     </Text>
                   </View>
@@ -500,7 +508,9 @@ const ChatAreaCenterLevel = ({
                       {message.message}
                     </Text>
                     <Text style={chatAreaStyles.messageTime}>
-                      {getStarMessage && <Icon name="star" size={13} />}{" "}
+                      {getStarMessage && (
+                        <Text style={chatAreaStyles.messageStar}>*</Text>
+                      )}{" "}
                       {message.editMessage && "Edited"}{" "}
                       {format(message.createdAt, "HH:mm")}
                     </Text>

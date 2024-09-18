@@ -146,6 +146,20 @@ export async function SocketIO(io: Server) {
     socket.on("storyFeed", (ms: EventPayload<"storyFeed">) => {
       io.emit("storyFeed", ms);
     });
+
+    // audio n=and video call
+    socket.on("join-call", (roomId) => {
+      socket.join(roomId);
+      socket.broadcast.to(roomId).emit("user-joined", socket.id);
+    });
+
+    socket.on("signal", (data) => {
+      io.to(data.to).emit("signal", data);
+    });
+
+    socket.on("disconnect", () => {
+      io.emit("user-left", socket.id);
+    });
   });
   return io;
 }

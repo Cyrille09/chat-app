@@ -149,16 +149,20 @@ export default function TabLayout() {
       }
     });
 
-    socket.on("addGroupMember", (response: []) => {
-      if (
-        isSubscribed &&
-        response
-          .map((user: { value: string }) => user.value)
-          .includes(userRecord._id)
-      ) {
-        userContactData();
+    socket.on(
+      "addGroupMember",
+      (response: { groupUsers: []; groupId: string }) => {
+        if (
+          isSubscribed &&
+          (response.groupUsers
+            .map((user: { value: string }) => user.value)
+            .includes(userRecord._id) ||
+            response.groupId === usersSlice.selectedUser?.group?._id)
+        ) {
+          userContactData();
+        }
       }
-    });
+    );
 
     socket.on("muteGroupMessage", (response: { _id: string }) => {
       if (isSubscribed && response._id === userRecord._id) {
@@ -287,16 +291,20 @@ export default function TabLayout() {
         }
       });
 
-      socket.off("addGroupMember", (response: []) => {
-        if (
-          isSubscribed &&
-          response
-            .map((user: { value: string }) => user.value)
-            .includes(userRecord._id)
-        ) {
-          userContactData();
+      socket.off(
+        "addGroupMember",
+        (response: { groupUsers: []; groupId: string }) => {
+          if (
+            isSubscribed &&
+            (response.groupUsers
+              .map((user: { value: string }) => user.value)
+              .includes(userRecord._id) ||
+              response.groupId === usersSlice.selectedUser?.group?._id)
+          ) {
+            userContactData();
+          }
         }
-      });
+      );
 
       socket.off("muteGroupMessage", (response: { _id: string }) => {
         if (isSubscribed && response._id === userRecord._id) {

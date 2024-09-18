@@ -101,7 +101,10 @@ const AddGroupMembers = () => {
       `${usersSlice.currentUser.user.name} has added ${joinMember} to the group.`
     )
       .then((response) => {
-        socket.emit("addGroupMember", values.groupUsers);
+        socket.emit("addGroupMember", {
+          groupUsers: values.groupUsers,
+          groupId: usersSlice.selectedUser.group._id,
+        });
 
         socket.emit("messageGroup", {
           groupId: usersSlice.selectedUser.group._id,

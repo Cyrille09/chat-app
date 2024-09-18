@@ -257,6 +257,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#999",
   },
+  messageStar: {
+    fontSize: 13,
+    color: Colors.black,
+  },
   chatAreaCenterTexts: {
     flex: 1,
     display: "flex",
